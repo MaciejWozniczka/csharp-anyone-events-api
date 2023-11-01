@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Events;
-
-namespace MobileApp.Host.Categories;
+﻿namespace MobileApp.Host.Categories;
 
 public class Category : BaseModel
 {
