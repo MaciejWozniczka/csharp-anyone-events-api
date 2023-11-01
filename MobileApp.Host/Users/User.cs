@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Infrastructure;
-
-namespace MobileApp.Host.Users;
+﻿namespace MobileApp.Host.Users;
 
 public class User : IdentityUser
 {

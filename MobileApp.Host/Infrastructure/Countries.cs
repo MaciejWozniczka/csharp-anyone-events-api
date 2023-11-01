@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace MobileApp.Host.Infrastructure;
+﻿namespace MobileApp.Host.Infrastructure;
 
 public enum Countries
 {
