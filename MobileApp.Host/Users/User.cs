@@ -14,4 +14,7 @@ public class User : IdentityUser
     public string Desciption { get; set; }
     public int PhoneNumber { get; set; }
     public string PhoneCountryCode { get; set; }
+    public DateTime CreateDate { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime DeletingDate { get; set; }
 }
