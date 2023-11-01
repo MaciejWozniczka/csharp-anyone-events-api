@@ -1,16 +1,30 @@
 // Global using directives
 
+global using FluentValidation;
+global using MediatR;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using Microsoft.AspNetCore.Mvc.Controllers;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Options;
+global using Microsoft.IdentityModel.Logging;
+global using Microsoft.IdentityModel.Tokens;
+global using Microsoft.OpenApi.Models;
 global using MobileApp.Host.Addresses;
 global using MobileApp.Host.Categories;
 global using MobileApp.Host.Companies;
+global using MobileApp.Host.Data;
 global using MobileApp.Host.Events;
 global using MobileApp.Host.EventTypes;
+global using MobileApp.Host.Infrastructure;
 global using MobileApp.Host.Invoices;
 global using MobileApp.Host.Models;
 global using MobileApp.Host.Tenants;
 global using MobileApp.Host.Users;
 global using Serilog;
 global using Serilog.Events;
+global using Swashbuckle.AspNetCore.SwaggerGen;
+global using System.Reflection;
+global using System.Text;
