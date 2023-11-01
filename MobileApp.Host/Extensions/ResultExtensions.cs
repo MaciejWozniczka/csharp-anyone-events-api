@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace MobileApp.Host.Extensions;
+﻿namespace MobileApp.Host.Extensions;
 
 public static class ResultExtensions
 {
