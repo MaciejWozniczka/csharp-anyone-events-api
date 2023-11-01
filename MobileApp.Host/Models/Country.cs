@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Models;
+﻿using System.Runtime.Serialization;
+
+namespace MobileApp.Host.Models;
 
 public enum Country
 {
