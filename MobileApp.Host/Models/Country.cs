@@ -1,6 +1,6 @@
-﻿namespace MobileApp.Host.Infrastructure;
+﻿namespace MobileApp.Host.Models;
 
-public enum Countries
+public enum Country
 {
     Afghanistan,
     Albania,

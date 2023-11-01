@@ -41,4 +41,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EventParameters\" />
+  </ItemGroup>
+
 </Project>

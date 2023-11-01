@@ -1,4 +1,4 @@
-﻿namespace MobileApp.Host.Infrastructure;
+﻿namespace MobileApp.Host.Models;
 
 public enum SexType
 {
