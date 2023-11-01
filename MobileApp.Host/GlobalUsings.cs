@@ -12,4 +12,5 @@ global using MobileApp.Host.Invoices;
 global using MobileApp.Host.Models;
 global using MobileApp.Host.Tenants;
 global using MobileApp.Host.Users;
-global using System.Runtime.Serialization;
+global using Serilog;
+global using Serilog.Events;
