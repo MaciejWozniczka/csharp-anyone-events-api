@@ -1,0 +1,110 @@
+﻿namespace MobileApp.Host;
+
+public interface IModule
+{
+    void GetServices(IServiceCollection services, ConfigurationManager configuration);
+    Task Run(IServiceProvider serviceProvider);
+}
+
+public class Module : IModule
+{
+    public void GetServices(IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(cfg =>
+            {
+                cfg.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = configuration["Authentication:Issuer"],
+                    ValidAudience = configuration["Authentication:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:SecretKey"]))
+                };
+            });
+
+        services.AddAuthorization(o =>
+        {
+            var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
+            defaultAuthorizationPolicyBuilder = defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+            o.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+        });
+
+        IdentityModelEventSource.ShowPII = false;
+        services.AddScoped<ITokenService, TokenService>();
+
+        services.AddCors(o => o.AddPolicy("default", builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }));
+
+        services.AddIdentity<User, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+            })
+            .AddEntityFrameworkStores<DataContext>();
+
+        services.AddDbContext<DataContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
+
+        services.AddDbContext<DataContextUsers>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
+
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddMediatR(typeof(Module));
+        services.AddValidatorsFromAssembly(typeof(Module).Assembly);
+        services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
+
+        services.Configure<TokenOption>(configuration.GetSection("TokenOptions"));
+
+        services.AddControllers();
+
+        services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenDefaults>();
+
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "TpaFinder", Version = "v1" });
+            c.EnableAnnotations();
+
+            var jwtSecurityScheme = new OpenApiSecurityScheme
+            {
+                BearerFormat = "JWT",
+                Name = "JWT Authentication",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+
+            c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {{ jwtSecurityScheme, Array.Empty<string>() }});
+
+            var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            c.IncludeXmlComments((Path.Combine(AppContext.BaseDirectory, xmlFileName)));
+        });
+    }
+
+    public async Task Run(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        await scope.ServiceProvider.GetRequiredService<DataContext>().Database.MigrateAsync();
+    }
+}
