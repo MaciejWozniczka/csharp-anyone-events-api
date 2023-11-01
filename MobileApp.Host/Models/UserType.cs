@@ -1,6 +1,9 @@
-﻿namespace MobileApp.Host.Models
+﻿namespace MobileApp.Host.Models;
+
+public enum UserType
 {
-    public class UserType
-    {
-    }
+    User,
+    Company,
+    Developer,
+    Admin
 }
