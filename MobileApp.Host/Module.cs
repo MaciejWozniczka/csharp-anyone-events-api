@@ -46,7 +46,7 @@ public class Module : IModule
             {
                 cfg.User.RequireUniqueEmail = true;
             })
-            .AddEntityFrameworkStores<DataContext>();
+            .AddEntityFrameworkStores<DataContextUsers>();
 
         services.AddDbContext<DataContext>(options =>
         {
