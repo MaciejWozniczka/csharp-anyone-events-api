@@ -19,7 +19,7 @@ builder.Host.UseSerilog((host,
 {
     log.Enrich.FromLogContext();
     log.MinimumLevel.Warning();
-    log.MinimumLevel.Override("TpaFinder", LogEventLevel.Information);
+    log.MinimumLevel.Override("MobileApp", LogEventLevel.Information);
     log.WriteTo.File(
         Path.Combine("Logs", "log.txt"),
         rollingInterval: RollingInterval.Day,
@@ -88,7 +88,7 @@ app.UseEndpoints(endpoints =>
 });
 
 app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TpaFinder v1"));
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MobileApp v1"));
 
 app.UseStaticFiles();
 app.UseSpaStaticFiles();

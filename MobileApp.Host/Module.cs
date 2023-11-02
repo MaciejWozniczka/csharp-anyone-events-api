@@ -66,7 +66,7 @@ public class Module : IModule
 
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "TpaFinder", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "MobileApp", Version = "v1" });
             c.EnableAnnotations();
 
             var jwtSecurityScheme = new OpenApiSecurityScheme
