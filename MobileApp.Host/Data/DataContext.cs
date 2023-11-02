@@ -1,6 +1,6 @@
 ﻿namespace MobileApp.Host.Data;
 
-public class DataContext : DbContext
+public class DataContext : IdentityDbContext<User>
 {
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
@@ -13,6 +13,11 @@ public class DataContext : DbContext
     public DbSet<EventType> EventTypes { get; set; }
     public DbSet<Invoice> Invoices { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

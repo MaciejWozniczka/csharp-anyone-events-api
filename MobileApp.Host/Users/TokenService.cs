@@ -14,10 +14,10 @@ public class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
     private readonly SignInManager<User> _signInManager;
-    private readonly DataContextUsers _db;
+    private readonly DataContext _db;
     private UserManager<User> _userManager { get; set; }
     private readonly TokenOption _tokenOptions;
-    public TokenService(IConfiguration configuration, SignInManager<User> signInManager, DataContextUsers db, UserManager<User> userManager, IOptions<TokenOption> tokenOptions)
+    public TokenService(IConfiguration configuration, SignInManager<User> signInManager, DataContext db, UserManager<User> userManager, IOptions<TokenOption> tokenOptions)
     {
         _configuration = configuration;
         _signInManager = signInManager;

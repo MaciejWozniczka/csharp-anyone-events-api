@@ -46,15 +46,9 @@ public class Module : IModule
             {
                 cfg.User.RequireUniqueEmail = true;
             })
-            .AddEntityFrameworkStores<DataContextUsers>();
+            .AddEntityFrameworkStores<DataContext>();
 
         services.AddDbContext<DataContext>(options =>
-        {
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        });
-
-        services.AddDbContext<DataContextUsers>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -102,6 +96,5 @@ public class Module : IModule
     {
         using var scope = serviceProvider.CreateScope();
         await scope.ServiceProvider.GetRequiredService<DataContext>().Database.MigrateAsync();
-        await scope.ServiceProvider.GetRequiredService<DataContextUsers>().Database.MigrateAsync();
     }
 }
