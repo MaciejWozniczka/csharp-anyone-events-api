@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MobileApp.Host.Migrations
 {
     [DbContext(typeof(DataContextUsers))]
-    [Migration("20231102155307_Users")]
+    [Migration("20231102163423_Users")]
     partial class Users
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

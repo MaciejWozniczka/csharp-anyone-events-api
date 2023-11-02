@@ -102,5 +102,6 @@ public class Module : IModule
     {
         using var scope = serviceProvider.CreateScope();
         await scope.ServiceProvider.GetRequiredService<DataContext>().Database.MigrateAsync();
+        await scope.ServiceProvider.GetRequiredService<DataContextUsers>().Database.MigrateAsync();
     }
 }
