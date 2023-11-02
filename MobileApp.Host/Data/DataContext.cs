@@ -14,10 +14,6 @@ public class DataContext : DbContext
     public DbSet<Invoice> Invoices { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
     }
