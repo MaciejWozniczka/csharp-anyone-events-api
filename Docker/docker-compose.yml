@@ -21,7 +21,7 @@ services:
       - db
     ports:
       - 8090:8080 
-  finder-backend:
+  mobileapp-backend:
     build:
       context: ..
       dockerfile: ./Docker/Dockerfile
@@ -37,4 +37,4 @@ services:
     ports:
       - 5173:5173
     volumes: 
-      - ./Finder/Logs:/app/MobileApp.Host/bin/Release/net6.0/publish/Logs
+      - ./MobileApp/Logs:/app/MobileApp.Host/bin/Release/net6.0/publish/Logs
