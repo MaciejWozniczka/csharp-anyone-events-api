@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Diagnostics;
 using Serilog.Context;
 
@@ -28,6 +29,14 @@ builder.Host.UseSerilog((host,
 });
 
 new MobileApp.Host.Module().GetServices(services, configuration);
+
+services.AddHangfire(c => c
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection"))));
+
+services.AddHangfireServer();
 
 services.AddSpaStaticFiles(c =>
 {
@@ -70,6 +79,8 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
+app.UseHangfireDashboard();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
@@ -90,9 +101,6 @@ app.UseSpa(spa =>
         spa.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
     }
 });
-
-app.UseHangfireDashboard();
-app.UseHangfireServer(new BackgroundJobServerOptions());
 
 GlobalConfiguration.Configuration.UseSerilogLogProvider();
 

@@ -61,7 +61,6 @@ public class Module : IModule
         });
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        services.AddMediatR(typeof(Module));
         services.AddValidatorsFromAssembly(typeof(Module).Assembly);
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
 
@@ -96,9 +95,6 @@ public class Module : IModule
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {{ jwtSecurityScheme, Array.Empty<string>() }});
-
-            var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            c.IncludeXmlComments((Path.Combine(AppContext.BaseDirectory, xmlFileName)));
         });
     }
 
