@@ -1,5 +1,6 @@
 using Hangfire;
 using Hangfire.PostgreSql;
+using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Diagnostics;
 using Serilog.Context;
 
@@ -79,7 +80,17 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-app.UseHangfireDashboard();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    DashboardTitle = "Hangfire",
+    Authorization = new[]
+    {
+        new HangfireCustomBasicAuthenticationFilter{
+            User = builder.Configuration.GetSection("HangfireSettings:UserName").Value,
+            Pass = builder.Configuration.GetSection("HangfireSettings:Password").Value
+        }
+    }
+});
 
 app.UseEndpoints(endpoints =>
 {
