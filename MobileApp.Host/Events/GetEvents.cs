@@ -98,6 +98,7 @@ public class GetEvents : ControllerBase
                     && e.AgeFrom <= request.UserAge
                     && e.AgeTo >= request.UserAge
                     && e.SexTypes.Contains(request.UserSexType)
+                    && e.UsersAssigned.Count < e.PeopleLimit
                     && !e.IsDeleted
                     && e.IsActive)
                 .AsQueryable();
