@@ -25,17 +25,17 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("EventUser", b =>
                 {
-                    b.Property<Guid>("EventsId")
+                    b.Property<Guid>("EventsAssignedId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("UsersAssignedId")
                         .HasColumnType("text");
 
-                    b.HasKey("EventsId", "UsersAssignedId");
+                    b.HasKey("EventsAssignedId", "UsersAssignedId");
 
                     b.HasIndex("UsersAssignedId");
 
-                    b.ToTable("EventUser");
+                    b.ToTable("EventUser", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -379,6 +379,8 @@ namespace MobileApp.Host.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CreatorId");
+
                     b.HasIndex("EventTypeId");
 
                     b.HasIndex("LocationId");
@@ -630,7 +632,7 @@ namespace MobileApp.Host.Migrations
                 {
                     b.HasOne("MobileApp.Host.Events.Event", null)
                         .WithMany()
-                        .HasForeignKey("EventsId")
+                        .HasForeignKey("EventsAssignedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -719,6 +721,12 @@ namespace MobileApp.Host.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MobileApp.Host.Users.User", "Creator")
+                        .WithMany("EventsCreated")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MobileApp.Host.EventTypes.EventType", "EventType")
                         .WithMany()
                         .HasForeignKey("EventTypeId")
@@ -732,6 +740,8 @@ namespace MobileApp.Host.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("Creator");
 
                     b.Navigation("EventType");
 
@@ -789,6 +799,11 @@ namespace MobileApp.Host.Migrations
             modelBuilder.Entity("MobileApp.Host.Tenants.Tenant", b =>
                 {
                     b.Navigation("Companies");
+                });
+
+            modelBuilder.Entity("MobileApp.Host.Users.User", b =>
+                {
+                    b.Navigation("EventsCreated");
                 });
 #pragma warning restore 612, 618
         }

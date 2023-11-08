@@ -11,6 +11,7 @@ public class Event : BaseModel
     public Guid CategoryId { get; set; }
     public Category Category { get; set; }
     public string CreatorId { get; set; }
+    public User Creator { get; set; }
     public List<User> UsersAssigned { get; set; }
     public string Name { get; set; }
     public DateTime EventDateTime { get; set; }

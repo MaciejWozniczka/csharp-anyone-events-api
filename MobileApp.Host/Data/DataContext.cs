@@ -16,6 +16,17 @@ public class DataContext : IdentityDbContext<User>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Event>()
+            .HasOne(e => e.Creator)
+            .WithMany(u => u.EventsCreated)
+            .HasForeignKey(e => e.CreatorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Event>()
+            .HasMany(e => e.UsersAssigned)
+            .WithMany(u => u.EventsAssigned)
+            .UsingEntity(j => j.ToTable("EventUser"));
+
         base.OnModelCreating(modelBuilder);
     }
 
