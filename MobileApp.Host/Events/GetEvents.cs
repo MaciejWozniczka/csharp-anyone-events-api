@@ -15,7 +15,7 @@ public class GetEvents : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get active events according to parameters")]
     [HttpGet("/api/events/")]
-    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, string location, int userAge, SexType userSexType, int? ageFrom, int? ageTo, List<SexType>? sexTypes)
+    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, string location, int userAge, SexType userSexType, int? ageFrom, int? ageTo, SexType? sexTypes)
     {
         var pagination = new PaginationArgs
         {
@@ -27,7 +27,7 @@ public class GetEvents : ControllerBase
 
     public class GetEventsQuery : IRequest<Result<GetEventsDto>>
     {
-        public GetEventsQuery(PaginationArgs paginationArgs, string location, int userAge, SexType userSexType, int? ageFrom, int? ageTo, List<SexType>? sexTypes)
+        public GetEventsQuery(PaginationArgs paginationArgs, string location, int userAge, SexType userSexType, int? ageFrom, int? ageTo, SexType? sexTypes)
         {
             PaginationArgs = paginationArgs;
             Location = location;
@@ -43,7 +43,7 @@ public class GetEvents : ControllerBase
         public SexType UserSexType { get; set; }
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
-        public List<SexType>? SexTypes { get; set; }
+        public SexType? SexTypes { get; set; }
     }
 
     public class GetEventsDto
@@ -108,9 +108,9 @@ public class GetEvents : ControllerBase
                 query = query.Where(e => e.Creator.Age >= request.AgeFrom && e.Creator.Age <= request.AgeTo);
             }
 
-            if (request.SexTypes != null)
+            if (request.SexTypes != null && request.SexTypes != 0)
             {
-                query = query.Where(e => request.SexTypes.Contains(e.Creator.Sex));
+                query = query.Where(e => e.Creator.Sex == request.SexTypes);
             }
 
             var events = await query
