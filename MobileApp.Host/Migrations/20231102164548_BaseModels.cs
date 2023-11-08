@@ -21,7 +21,7 @@ namespace MobileApp.Host.Migrations
                     PostalCode = table.Column<string>(type: "text", nullable: false),
                     Street = table.Column<string>(type: "text", nullable: false),
                     StreeNumber = table.Column<string>(type: "text", nullable: false),
-                    LocalNumber = table.Column<string>(type: "text", nullable: false),
+                    ApartmentNumber = table.Column<string>(type: "text", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     DeletingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)

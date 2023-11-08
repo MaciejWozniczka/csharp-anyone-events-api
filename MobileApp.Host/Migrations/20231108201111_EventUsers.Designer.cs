@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MobileApp.Host.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231102164548_BaseModels")]
-    partial class BaseModels
+    [Migration("20231108201111_EventUsers")]
+    partial class EventUsers
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,6 +24,21 @@ namespace MobileApp.Host.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("EventUser", b =>
+                {
+                    b.Property<Guid>("EventsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UsersAssignedId")
+                        .HasColumnType("text");
+
+                    b.HasKey("EventsId", "UsersAssignedId");
+
+                    b.HasIndex("UsersAssignedId");
+
+                    b.ToTable("EventUser");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -163,6 +178,10 @@ namespace MobileApp.Host.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ApartmentNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("text");
@@ -178,10 +197,6 @@ namespace MobileApp.Host.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("ApartmentNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -280,29 +295,30 @@ namespace MobileApp.Host.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("AgeFrom")
+                    b.Property<int?>("AgeFrom")
                         .HasColumnType("integer");
 
-                    b.Property<int>("AgeTo")
+                    b.Property<int?>("AgeTo")
                         .HasColumnType("integer");
 
                     b.Property<string>("Budget")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<List<string>>("Cities")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<int[]>("Countries")
-                        .IsRequired()
                         .HasColumnType("integer[]");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatorId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
@@ -312,7 +328,6 @@ namespace MobileApp.Host.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Destination")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Duration")
@@ -325,14 +340,15 @@ namespace MobileApp.Host.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int[]>("ExperienceLevels")
-                        .IsRequired()
                         .HasColumnType("integer[]");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<List<string>>("Languages")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<Guid>("LocationId")
@@ -343,7 +359,6 @@ namespace MobileApp.Host.Migrations
                         .HasColumnType("text");
 
                     b.Property<List<string>>("Nationalities")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<int>("PeopleLimit")
@@ -353,14 +368,13 @@ namespace MobileApp.Host.Migrations
                         .HasColumnType("text");
 
                     b.Property<int[]>("SexTypes")
-                        .IsRequired()
                         .HasColumnType("integer[]");
 
                     b.Property<string>("ShortDescription")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TripType")
+                    b.Property<int?>("TripType")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -612,6 +626,21 @@ namespace MobileApp.Host.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("EventUser", b =>
+                {
+                    b.HasOne("MobileApp.Host.Events.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MobileApp.Host.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersAssignedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

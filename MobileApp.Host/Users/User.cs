@@ -18,4 +18,5 @@ public class User : IdentityUser
     public DateTime CreateDate { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime DeletingDate { get; set; }
+    public List<Event> Events { get; set; }
 }
