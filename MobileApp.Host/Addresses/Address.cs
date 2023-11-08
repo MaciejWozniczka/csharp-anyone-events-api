@@ -8,5 +8,5 @@ public class Address : BaseModel
     public string PostalCode { get; set; }
     public string Street { get; set; }
     public string StreeNumber { get; set; }
-    public string LocalNumber { get; set; }
+    public string ApartmentNumber { get; set; }
 }
