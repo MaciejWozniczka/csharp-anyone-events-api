@@ -40,17 +40,14 @@ public class ChangePassword : ControllerBase
 
     public class ChangePasswordQueryHandler : IRequestHandler<ChangePasswordQuery, Result>
     {
-        public UserManager<User> _userManager { get; set; }
         public IValidator<ChangePasswordQuery> _validator { get; set; }
-        public DataContext _db { get; set; }
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public ChangePasswordQueryHandler(UserManager<User> userManager, IValidator<ChangePasswordQuery> validator, DataContext db, IHttpContextAccessor httpContextAccessor)
+        public readonly IUserService _tokenService;
+        public ChangePasswordQueryHandler(IValidator<ChangePasswordQuery> validator, IUserService tokenService)
         {
-            _userManager = userManager;
             _validator = validator;
-            _db = db;
-            _httpContextAccessor = httpContextAccessor;
+            _tokenService = tokenService;
         }
+
         public async Task<Result> Handle(ChangePasswordQuery request, CancellationToken cancellationToken)
         {
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
@@ -63,23 +60,7 @@ public class ChangePassword : ControllerBase
             if (request.NewPassword != request.RepeatedNewPassword)
                 return Result.BadRequest("New passwords should be the same");
 
-            var httpContext = _httpContextAccessor.HttpContext;
-
-            var userClaims = httpContext.User.Claims;
-
-            var email = userClaims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
-            {
-                return Result.NotFound();
-            }
-
-            var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
-            await _db.SaveChangesAsync(cancellationToken);
-
-            return result.Succeeded ? Result.Ok() : Result.BadRequest("The password has not been changed");
+            return await _tokenService.ChangePassword(request.CurrentPassword, request.NewPassword, cancellationToken);
         }
     }
 }

@@ -22,8 +22,8 @@ public class AuthorizeUser : ControllerBase
     }
     public class GetTokenQueryHandler : IRequestHandler<AuthorizeUsernCommand, Result<TokenDto>>
     {
-        private readonly ITokenService _tokenService;
-        public GetTokenQueryHandler(ITokenService tokenService)
+        private readonly IUserService _tokenService;
+        public GetTokenQueryHandler(IUserService tokenService)
         {
             _tokenService = tokenService;
         }

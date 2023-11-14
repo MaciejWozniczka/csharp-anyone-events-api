@@ -33,7 +33,7 @@ public class Module : IModule
         });
 
         IdentityModelEventSource.ShowPII = false;
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IUserService, UserService>();
 
         services.AddCors(o => o.AddPolicy("default", builder =>
         {
