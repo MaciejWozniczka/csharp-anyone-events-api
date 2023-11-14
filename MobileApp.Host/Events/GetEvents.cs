@@ -1,4 +1,5 @@
 ﻿using MobileApp.Host.Extensions;
+using MobileApp.Host.Locations;
 
 namespace MobileApp.Host.Events;
 
@@ -6,39 +7,40 @@ namespace MobileApp.Host.Events;
 public class GetEvents : ControllerBase
 {
     private readonly IMediator _mediator;
-
-    public GetEvents(IMediator mediator)
+    private ICurrentUserAccessor _currentUserAccessor;
+    public GetEvents(IMediator mediator, ICurrentUserAccessor currentUserAccessor)
     {
         _mediator = mediator;
+        _currentUserAccessor = currentUserAccessor;
     }
 
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get active events according to parameters")]
     [HttpGet("/api/events/")]
-    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, string location, int userAge, SexType userSexType, int? ageFrom, int? ageTo, SexType? sexTypes)
+    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, Location location, int? ageFrom, int? ageTo, SexType? sexTypes)
     {
         var pagination = new PaginationArgs
         {
             Page = offset ?? 0,
             PageSize = limit ?? 10
         };
-        return await _mediator.Send(new GetEventsQuery(pagination, location, userAge, userSexType, ageFrom, ageTo, sexTypes)).Process();
+        return await _mediator.Send(new GetEventsQuery(pagination, await _currentUserAccessor.GetCurrentUser(), location, ageFrom, ageTo, sexTypes)).Process();
     }
 
     public class GetEventsQuery : IRequest<Result<GetEventsDto>>
     {
-        public GetEventsQuery(PaginationArgs paginationArgs, string location, int userAge, SexType userSexType, int? ageFrom, int? ageTo, SexType? sexTypes)
+        public GetEventsQuery(PaginationArgs paginationArgs, User? user, Location location, int? ageFrom, int? ageTo, SexType? sexTypes)
         {
             PaginationArgs = paginationArgs;
             Location = location;
-            UserAge = userAge;
-            UserSexType = userSexType;
+            UserAge = user.Age;
+            UserSexType = user.Sex;
             AgeFrom = ageFrom;
             AgeTo = ageTo;
             SexTypes = sexTypes;
         }
         public PaginationArgs PaginationArgs { get; set; }
-        public string Location { get; set; }
+        public Location Location { get; set; }
         public int UserAge { get; set; }
         public SexType UserSexType { get; set; }
         public int? AgeFrom { get; set; }
@@ -67,6 +69,7 @@ public class GetEvents : ControllerBase
         public string Category { get; set; }
         public DateTime EventDateTime { get; set; }
         public int Duration { get; set; }
+        public Location Location { get; set; }
         public string Country { get; set; }
         public string State { get; set; }
         public string City { get; set; }
@@ -94,7 +97,7 @@ public class GetEvents : ControllerBase
         public async Task<Result<GetEventsDto>> Handle(GetEventsQuery request, CancellationToken cancellationToken)
         {
             var query = _db.Events
-                .Where(e => e.Location.City == request.Location
+                .Where(e => e.Location == request.Location
                     && e.AgeFrom <= request.UserAge
                     && e.AgeTo >= request.UserAge
                     && e.SexTypes.Contains(request.UserSexType)
@@ -121,13 +124,14 @@ public class GetEvents : ControllerBase
                     Category = e.Category.Name,
                     EventDateTime = e.EventDateTime,
                     Duration = e.Duration,
-                    Country = e.Location.Country.GetDisplayName(),
-                    State = e.Location.State,
-                    City = e.Location.City,
-                    PostalCode = e.Location.PostalCode,
-                    Street = e.Location.Street,
-                    StreeNumber = e.Location.StreeNumber,
-                    ApartmentNumber = e.Location.ApartmentNumber,
+                    Location = e.Location,
+                    Country = e.Address.Country.GetDisplayName(),
+                    State = e.Address.State,
+                    City = e.Address.City,
+                    PostalCode = e.Address.PostalCode,
+                    Street = e.Address.Street,
+                    StreeNumber = e.Address.StreeNumber,
+                    ApartmentNumber = e.Address.ApartmentNumber,
                     ShortDescription = e.ShortDescription,
                     Description = e.Description,
                     Picture = e.Picture,

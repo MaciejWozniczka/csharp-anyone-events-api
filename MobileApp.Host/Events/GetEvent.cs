@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Events;
+﻿using MobileApp.Host.Locations;
+
+namespace MobileApp.Host.Events;
 
 [ApiController]
 public class GetEvent : ControllerBase
@@ -37,6 +39,7 @@ public class GetEvent : ControllerBase
         public string Category { get; set; }
         public DateTime EventDateTime { get; set; }
         public int Duration { get; set; }
+        public Location Location { get; set; }
         public string Country { get; set; }
         public string State { get; set; }
         public string City { get; set; }
@@ -72,13 +75,14 @@ public class GetEvent : ControllerBase
                     Category = e.Category.Name,
                     EventDateTime = e.EventDateTime,
                     Duration = e.Duration,
-                    Country = e.Location.Country.GetDisplayName(),
-                    State = e.Location.State,
-                    City = e.Location.City,
-                    PostalCode = e.Location.PostalCode,
-                    Street = e.Location.Street,
-                    StreeNumber = e.Location.StreeNumber,
-                    ApartmentNumber = e.Location.ApartmentNumber,
+                    Location = e.Location,
+                    Country = e.Address.Country.GetDisplayName(),
+                    State = e.Address.State,
+                    City = e.Address.City,
+                    PostalCode = e.Address.PostalCode,
+                    Street = e.Address.Street,
+                    StreeNumber = e.Address.StreeNumber,
+                    ApartmentNumber = e.Address.ApartmentNumber,
                     ShortDescription = e.ShortDescription,
                     Description = e.Description,
                     Picture = e.Picture,

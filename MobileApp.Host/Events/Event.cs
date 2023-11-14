@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Events;
+﻿using MobileApp.Host.Locations;
+
+namespace MobileApp.Host.Events;
 
 public class Event : BaseModel
 {
@@ -16,7 +18,8 @@ public class Event : BaseModel
     public string Name { get; set; }
     public DateTime EventDateTime { get; set; }
     public int Duration { get; set; }
-    public Address Location { get; set; }
+    public Location Location { get; set; }
+    public Address Address { get; set; }
     public string ShortDescription { get; set; }
     public string Description { get; set; }
     public string? Picture { get; set; }
