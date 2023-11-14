@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Locations;
-
-namespace MobileApp.Host.Events;
+﻿namespace MobileApp.Host.Events;
 
 public class Event : BaseModel
 {

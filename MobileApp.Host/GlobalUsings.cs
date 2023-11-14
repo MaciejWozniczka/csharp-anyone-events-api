@@ -1,6 +1,7 @@
 // Global using directives
 
 global using FluentValidation;
+global using GeoCoordinatePortable;
 global using MediatR;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Authorization;
@@ -20,8 +21,10 @@ global using MobileApp.Host.Companies;
 global using MobileApp.Host.Data;
 global using MobileApp.Host.Events;
 global using MobileApp.Host.EventTypes;
+global using MobileApp.Host.Extensions;
 global using MobileApp.Host.Infrastructure;
 global using MobileApp.Host.Invoices;
+global using MobileApp.Host.Locations;
 global using MobileApp.Host.Models;
 global using MobileApp.Host.Tenants;
 global using MobileApp.Host.Users;

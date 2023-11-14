@@ -1,8 +1,4 @@
-﻿using GeoCoordinatePortable;
-using MobileApp.Host.Extensions;
-using MobileApp.Host.Locations;
-
-namespace MobileApp.Host.Events;
+﻿namespace MobileApp.Host.Events;
 
 [ApiController]
 public class GetEvents : ControllerBase

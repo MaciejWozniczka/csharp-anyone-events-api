@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Locations;
-
-namespace MobileApp.Host.Events;
+﻿namespace MobileApp.Host.Events;
 
 [ApiController]
 public class GetEvent : ControllerBase
