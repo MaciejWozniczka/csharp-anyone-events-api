@@ -7,7 +7,7 @@ namespace MobileApp.Host.Events;
 public class GetEvents : ControllerBase
 {
     private readonly IMediator _mediator;
-    private ICurrentUserAccessor _currentUserAccessor;
+    private readonly ICurrentUserAccessor _currentUserAccessor;
     public GetEvents(IMediator mediator, ICurrentUserAccessor currentUserAccessor)
     {
         _mediator = mediator;
