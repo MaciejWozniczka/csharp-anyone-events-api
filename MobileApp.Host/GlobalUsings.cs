@@ -32,4 +32,6 @@ global using Serilog;
 global using Serilog.Events;
 global using Swashbuckle.AspNetCore.Annotations;
 global using Swashbuckle.AspNetCore.SwaggerGen;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;
 global using System.Text;

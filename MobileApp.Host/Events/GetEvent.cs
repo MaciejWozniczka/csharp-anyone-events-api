@@ -4,7 +4,6 @@
 public class GetEvent : ControllerBase
 {
     private readonly IMediator _mediator;
-
     public GetEvent(IMediator mediator)
     {
         _mediator = mediator;
