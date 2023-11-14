@@ -2,54 +2,33 @@
 
 public interface ICurrentUserAccessor
 {
-    string? GetCountryCodeFromEmail(string email);
     string? GetUserEmail();
+    Task<User?> GetCurrentUser();
 }
 
 public class CurrentUserAccessor : ICurrentUserAccessor
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public CurrentUserAccessor(IHttpContextAccessor httpContextAccessor)
+    private readonly DataContext _db;
+    public CurrentUserAccessor(IHttpContextAccessor httpContextAccessor, DataContext db)
     {
         _httpContextAccessor = httpContextAccessor;
-    }
-    public string? GetCountryCodeFromEmail(string email)
-    {
-        if (!email.Contains("@"))
-        {
-            return null;
-        }
-        string[] parts = email.Split('@');
-
-        if (parts.Length != 2)
-        {
-            return null;
-        }
-
-        string domain = parts[1];
-
-        string[] domainParts = domain.Split('.');
-        if (parts.Length != 2)
-        {
-            return null;
-        }
-        string tld = domainParts[domainParts.Length - 1];
-
-        return tld;
+        _db = db;
     }
 
     public string? GetUserEmail()
     {
-        var emailClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+        var emailClaim = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
 
-        if (emailClaim != null)
-        {
-            return emailClaim.Value;
-        }
-        else
-        {
-            return null;
-        }
+        return emailClaim?.Value;
+    }
+
+    public async Task<User?> GetCurrentUser()
+    {
+        var emailClaim = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+
+        if (emailClaim == null) return null;
+
+        return await _db.Users.FirstOrDefaultAsync(u => u.NormalizedEmail == emailClaim.Value.ToUpper());
     }
 }
