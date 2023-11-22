@@ -2,6 +2,8 @@
 
 global using AutoMapper;
 global using FluentValidation;
+global using Flurl;
+global using Flurl.Http;
 global using GeoCoordinatePortable;
 global using MediatR;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +16,6 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Logging;
 global using Microsoft.IdentityModel.Tokens;
-global using Microsoft.OpenApi.Extensions;
 global using Microsoft.OpenApi.Models;
 global using MobileApp.Host.Addresses;
 global using MobileApp.Host.Categories;
@@ -35,4 +36,3 @@ global using Swashbuckle.AspNetCore.Annotations;
 global using Swashbuckle.AspNetCore.SwaggerGen;
 global using System.IdentityModel.Tokens.Jwt;
 global using System.Security.Claims;
-global using System.Text;

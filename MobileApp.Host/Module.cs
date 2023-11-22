@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host;
+﻿using System.Text;
+
+namespace MobileApp.Host;
 
 public interface IModule
 {

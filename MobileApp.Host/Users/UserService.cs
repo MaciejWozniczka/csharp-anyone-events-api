@@ -1,4 +1,5 @@
-﻿using TokenOption = MobileApp.Host.Infrastructure.TokenOption;
+﻿using System.Text;
+using TokenOption = MobileApp.Host.Infrastructure.TokenOption;
 
 namespace MobileApp.Host.Users;
 
