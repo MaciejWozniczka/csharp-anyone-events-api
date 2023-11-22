@@ -3,5 +3,5 @@
 public class TokenDto
 {
     public string Token { get; set; }
-    public DateTime Expiry { get; set; }
+    public DateTimeOffset Expiry { get; set; }
 }

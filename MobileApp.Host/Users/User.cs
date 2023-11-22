@@ -15,9 +15,9 @@ public class User : IdentityUser
     public int PhoneNumber { get; set; }
     public string PhoneCountryCode { get; set; }
     public UserType UserType { get; set; }
-    public DateTime CreateDate { get; set; }
+    public DateTimeOffset CreateDate { get; set; }
     public bool IsDeleted { get; set; }
-    public DateTime DeletingDate { get; set; }
-    public List<Event> EventsCreated { get; set; }
-    public List<Event> EventsAssigned { get; set; }
+    public DateTimeOffset DeletingDate { get; set; }
+    public List<UserEvent> EventsCreated { get; set; }
+    public List<UserEvent> EventsAssigned { get; set; }
 }

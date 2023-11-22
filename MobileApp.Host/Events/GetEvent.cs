@@ -20,7 +20,6 @@ public class GetEvent : ControllerBase
     public class GetEventQuery : IRequest<Result<GetEventDto>>
     {
         public Guid Id { get; set; }
-
         public GetEventQuery(Guid id)
         {
             Id = id;
@@ -31,10 +30,9 @@ public class GetEvent : ControllerBase
     {
         public User Creator { get; set; }
         public List<User> UsersAssigned { get; set; }
-        public string Name { get; set; }
         public string EventType { get; set; }
         public string Category { get; set; }
-        public DateTime EventDateTime { get; set; }
+        public DateTimeOffset EventDateTime { get; set; }
         public int Duration { get; set; }
         public Location Location { get; set; }
         public string Country { get; set; }
@@ -67,7 +65,6 @@ public class GetEvent : ControllerBase
                 .Where(e => e.Id == request.Id && !e.IsDeleted)
                 .Select(e => new GetEventDto()
                 {
-                    Name = e.Name,
                     EventType = e.EventType.Name,
                     Category = e.Category.Name,
                     EventDateTime = e.EventDateTime,

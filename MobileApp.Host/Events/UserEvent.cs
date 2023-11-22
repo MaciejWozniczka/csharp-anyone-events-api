@@ -1,8 +1,8 @@
 ﻿namespace MobileApp.Host.Events;
 
-public class Event : BaseModel
+public class UserEvent : BaseModel
 {
-    public Event()
+    public UserEvent()
     {
         IsActive = true;
     }
@@ -13,8 +13,7 @@ public class Event : BaseModel
     public string CreatorId { get; set; }
     public User Creator { get; set; }
     public List<User> UsersAssigned { get; set; }
-    public string Name { get; set; }
-    public DateTime EventDateTime { get; set; }
+    public DateTimeOffset EventDateTime { get; set; }
     public int Duration { get; set; }
     public Location Location { get; set; }
     public Address Address { get; set; }

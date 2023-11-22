@@ -6,5 +6,5 @@ public class Category : BaseModel
     public string Description { get; set; }
     public string Picture { get; set; }
     public List<EventType> EventTypes { get; set; }
-    public List<Event> Events { get; set; }
+    public List<UserEvent> Events { get; set; }
 }

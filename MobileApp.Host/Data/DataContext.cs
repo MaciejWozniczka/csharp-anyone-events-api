@@ -9,20 +9,20 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Company> Companies { get; set; }
-    public DbSet<Event> Events { get; set; }
+    public DbSet<UserEvent> Events { get; set; }
     public DbSet<EventType> EventTypes { get; set; }
     public DbSet<Invoice> Invoices { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Event>()
+        modelBuilder.Entity<UserEvent>()
             .HasOne(e => e.Creator)
             .WithMany(u => u.EventsCreated)
             .HasForeignKey(e => e.CreatorId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Event>()
+        modelBuilder.Entity<UserEvent>()
             .HasMany(e => e.UsersAssigned)
             .WithMany(u => u.EventsAssigned)
             .UsingEntity(j => j.ToTable("EventUser"));

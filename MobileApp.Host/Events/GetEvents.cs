@@ -64,10 +64,9 @@ public class GetEvents : ControllerBase
         public Guid Id { get; set; }
         public User Creator { get; set; }
         public List<User> UsersAssigned { get; set; }
-        public string Name { get; set; }
         public string EventType { get; set; }
         public string Category { get; set; }
-        public DateTime EventDateTime { get; set; }
+        public DateTimeOffset EventDateTime { get; set; }
         public int Duration { get; set; }
         public Location Location { get; set; }
         public string Country { get; set; }
@@ -127,7 +126,6 @@ public class GetEvents : ControllerBase
                 .Select(e => new EventsDto()
                 {
                     Id = e.Id,
-                    Name = e.Name,
                     EventType = e.EventType.Name,
                     Category = e.Category.Name,
                     EventDateTime = e.EventDateTime,
