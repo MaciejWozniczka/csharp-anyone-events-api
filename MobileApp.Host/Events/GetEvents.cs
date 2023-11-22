@@ -14,23 +14,22 @@ public class GetEvents : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get active events according to parameters")]
     [HttpGet("/api/events/")]
-    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, Location location, int distance, int? ageFrom, int? ageTo, SexType? sexTypes)
+    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, Location location, int? ageFrom, int? ageTo, SexType? sexTypes)
     {
         var pagination = new PaginationArgs
         {
             Page = offset ?? 0,
             PageSize = limit ?? 10
         };
-        return await _mediator.Send(new GetEventsQuery(pagination, await _currentUserAccessor.GetCurrentUser(), location, distance, ageFrom, ageTo, sexTypes)).Process();
+        return await _mediator.Send(new GetEventsQuery(pagination, await _currentUserAccessor.GetCurrentUser(), location, ageFrom, ageTo, sexTypes)).Process();
     }
 
     public class GetEventsQuery : IRequest<Result<GetEventsDto>>
     {
-        public GetEventsQuery(PaginationArgs paginationArgs, User? user, Location location, int distance, int? ageFrom, int? ageTo, SexType? sexTypes)
+        public GetEventsQuery(PaginationArgs paginationArgs, User? user, Location location, int? ageFrom, int? ageTo, SexType? sexTypes)
         {
             PaginationArgs = paginationArgs;
             Location = location;
-            Distance = distance;
             UserAge = user.Age;
             UserSexType = user.Sex;
             AgeFrom = ageFrom;
@@ -39,7 +38,6 @@ public class GetEvents : ControllerBase
         }
         public PaginationArgs PaginationArgs { get; set; }
         public Location Location { get; set; }
-        public int Distance { get; set; }
         public int UserAge { get; set; }
         public SexType UserSexType { get; set; }
         public int? AgeFrom { get; set; }
@@ -98,7 +96,7 @@ public class GetEvents : ControllerBase
             var userLocation = new GeoCoordinate(request.Location.Latitude, request.Location.Longitude);
 
             var query = _db.Events
-                .Where(e => userLocation.GetDistanceTo(new GeoCoordinate(e.Location.Latitude, e.Location.Longitude)) <= request.Distance
+                .Where(e => userLocation.GetDistanceTo(new GeoCoordinate(e.Location.Latitude, e.Location.Longitude)) <= request.Location.Distance
                     && e.AgeFrom <= request.UserAge
                     && e.AgeTo >= request.UserAge
                     && e.SexTypes.Contains(request.UserSexType)
