@@ -58,7 +58,8 @@ public class Module : IModule
         services.AddValidatorsFromAssembly(typeof(Module).Assembly);
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
 
-        services.Configure<TokenOption>(configuration.GetSection("TokenOptions"));
+        services.Configure<TokenOption>(configuration.GetSection("Authentication"));
+        services.Configure<HereOptions>(configuration.GetSection("Here"));
 
         services.AddControllers();
 
