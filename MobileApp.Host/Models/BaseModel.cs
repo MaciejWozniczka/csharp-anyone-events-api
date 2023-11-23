@@ -11,5 +11,5 @@ public class BaseModel
     public Guid Id { get; set; }
     public DateTimeOffset CreateDate { get; set; }
     public bool IsDeleted { get; set; }
-    public DateTimeOffset DeletingDate { get; set; }
+    public DateTimeOffset? DeletingDate { get; set; }
 }
