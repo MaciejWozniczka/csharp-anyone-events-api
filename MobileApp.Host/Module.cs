@@ -57,7 +57,8 @@ public class Module : IModule
         });
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        services.AddValidatorsFromAssembly(typeof(Module).Assembly);
+        services.AddMediatR(typeof(Program));
+        services.AddValidatorsFromAssembly(typeof(Program).Assembly);
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
 
         services.Configure<TokenOption>(configuration.GetSection("Authentication"));
