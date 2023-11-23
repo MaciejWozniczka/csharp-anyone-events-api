@@ -11,7 +11,7 @@ public class AddUser : ControllerBase
 
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Auth" }, Summary = "Add user")]
-    [HttpPut("/api/user")]
+    [HttpPost("/api/user")]
     public async Task<Result> AddUserAsync([FromBody] AddUserQuery addUserRequestBody)
     {
         return await _mediator.Send(new AddUserQuery() { Email = addUserRequestBody.Email, Password = addUserRequestBody.Password, RepeatedPassword = addUserRequestBody.RepeatedPassword });
