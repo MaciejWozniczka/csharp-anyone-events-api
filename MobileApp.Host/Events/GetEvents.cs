@@ -14,14 +14,15 @@ public class GetEvents : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get active events according to parameters")]
     [HttpGet("/api/events/")]
-    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, Location location, int? ageFrom, int? ageTo, SexType? sexTypes)
+    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, double latitude, double longitude, int distance, int? ageFrom, int? ageTo, SexType? sexTypes)
     {
         var pagination = new PaginationArgs
         {
             Page = offset ?? 0,
             PageSize = limit ?? 10
         };
-        return await _mediator.Send(new GetEventsQuery(pagination, await _currentUserAccessor.GetCurrentUser(), location, ageFrom, ageTo, sexTypes)).Process();
+        return await _mediator.Send(new GetEventsQuery(pagination, await _currentUserAccessor.GetCurrentUser(),
+            new Location { Latitude = latitude, Longitude = longitude, Distance = distance }, ageFrom, ageTo, sexTypes)).Process();
     }
 
     public class GetEventsQuery : IRequest<Result<GetEventsDto>>
@@ -30,8 +31,8 @@ public class GetEvents : ControllerBase
         {
             PaginationArgs = paginationArgs;
             Location = location;
-            UserAge = user.Age;
-            UserSexType = user.Sex;
+            UserAge = 18;//user.Age;
+            UserSexType = 0;//user.Sex;
             AgeFrom = ageFrom;
             AgeTo = ageTo;
             SexTypes = sexTypes;
