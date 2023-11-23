@@ -11,18 +11,22 @@
 
         [Authorize]
         [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Check location")]
-        [HttpPost("/api/location")]
-        public async Task<Result<List<HereGeocode>>> CheckLocationAsync([FromBody] CheckLocationCommand command)
+        [HttpGet("/api/location")]
+        public async Task<Result<List<HereGeocode>>> CheckLocationAsync(string address)
         {
-            return await _mediator.Send(command);
+            return await _mediator.Send(new CheckLocationQuery(address));
         }
 
-        public class CheckLocationCommand : IRequest<Result<List<HereGeocode>>>
+        public class CheckLocationQuery : IRequest<Result<List<HereGeocode>>>
         {
+            public CheckLocationQuery(string address)
+            {
+                Address = address;
+            }
             public string Address { get; set; }
         }
 
-        public class CheckLocationCommandHandler : IRequestHandler<CheckLocationCommand, Result<List<HereGeocode>>>
+        public class CheckLocationCommandHandler : IRequestHandler<CheckLocationQuery, Result<List<HereGeocode>>>
         {
             private readonly HereOptions _hereOptions;
             public CheckLocationCommandHandler(IOptions<HereOptions> hereOptions)
@@ -30,7 +34,7 @@
                 _hereOptions = hereOptions.Value;
             }
 
-            public async Task<Result<List<HereGeocode>>> Handle(CheckLocationCommand request, CancellationToken cancellationToken)
+            public async Task<Result<List<HereGeocode>>> Handle(CheckLocationQuery request, CancellationToken cancellationToken)
             {
                 var result = await _hereOptions.Url
                     .AppendPathSegment("geocode")
