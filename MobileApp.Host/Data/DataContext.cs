@@ -8,6 +8,7 @@ public class DataContext : IdentityDbContext<User>
 
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Communication> Communications { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<UserEvent> Events { get; set; }
     public DbSet<EventType> EventTypes { get; set; }
