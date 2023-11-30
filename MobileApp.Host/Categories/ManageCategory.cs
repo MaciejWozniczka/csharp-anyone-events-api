@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace MobileApp.Host.Categories;
+﻿namespace MobileApp.Host.Categories;
 
 [ApiController]
 public class ManageCategory : ControllerBase
