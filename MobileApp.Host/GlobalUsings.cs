@@ -1,6 +1,7 @@
 // Global using directives
 
 global using AutoMapper;
+global using AutoMapper.QueryableExtensions;
 global using FluentValidation;
 global using Flurl;
 global using Flurl.Http;
