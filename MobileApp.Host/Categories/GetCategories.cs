@@ -1,10 +1,10 @@
 ﻿namespace MobileApp.Host.Categories;
 
 [ApiController]
-public class GetCategorys : ControllerBase
+public class GetCategories : ControllerBase
 {
     private readonly IMediator _mediator;
-    public GetCategorys(IMediator mediator)
+    public GetCategories(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -12,16 +12,16 @@ public class GetCategorys : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Get categories list")]
     [HttpGet("/api/categories")]
-    public async Task<Result<List<GetCategorysDto>>> GetCategoriesAsync([FromQuery] GetCategorysQuery query)
+    public async Task<Result<List<GetCategoriesDto>>> GetCategoriesAsync([FromQuery] GetCategoriesQuery query)
     {
         return await _mediator.Send(query);
     }
 
-    public class GetCategorysQuery : IRequest<Result<List<GetCategorysDto>>>
+    public class GetCategoriesQuery : IRequest<Result<List<GetCategoriesDto>>>
     {
     }
 
-    public class GetCategorysDto
+    public class GetCategoriesDto
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -33,11 +33,11 @@ public class GetCategorys : ControllerBase
     {
         public MapperProfile()
         {
-            CreateMap<Category, GetCategorysDto>();
+            CreateMap<Category, GetCategoriesDto>();
         }
     }
 
-    public class GetCategoriessQueryHandler : IRequestHandler<GetCategorysQuery, Result<List<GetCategorysDto>>>
+    public class GetCategoriessQueryHandler : IRequestHandler<GetCategoriesQuery, Result<List<GetCategoriesDto>>>
     {
         private readonly DataContext _db;
         private readonly IMapper _mapper;
@@ -47,11 +47,11 @@ public class GetCategorys : ControllerBase
             _mapper = mapper;
         }
 
-        public async Task<Result<List<GetCategorysDto>>> Handle(GetCategorysQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<GetCategoriesDto>>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
         {
             var result = await _db.Categories
                 .Where(c => c.IsDeleted == false)
-                .ProjectTo<GetCategorysDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<GetCategoriesDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
             return Result.Ok(result);
