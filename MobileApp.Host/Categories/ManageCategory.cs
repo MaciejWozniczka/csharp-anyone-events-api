@@ -12,16 +12,16 @@ public class ManageCategory : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Add legal form")]
-    [HttpPost("/api/Category")]
+    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Add category")]
+    [HttpPost("/api/category")]
     public async Task<Result<Guid>> PostCategoryAsync([FromBody] ManageCategoryCommand command)
     {
         return await _mediator.Send(command);
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Change legal form")]
-    [HttpPut("/api/Category/{id}")]
+    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Change category")]
+    [HttpPut("/api/category/{id}")]
     public async Task<Result<Guid>> PutCategoryAsync(Guid id, [FromBody] ManageCategoryCommand command)
     {
         return await _mediator.Send(command.Set(p => p.Id = id));

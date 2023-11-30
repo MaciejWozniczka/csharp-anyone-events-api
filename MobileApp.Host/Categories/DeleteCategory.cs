@@ -4,7 +4,6 @@
 public class DeleteCategory : ControllerBase
 {
     private readonly IMediator _mediator;
-
     public DeleteCategory(IMediator mediator)
     {
         _mediator = mediator;
@@ -21,7 +20,6 @@ public class DeleteCategory : ControllerBase
     public class DeleteCategoryCommand : IRequest<Result>
     {
         public Guid Id { get; set; }
-
         public DeleteCategoryCommand(Guid id)
         {
             Id = id;

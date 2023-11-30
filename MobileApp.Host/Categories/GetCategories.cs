@@ -11,8 +11,8 @@ public class GetCategorys : ControllerBase
 
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Get categories list")]
-    [HttpGet("/api/Categorys")]
-    public async Task<Result<List<GetCategorysDto>>> GetCategorysAsync([FromQuery] GetCategorysQuery query)
+    [HttpGet("/api/categories")]
+    public async Task<Result<List<GetCategorysDto>>> GetCategoriesAsync([FromQuery] GetCategorysQuery query)
     {
         return await _mediator.Send(query);
     }
@@ -37,11 +37,11 @@ public class GetCategorys : ControllerBase
         }
     }
 
-    public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery, Result<List<GetCategorysDto>>>
+    public class GetCategoriessQueryHandler : IRequestHandler<GetCategorysQuery, Result<List<GetCategorysDto>>>
     {
         private readonly DataContext _db;
         private readonly IMapper _mapper;
-        public GetCategorysQueryHandler(DataContext db, IMapper mapper)
+        public GetCategoriessQueryHandler(DataContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
