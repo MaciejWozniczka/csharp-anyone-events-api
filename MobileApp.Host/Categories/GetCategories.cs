@@ -26,7 +26,6 @@ public class GetCategories : ControllerBase
         public string Name { get; set; }
         public string Description { get; set; }
         public string Picture { get; set; }
-        public List<EventType> EventTypes { get; set; }
     }
 
     public class MapperProfile : Profile
@@ -37,11 +36,11 @@ public class GetCategories : ControllerBase
         }
     }
 
-    public class GetCategoriessQueryHandler : IRequestHandler<GetCategoriesQuery, Result<List<GetCategoriesDto>>>
+    public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Result<List<GetCategoriesDto>>>
     {
         private readonly DataContext _db;
         private readonly IMapper _mapper;
-        public GetCategoriessQueryHandler(DataContext db, IMapper mapper)
+        public GetCategoriesQueryHandler(DataContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
