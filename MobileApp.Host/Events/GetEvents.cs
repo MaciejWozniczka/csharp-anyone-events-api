@@ -31,8 +31,8 @@ public class GetEvents : ControllerBase
         {
             PaginationArgs = paginationArgs;
             Location = location;
-            UserAge = user.Age;
-            UserSexType = user.Sex;
+            UserAge = user.Age.Value;
+            UserSexType = user.Sex.Value;
             AgeFrom = ageFrom;
             AgeTo = ageTo;
             SexTypes = sexTypes;
