@@ -33,7 +33,7 @@ public class Result
             Code = ResultCode.BadRequest,
             Errors = new List<ErrorMessage>()
             {
-                new ErrorMessage()
+                new()
                 {
                     Message = message
                 }
@@ -61,7 +61,7 @@ public class Result
             Code = ResultCode.BadRequest,
             Errors = new List<ErrorMessage>()
             {
-                new ErrorMessage()
+                new()
                 {
                     Message = message
                 }
@@ -90,7 +90,7 @@ public class Result
             Code = ResultCode.NotFound,
             Errors = new List<ErrorMessage>()
             {
-                new ErrorMessage()
+                new()
                 {
                     Message = "There is no such object"
                 }
@@ -105,7 +105,7 @@ public class Result
             Code = ResultCode.NotFound,
             Errors = new List<ErrorMessage>()
             {
-                new ErrorMessage()
+                new()
                 {
                     Message = $"There is no object with the id {id}"
                 }
@@ -123,12 +123,30 @@ public class Result
             Code = ResultCode.NotFound,
             Errors = new List<ErrorMessage>()
             {
-                new ErrorMessage()
+                new()
                 {
                     Message = $"There is no object {message}"
                 }
             },
             Value = new T()
+        };
+
+        return result;
+    }
+
+    public static Result<string> NotFound(string id)
+    {
+        var result = new Result<string>
+        {
+            Code = ResultCode.NotFound,
+            Errors = new List<ErrorMessage>()
+            {
+                new()
+                {
+                    Message = $"There is no object {id}"
+                }
+            },
+            Value = id
         };
 
         return result;
@@ -141,7 +159,7 @@ public class Result
             Code = ResultCode.NotFound,
             Errors = new List<ErrorMessage>()
             {
-                new ErrorMessage()
+                new()
                 {
                     Message = $"The requested object was not found"
                 }
@@ -159,7 +177,7 @@ public class Result
             Code = ResultCode.NotFound,
             Errors = new List<ErrorMessage>()
             {
-                new ErrorMessage()
+                new()
                 {
                     Message = $"There is no object with the id {id}"
                 }
