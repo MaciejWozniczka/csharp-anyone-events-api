@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Text;
 using TokenOption = MobileApp.Host.Infrastructure.TokenOption;
 
 namespace MobileApp.Host.Users;
@@ -41,6 +42,10 @@ public class UserService : IUserService
 
             if (result.Succeeded)
             {
+                existingUser = await _userManager.FindByEmailAsync(email);
+
+                await _userManager.AddToRoleAsync(existingUser, "user");
+
                 return Result.Ok("The user has been created");
             }
 
