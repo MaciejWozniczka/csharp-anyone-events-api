@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 using TokenOption = MobileApp.Host.Infrastructure.TokenOption;
 
@@ -16,15 +17,19 @@ public class UserService : IUserService
     private readonly SignInManager<User> _signInManager;
     private readonly DataContext _db;
     private UserManager<User> _userManager { get; set; }
+    private RoleManager<IdentityRole> _roleManager { get; set; }
     private readonly TokenOption _tokenOptions;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public UserService(SignInManager<User> signInManager, DataContext db, UserManager<User> userManager, IOptions<TokenOption> tokenOptions, IHttpContextAccessor httpContextAccessor)
+    private string roleName;
+    public UserService(SignInManager<User> signInManager, DataContext db, UserManager<User> userManager, IOptions<TokenOption> tokenOptions, IHttpContextAccessor httpContextAccessor, RoleManager<IdentityRole> roleManager)
     {
         _signInManager = signInManager;
         _db = db;
         _userManager = userManager;
         _httpContextAccessor = httpContextAccessor;
+        _roleManager = roleManager;
         _tokenOptions = tokenOptions.Value;
+        roleName = "user";
     }
     public async Task<Result> AddUser(string email, string password)
     {
@@ -42,9 +47,14 @@ public class UserService : IUserService
 
             if (result.Succeeded)
             {
-                existingUser = await _userManager.FindByEmailAsync(email);
+                if (_db.Entry(newUser).State == EntityState.Detached)
+                {
+                    _db.Attach(newUser);
+                }
 
-                await _userManager.AddToRoleAsync(existingUser, "user");
+                var role = await _roleManager.FindByNameAsync(roleName);
+
+                await _userManager.AddToRoleAsync(newUser, role.Name);
 
                 return Result.Ok("The user has been created");
             }
