@@ -13,7 +13,7 @@ public class ManageUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Auth" }, Summary = "Change user")]
+    [SwaggerOperation(Tags = new[] { "User" }, Summary = "Change user")]
     [HttpPut("/api/user/{id}")]
     public async Task<Result<string>> ManageUserAsync(string id, ManageUserCommand command)
     {
@@ -28,7 +28,6 @@ public class ManageUser : ControllerBase
         public string? LastName { get; set; }
         public int? Age { get; set; }
         public Country? Country { get; set; }
-        public Location? Location { get; set; }
         public string? Nationality { get; set; }
         public SexType? Sex { get; set; }
         public List<string>? Languages { get; set; }
@@ -37,26 +36,14 @@ public class ManageUser : ControllerBase
         public int? PhoneNumber { get; set; }
         public string? PhoneCountryCode { get; set; }
         public UserType? UserType { get; set; }
-        public List<UserEvent>? EventsCreated { get; set; }
-        public List<UserEvent>? EventsAssigned { get; set; }
-    }
-    public class MapperProfile : Profile
-    {
-        public MapperProfile()
-        {
-            CreateMap<ManageUserCommand, User?>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-        }
     }
 
     public class ManageUserCommandHandler : IRequestHandler<ManageUserCommand, Result<string>>
     {
         private readonly DataContext _db;
-        private readonly IMapper _mapper;
-        public ManageUserCommandHandler(DataContext db, IMapper mapper)
+        public ManageUserCommandHandler(DataContext db)
         {
             _db = db;
-            _mapper = mapper;
         }
 
         public async Task<Result<string>> Handle(ManageUserCommand request, CancellationToken cancellationToken)
@@ -68,7 +55,21 @@ public class ManageUser : ControllerBase
                 return Result.NotFound(request.Id);
             }
 
-            user = _mapper.Map<User?>(request);
+            if (request.FirstName != null) user.FirstName = request.FirstName;
+            if (request.LastName != null) user.LastName = request.LastName;
+            if (request.Age != null) user.Age = request.Age;
+            if (request.Country != null) user.Country = request.Country;
+            if (request.Nationality != null) user.Nationality = request.Nationality;
+            if (request.Sex != null) user.Sex = request.Sex;
+            if (request.Languages != null) user.Languages = request.Languages;
+            if (request.Picture != null) user.Picture = request.Picture;
+            if (request.Desciption != null) user.Desciption = request.Desciption;
+            if (request.PhoneCountryCode != null) user.PhoneCountryCode = request.PhoneCountryCode;
+            if (request.PhoneNumber != null) user.PhoneNumber = request.PhoneNumber;
+            if (request.UserType != null) user.UserType = request.UserType;
+
+            _db.Update(user);
+            await _db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(user.Id);
         }
