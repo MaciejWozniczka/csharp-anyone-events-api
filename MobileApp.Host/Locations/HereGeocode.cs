@@ -13,9 +13,10 @@ public class Access
 
 public class FieldScore
 {
-    public int? City { get; set; }
-    public List<int>? Streets { get; set; }
-    public int? HouseNumber { get; set; }
+    public double City { get; set; }
+    public List<double> Streets { get; set; }
+    public double HouseNumber { get; set; }
+    public double? Country { get; set; }
 }
 
 public class Item
