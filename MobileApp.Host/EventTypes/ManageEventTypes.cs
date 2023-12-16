@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.EventTypes;
+﻿using MobileApp.Host.Categories;
+
+namespace MobileApp.Host.EventTypes;
 
 [ApiController]
 public class ManageEventTypes : ControllerBase
@@ -31,31 +33,16 @@ public class ManageEventTypes : ControllerBase
         public Guid Id { get; set; }
         public Guid CategoryId { get; set; }
         public string Name { get; set; }
-        public string Type { get; set; }
-        public string Picture { get; set; }
-        [JsonIgnore]
-        public bool IsDeleted { get; set; }
-        [JsonIgnore]
-        public DateTime CreateDate { get; set; }
-    }
-
-    public class MapperProfile : Profile
-    {
-        public MapperProfile()
-        {
-            CreateMap<ManageEventTypeCommand, EventType>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-        }
+        public string? Type { get; set; }
+        public string? Picture { get; set; }
     }
 
     public class ManageEventTypeCommandHandler : IRequestHandler<ManageEventTypeCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        private readonly IMapper _mapper;
-        public ManageEventTypeCommandHandler(DataContext db, IMapper mapper)
+        public ManageEventTypeCommandHandler(DataContext db)
         {
             _db = db;
-            _mapper = mapper;
         }
 
         public async Task<Result<Guid>> Handle(ManageEventTypeCommand request, CancellationToken cancellationToken)
@@ -65,28 +52,34 @@ public class ManageEventTypes : ControllerBase
 
             if (isAdding)
             {
-                eventType = new EventType();
-
-                request.Id = Guid.NewGuid();
-                request.CreateDate = DateTime.Now;
-                request.IsDeleted = false;
+                eventType = new EventType()
+                {
+                    CategoryId = request.CategoryId,
+                    Name = request.Name,
+                    Type = request.Type,
+                    Picture = request.Picture
+                };
 
                 await _db.AddAsync(eventType, cancellationToken);
             }
             else
             {
-                request.CreateDate = DateTime.Now;
-
-                eventType = await _db.EventTypes
-                    .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+                eventType = await _db.EventTypes.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
                 if (eventType == null)
                 {
                     return Result.NotFound<Guid>(request.Id);
                 }
+
+                if (request.CategoryId != null) eventType.CategoryId = request.CategoryId;
+                if (request.Name != null) eventType.Name = request.Name;
+                if (request.Type != null) eventType.Type = request.Type;
+                if (request.Picture != null) eventType.Picture = request.Picture;
+
+                _db.Update(eventType);
             }
 
-            eventType = _mapper.Map(request, eventType);
+            await _db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(eventType.Id);
         }
