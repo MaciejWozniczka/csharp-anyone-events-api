@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Users;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MobileApp.Host.Users;
 
 public class User : IdentityUser
 {
@@ -11,7 +13,9 @@ public class User : IdentityUser
     public string? LastName { get; set; }
     public int? Age { get; set; }
     public Country? Country { get; set; }
-    public Location? Location { get; set; }
+    public Guid? CurrentLocationId { get; set; }
+    [ForeignKey("CurrentLocationId")]
+    public Location? CurrentLocation { get; set; }
     public string? Nationality { get; set; }
     public SexType? Sex { get; set; }
     public List<string>? Languages { get; set; }
