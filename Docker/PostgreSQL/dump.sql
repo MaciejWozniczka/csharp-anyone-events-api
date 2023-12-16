@@ -129,20 +129,12 @@ CREATE TABLE "public"."Events" (
     "LocationId" uuid NOT NULL,
     "AddressId" uuid NOT NULL,
     "ShortDescription" text NOT NULL,
-    "Description" text NOT NULL,
+    "Description" text,
     "Picture" text,
     "PeopleLimit" integer NOT NULL,
     "AgeFrom" integer,
     "AgeTo" integer,
-    "Cities" text[],
-    "Countries" integer[],
-    "Nationalities" text[],
     "SexTypes" integer[],
-    "Languages" text[],
-    "ExperienceLevels" integer[],
-    "TripType" integer,
-    "Budget" text,
-    "Destination" text,
     "IsActive" boolean NOT NULL,
     "CreateDate" timestamptz NOT NULL,
     "IsDeleted" boolean NOT NULL,
@@ -306,21 +298,26 @@ CREATE TABLE "public"."__EFMigrationsHistory" (
     CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
 ) WITH (oids = false);
 
+INSERT INTO "Addresses" ("Id", "Label", "CountryCode", "CountryName", "StateCode", "State", "CountyCode", "County", "City", "District", "Street", "PostalCode", "HouseNumber", "ApartmentNumber", "CreateDate", "IsDeleted", "DeletingDate") VALUES
+('fd30219e-6a10-44cc-9441-7046d9056435',	'ulica Święty Marcin 24, 61-805 Poznań, Polska',	'POL',	'Polska',	NULL,	'Woj. Wielkopolskie',	NULL,	'Poznań',	'Poznań',	'Poznań',	'ulica Święty Marcin',	'61-805',	'24',	NULL,	'2023-12-16 12:48:58.52768+00',	'f',	NULL),
+('697979b5-c752-480c-b10e-5cbaccb042b7',	'plac Wolności 19, 61-739 Poznań, Polska',	'POL',	'Polska',	NULL,	'Woj. Wielkopolskie',	NULL,	'Poznań',	'Poznań',	'Poznań',	'plac Wolności',	'61-739',	'19',	NULL,	'2023-12-16 12:54:32.180551+00',	'f',	NULL),
+('24e391b9-dc68-4ce4-94d4-24aee3a2c4d1',	'ulica Pleszewska 1, 61-136 Poznań, Polska',	'POL',	'Polska',	NULL,	'Woj. Wielkopolskie',	NULL,	'Poznań',	'Poznań',	'Poznań',	'ulica Pleszewska',	'61-136',	'1',	NULL,	'2023-12-16 13:00:20.554194+00',	'f',	NULL),
+('23669b60-6698-4e1b-aeb4-baa56c2af267',	'ulica Pleszewska 1, 61-136 Poznań, Polska',	'POL',	'Polska',	NULL,	'Woj. Wielkopolskie',	NULL,	'Poznań',	'Poznań',	'Poznań',	'ulica Pleszewska',	'61-136',	'1',	NULL,	'2023-12-16 13:01:04.86523+00',	'f',	NULL),
+('81be8a85-b04f-41fa-8b70-66fc97c6db7a',	'ulica Pleszewska 1, 61-136 Poznań, Polska',	'POL',	'Polska',	NULL,	'Woj. Wielkopolskie',	NULL,	'Poznań',	'Poznań',	'Poznań',	'ulica Pleszewska',	'61-136',	'1',	NULL,	'2023-12-16 13:20:02.759899+00',	'f',	NULL),
+('beff10a0-2997-4f38-a490-65eec1e7fd0b',	'ulica Solna 6, 61-736 Poznań, Polska',	'POL',	'Polska',	NULL,	'Woj. Wielkopolskie',	NULL,	'Poznań',	'Poznań',	'Poznań',	'ulica Solna',	'61-736',	'6',	NULL,	'2023-12-16 13:29:35.825631+00',	'f',	NULL);
 
 INSERT INTO "AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES
 ('4c9b71f5-b2b5-4724-8024-0f3fef7549a4',	'user',	'USER',	'344e9049-c626-4877-95c0-61e85554abde');
 
 INSERT INTO "AspNetUsers" ("Id", "FirstName", "LastName", "Age", "Country", "CurrentLocationId", "Nationality", "Sex", "Languages", "Picture", "Desciption", "PhoneNumber", "PhoneCountryCode", "UserType", "CreateDate", "IsDeleted", "DeletingDate", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash", "SecurityStamp", "ConcurrencyStamp", "PhoneNumberConfirmed", "TwoFactorEnabled", "LockoutEnd", "LockoutEnabled", "AccessFailedCount") VALUES
 ('ad66205d-02aa-4e84-a3d9-ed9b5174a405',	'Maciej',	'Wozniczka',	29,	139,	'27f6b3ac-caba-473d-9aca-9237b50356d5',	'polish',	1,	'{polish,english}',	NULL,	'Half-time traveller',	123456789,	'+48',	0,	'2023-12-16 00:33:18.439552+00',	'f',	NULL,	'maciej.wozniczka@outlook.com',	'MACIEJ.WOZNICZKA@OUTLOOK.COM',	'maciej.wozniczka@outlook.com',	'MACIEJ.WOZNICZKA@OUTLOOK.COM',	'f',	'AQAAAAEAACcQAAAAEC4e+RFPsd4tyKl9V+sHgetM1cLKTDnqdvlou8KmjLnrvTmz5p4fYA/SSI87seTirQ==',	'N55O5ZP72D3FTT7CRF6O533324BE6J2G',	'9c546f2e-1059-47f7-8339-832441eca08a',	'f',	'f',	NULL,	't',	0),
-('87f8a59e-a6d7-470e-8e0b-1e3d2bc778a2',	'Bartosz',	'Zasiadczyk',	29,	139,	'13f4cc9e-e62b-41e5-b430-5d27cba828cd',	'polish',	1,	'{polish,english}',	NULL,	'CEO Mordo!',	987654321,	'+48',	0,	'2023-12-16 01:19:40.992596+00',	'f',	NULL,	'bartosz.zasiadczyk@wp.pl',	'BARTOSZ.ZASIADCZYK@WP.PL',	'bartosz.zasiadczyk@wp.pl',	'BARTOSZ.ZASIADCZYK@WP.PL',	'f',	'AQAAAAEAACcQAAAAEMVdlpZkQNFvqPciEoLILGJ8FSRdScYoYr4g/XUo7whnmhUA34pnudGMCHgvc+vnnw==',	'Q6AL3I6HF3OGKD7J2RS7HSWN4LBUUG77',	'65713d54-bec5-4be0-9c12-63652e850108',	'f',	'f',	NULL,	't',	0);
+('87f8a59e-a6d7-470e-8e0b-1e3d2bc778a2',	'Bartosz',	'Zasiadczyk',	29,	139,	'13f4cc9e-e62b-41e5-b430-5d27cba828cd',	'polish',	1,	'{polish,english}',	NULL,	'CEO Mordo!',	987654321,	'+48',	0,	'2023-12-16 01:19:40.992596+00',	'f',	NULL,	'bartosz.zasiadczyk@wp.pl',	'BARTOSZ.ZASIADCZYK@WP.PL',	'bartosz.zasiadczyk@wp.pl',	'BARTOSZ.ZASIADCZYK@WP.PL',	'f',	'AQAAAAEAACcQAAAAEMVdlpZkQNFvqPciEoLILGJ8FSRdScYoYr4g/XUo7whnmhUA34pnudGMCHgvc+vnnw==',	'Q6AL3I6HF3OGKD7J2RS7HSWN4LBUUG77',	'65713d54-bec5-4be0-9c12-63652e850108',	'f',	'f',	NULL,	't',	0),
+('2d014d19-4d61-493b-8581-988f853e6a43',	'Kacper',	'Pacholski',	30,	139,	'b22d6072-f64d-4adc-baba-8dcdca0365b1',	'polish',	1,	'{polish,english}',	NULL,	'Druk 3D dla każdego!',	111222333,	'+48',	0,	'2023-12-16 11:53:19.632227+00',	'f',	NULL,	'kacper.pacholski@gmail.com',	'KACPER.PACHOLSKI@GMAIL.COM',	'kacper.pacholski@gmail.com',	'KACPER.PACHOLSKI@GMAIL.COM',	'f',	'AQAAAAEAACcQAAAAENetqLW7HM+yY4mXGSzw63gTs0zUbn8aURhDJFuvNZFR1IbQxFQLtTXfwMVU0s1kJQ==',	'627CAPW2W7OTKBO644OWLO4NESH4ZPL6',	'176ad29c-2c12-49d4-815f-c04f12be3e3f',	'f',	'f',	NULL,	't',	0);
 
 INSERT INTO "AspNetUserRoles" ("UserId", "RoleId") VALUES
 ('ad66205d-02aa-4e84-a3d9-ed9b5174a405',	'4c9b71f5-b2b5-4724-8024-0f3fef7549a4'),
-('87f8a59e-a6d7-470e-8e0b-1e3d2bc778a2',	'4c9b71f5-b2b5-4724-8024-0f3fef7549a4');
-
-INSERT INTO "Locations" ("Id", "Latitude", "Longitude", "Distance", "UserId", "CreateDate", "IsDeleted", "DeletingDate") VALUES
-('27f6b3ac-caba-473d-9aca-9237b50356d5',	52.39746,	16.96257,	0,	'ad66205d-02aa-4e84-a3d9-ed9b5174a405',	'2023-12-16 00:39:51.151259+00',	'f',	NULL),
-('13f4cc9e-e62b-41e5-b430-5d27cba828cd',	52.46262,	16.92506,	0,	'87f8a59e-a6d7-470e-8e0b-1e3d2bc778a2',	'2023-12-16 01:21:16.422655+00',	'f',	NULL);
+('87f8a59e-a6d7-470e-8e0b-1e3d2bc778a2',	'4c9b71f5-b2b5-4724-8024-0f3fef7549a4'),
+('2d014d19-4d61-493b-8581-988f853e6a43',	'4c9b71f5-b2b5-4724-8024-0f3fef7549a4');
 
 INSERT INTO "Categories" ("Id", "Name", "Description", "Picture", "CreateDate", "IsDeleted", "DeletingDate") VALUES
 ('deba8c96-6697-454f-bb48-6fe3c4105aa8',	'Ogólne',	NULL,	NULL,	'2023-12-16 01:34:02.521651+00',	'f',	NULL),
@@ -338,9 +335,29 @@ INSERT INTO "EventTypes" ("Id", "CategoryId", "Name", "Type", "Picture", "Create
 ('2c4a4cb2-5dad-48c1-a159-7628d74b672a',	'b7022fb7-688e-41cd-8b2f-c95e7947f90b',	'Siłownia',	NULL,	NULL,	'2023-12-16 01:38:53.135884+00',	'f',	NULL),
 ('4f3ebcc2-3cfc-448b-aebb-52f539b3fbb2',	'b7022fb7-688e-41cd-8b2f-c95e7947f90b',	'Squash',	NULL,	NULL,	'2023-12-16 01:38:59.344559+00',	'f',	NULL);
 
+INSERT INTO "Events" ("Id", "EventTypeId", "CategoryId", "CreatorId", "EventDateTime", "Duration", "LocationId", "AddressId", "ShortDescription", "Description", "Picture", "PeopleLimit", "AgeFrom", "AgeTo", "SexTypes", "IsActive", "CreateDate", "IsDeleted", "DeletingDate") VALUES
+('fca54e15-677c-4a04-b516-cbe3f9771f2b',	'69fff64d-8324-4ee7-8f2b-99dffe88c62d',	'deba8c96-6697-454f-bb48-6fe3c4105aa8',	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 15:00:00+00',	120,	'3930e5f7-da93-40b4-844b-5d7e8b67f02f',	'beff10a0-2997-4f38-a490-65eec1e7fd0b',	'Ktoś na kawę?',	'Mam ochotę na kawę w przerwie lunchowej. Ktoś ma chęć wyjść i pogadać?',	NULL,	2,	18,	99,	'{}',	't',	'2023-12-16 03:02:04.662094+00',	'f',	NULL),
+('deb8531a-f259-460f-b4ef-0a9fc6267da2',	'69fff64d-8324-4ee7-8f2b-99dffe88c62d',	'deba8c96-6697-454f-bb48-6fe3c4105aa8',	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 15:05:00+00',	120,	'0b584701-2845-4287-b548-3e376c3c4fc3',	'fd30219e-6a10-44cc-9441-7046d9056435',	'Ktoś na kawę?',	'Mam ochotę na kawę w przerwie lunchowej. Ktoś ma chęć wyjść i pogadać?',	NULL,	2,	18,	99,	'{}',	't',	'2023-12-16 12:48:58.63716+00',	'f',	NULL),
+('aa632454-111c-49c1-a728-45a026947f1d',	'26cbb6e1-6b89-4a26-a8a4-4b2597585ce3',	'deba8c96-6697-454f-bb48-6fe3c4105aa8',	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 15:10:00+00',	120,	'dd7e1c38-6ed4-4530-bb05-73631a403d17',	'697979b5-c752-480c-b10e-5cbaccb042b7',	'Ktoś na spacer?',	'Mam ochotę na spacer. Ktoś ma chęć wyjść i pogadać?',	NULL,	2,	18,	99,	'{}',	't',	'2023-12-16 12:54:32.205161+00',	'f',	NULL),
+('6c9f86e5-170c-42b4-b895-516244d423e8',	'2c4a4cb2-5dad-48c1-a159-7628d74b672a',	'b7022fb7-688e-41cd-8b2f-c95e7947f90b',	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 15:10:00+00',	120,	'e3f34cae-b906-46b9-a368-864106fcf92a',	'24e391b9-dc68-4ce4-94d4-24aee3a2c4d1',	'Ktoś na siłownię?',	'Mam ochotę na trening na siłowni. Ktoś robi klatę, plecy, barki?',	NULL,	2,	25,	30,	'{}',	't',	'2023-12-16 13:00:20.55593+00',	'f',	NULL),
+('e413fe80-25ee-4176-8609-ad5e975648d7',	'2c4a4cb2-5dad-48c1-a159-7628d74b672a',	'b7022fb7-688e-41cd-8b2f-c95e7947f90b',	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 15:20:00+00',	120,	'fae6d30f-4185-4846-8e13-5940c4a5d0dc',	'23669b60-6698-4e1b-aeb4-baa56c2af267',	'Ktoś na siłownię?',	'Mam ochotę na trening na siłowni. Ktoś robi klatę, plecy, barki?',	NULL,	2,	18,	25,	'{}',	't',	'2023-12-16 13:01:04.866123+00',	'f',	NULL),
+('05e5960c-9ef3-4fab-b4c2-e142fdffd8fe',	'69fff64d-8324-4ee7-8f2b-99dffe88c62d',	'deba8c96-6697-454f-bb48-6fe3c4105aa8',	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 15:30:00+00',	120,	'72aa4a4d-8a0e-4bd6-9ef7-c184dd104285',	'81be8a85-b04f-41fa-8b70-66fc97c6db7a',	'Ktoś na siłownię?',	'Mam ochotę na trening na siłowni. Ktoś robi klatę, plecy, barki?',	NULL,	2,	25,	30,	'{2}',	't',	'2023-12-16 13:20:02.76189+00',	'f',	NULL);
+
+INSERT INTO "Locations" ("Id", "Latitude", "Longitude", "Distance", "UserId", "CreateDate", "IsDeleted", "DeletingDate") VALUES
+('27f6b3ac-caba-473d-9aca-9237b50356d5',	52.39746,	16.96257,	0,	'ad66205d-02aa-4e84-a3d9-ed9b5174a405',	'2023-12-16 00:39:51.151259+00',	'f',	NULL),
+('13f4cc9e-e62b-41e5-b430-5d27cba828cd',	52.46262,	16.92506,	0,	'87f8a59e-a6d7-470e-8e0b-1e3d2bc778a2',	'2023-12-16 01:21:16.422655+00',	'f',	NULL),
+('b22d6072-f64d-4adc-baba-8dcdca0365b1',	52.39243,	16.96684,	0,	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 11:55:22.560099+00',	'f',	NULL),
+('3930e5f7-da93-40b4-844b-5d7e8b67f02f',	52.41269,	16.92922,	0,	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 11:57:52.89598+00',	'f',	NULL),
+('0b584701-2845-4287-b548-3e376c3c4fc3',	52.40618,	16.92776,	0,	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 12:48:58.526653+00',	'f',	NULL),
+('dd7e1c38-6ed4-4530-bb05-73631a403d17',	52.40845,	16.92857,	0,	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 12:54:32.180227+00',	'f',	NULL),
+('e3f34cae-b906-46b9-a368-864106fcf92a',	52.40845,	16.92857,	0,	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 13:00:20.554187+00',	'f',	NULL),
+('fae6d30f-4185-4846-8e13-5940c4a5d0dc',	52.40845,	16.92857,	0,	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 13:01:04.865221+00',	'f',	NULL),
+('72aa4a4d-8a0e-4bd6-9ef7-c184dd104285',	52.40845,	16.92857,	0,	'2d014d19-4d61-493b-8581-988f853e6a43',	'2023-12-16 13:20:02.759891+00',	'f',	NULL);
+
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion") VALUES
 ('20231216003151_DbInitialization',	'6.0.24'),
-('20231216013346_CategoryEventTypeNullability',	'6.0.24');
+('20231216013346_CategoryEventTypeNullability',	'6.0.24'),
+('20231216021144_EventPrototype', '6.0.24');
 
 
 ALTER TABLE ONLY "public"."AspNetRoleClaims" ADD CONSTRAINT "FK_AspNetRoleClaims_AspNetRoles_RoleId" FOREIGN KEY ("RoleId") REFERENCES "AspNetRoles"("Id") ON DELETE CASCADE NOT DEFERRABLE;
