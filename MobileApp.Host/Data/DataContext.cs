@@ -10,6 +10,7 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Category> Categories { get; set; }
     public DbSet<Communication> Communications { get; set; }
     public DbSet<Company> Companies { get; set; }
+    public DbSet<Location> Locations { get; set; }
     public DbSet<UserEvent> Events { get; set; }
     public DbSet<EventType> EventTypes { get; set; }
     public DbSet<Invoice> Invoices { get; set; }
