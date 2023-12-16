@@ -1,9 +1,11 @@
-﻿namespace MobileApp.Host.Locations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-public class Location
+namespace MobileApp.Host.Locations;
+
+public class Location : BaseModel
 {
-    public Guid Id { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public int Distance { get; set; }
+    public string UserId { get; set; }
 }
