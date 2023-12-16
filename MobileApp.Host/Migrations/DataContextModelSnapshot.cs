@@ -497,8 +497,17 @@ namespace MobileApp.Host.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletingDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("Distance")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("double precision");
@@ -506,9 +515,13 @@ namespace MobileApp.Host.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Location");
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("MobileApp.Host.Tenants.Tenant", b =>
@@ -583,6 +596,9 @@ namespace MobileApp.Host.Migrations
                     b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("CurrentLocationId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -607,9 +623,6 @@ namespace MobileApp.Host.Migrations
 
                     b.Property<string>("LastName")
                         .HasColumnType("text");
-
-                    b.Property<Guid?>("LocationId")
-                        .HasColumnType("uuid");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -661,7 +674,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("CurrentLocationId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -859,11 +872,11 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("MobileApp.Host.Users.User", b =>
                 {
-                    b.HasOne("MobileApp.Host.Locations.Location", "Location")
+                    b.HasOne("MobileApp.Host.Locations.Location", "CurrentLocation")
                         .WithMany()
-                        .HasForeignKey("LocationId");
+                        .HasForeignKey("CurrentLocationId");
 
-                    b.Navigation("Location");
+                    b.Navigation("CurrentLocation");
                 });
 
             modelBuilder.Entity("UserUserEvent", b =>

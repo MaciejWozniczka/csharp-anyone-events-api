@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MobileApp.Host.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231108211725_DbInitialization")]
+    [Migration("20231216003151_DbInitialization")]
     partial class DbInitialization
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace MobileApp.Host.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("EventUser", b =>
-                {
-                    b.Property<Guid>("EventsAssignedId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("UsersAssignedId")
-                        .HasColumnType("text");
-
-                    b.HasKey("EventsAssignedId", "UsersAssignedId");
-
-                    b.HasIndex("UsersAssignedId");
-
-                    b.ToTable("EventUser", (string)null);
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -179,39 +164,51 @@ namespace MobileApp.Host.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("ApartmentNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Country")
-                        .HasColumnType("integer");
+                    b.Property<string>("CountryCode")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<string>("CountryName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("County")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CountyCode")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletingDate")
+                    b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("District")
+                        .HasColumnType("text");
+
+                    b.Property<string>("HouseNumber")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Label")
+                        .HasColumnType("text");
+
                     b.Property<string>("PostalCode")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("StreeNumber")
-                        .IsRequired()
+                    b.Property<string>("StateCode")
                         .HasColumnType("text");
 
                     b.Property<string>("Street")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -225,10 +222,10 @@ namespace MobileApp.Host.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletingDate")
+                    b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -251,6 +248,39 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("MobileApp.Host.Communications.Communication", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Communications");
+                });
+
             modelBuilder.Entity("MobileApp.Host.Companies.Company", b =>
                 {
                     b.Property<Guid>("Id")
@@ -264,10 +294,10 @@ namespace MobileApp.Host.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletingDate")
+                    b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -289,10 +319,13 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Events.Event", b =>
+            modelBuilder.Entity("MobileApp.Host.Events.UserEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AddressId")
                         .HasColumnType("uuid");
 
                     b.Property<int?>("AgeFrom")
@@ -313,14 +346,14 @@ namespace MobileApp.Host.Migrations
                     b.Property<int[]>("Countries")
                         .HasColumnType("integer[]");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatorId")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DeletingDate")
+                    b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -333,7 +366,7 @@ namespace MobileApp.Host.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("EventDateTime")
+                    b.Property<DateTimeOffset>("EventDateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("EventTypeId")
@@ -353,10 +386,6 @@ namespace MobileApp.Host.Migrations
 
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<List<string>>("Nationalities")
                         .HasColumnType("text[]");
@@ -379,6 +408,8 @@ namespace MobileApp.Host.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AddressId");
+
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("CreatorId");
@@ -399,10 +430,10 @@ namespace MobileApp.Host.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletingDate")
+                    b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -439,10 +470,10 @@ namespace MobileApp.Host.Migrations
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletingDate")
+                    b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -462,6 +493,39 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("Invoices");
                 });
 
+            modelBuilder.Entity("MobileApp.Host.Locations.Location", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Distance")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Locations");
+                });
+
             modelBuilder.Entity("MobileApp.Host.Tenants.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -471,10 +535,10 @@ namespace MobileApp.Host.Migrations
                     b.Property<Guid>("AddressId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletingDate")
+                    b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
@@ -521,28 +585,26 @@ namespace MobileApp.Host.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("integer");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<int>("Country")
+                    b.Property<int?>("Country")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletingDate")
+                    b.Property<Guid?>("CurrentLocationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Desciption")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -553,18 +615,15 @@ namespace MobileApp.Host.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<List<string>>("Languages")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
@@ -574,7 +633,6 @@ namespace MobileApp.Host.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Nationality")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("NormalizedEmail")
@@ -589,23 +647,21 @@ namespace MobileApp.Host.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneCountryCode")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("PhoneNumber")
+                    b.Property<int?>("PhoneNumber")
                         .HasColumnType("integer");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Picture")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<int>("Sex")
+                    b.Property<int?>("Sex")
                         .HasColumnType("integer");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -615,10 +671,12 @@ namespace MobileApp.Host.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<int>("UserType")
+                    b.Property<int?>("UserType")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CurrentLocationId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -630,19 +688,19 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("EventUser", b =>
+            modelBuilder.Entity("UserUserEvent", b =>
                 {
-                    b.HasOne("MobileApp.Host.Events.Event", null)
-                        .WithMany()
-                        .HasForeignKey("EventsAssignedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("EventsAssignedId")
+                        .HasColumnType("uuid");
 
-                    b.HasOne("MobileApp.Host.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersAssignedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("UsersAssignedId")
+                        .HasColumnType("text");
+
+                    b.HasKey("EventsAssignedId", "UsersAssignedId");
+
+                    b.HasIndex("UsersAssignedId");
+
+                    b.ToTable("EventUser", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -696,6 +754,21 @@ namespace MobileApp.Host.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MobileApp.Host.Communications.Communication", b =>
+                {
+                    b.HasOne("MobileApp.Host.Events.UserEvent", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId");
+
+                    b.HasOne("MobileApp.Host.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MobileApp.Host.Companies.Company", b =>
                 {
                     b.HasOne("MobileApp.Host.Addresses.Address", "Address")
@@ -715,8 +788,14 @@ namespace MobileApp.Host.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Events.Event", b =>
+            modelBuilder.Entity("MobileApp.Host.Events.UserEvent", b =>
                 {
+                    b.HasOne("MobileApp.Host.Addresses.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MobileApp.Host.Categories.Category", "Category")
                         .WithMany("Events")
                         .HasForeignKey("CategoryId")
@@ -730,16 +809,18 @@ namespace MobileApp.Host.Migrations
                         .IsRequired();
 
                     b.HasOne("MobileApp.Host.EventTypes.EventType", "EventType")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("EventTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Addresses.Address", "Location")
+                    b.HasOne("MobileApp.Host.Locations.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Address");
 
                     b.Navigation("Category");
 
@@ -791,10 +872,39 @@ namespace MobileApp.Host.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MobileApp.Host.Users.User", b =>
+                {
+                    b.HasOne("MobileApp.Host.Locations.Location", "CurrentLocation")
+                        .WithMany()
+                        .HasForeignKey("CurrentLocationId");
+
+                    b.Navigation("CurrentLocation");
+                });
+
+            modelBuilder.Entity("UserUserEvent", b =>
+                {
+                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                        .WithMany()
+                        .HasForeignKey("EventsAssignedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MobileApp.Host.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersAssignedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MobileApp.Host.Categories.Category", b =>
                 {
                     b.Navigation("EventTypes");
 
+                    b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("MobileApp.Host.EventTypes.EventType", b =>
+                {
                     b.Navigation("Events");
                 });
 
