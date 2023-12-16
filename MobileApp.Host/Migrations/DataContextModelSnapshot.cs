@@ -211,7 +211,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.Categories.Category", b =>
@@ -241,7 +241,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.Communications.Communication", b =>
@@ -274,7 +274,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Communications");
+                    b.ToTable("Communications", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.Companies.Company", b =>
@@ -312,7 +312,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.Events.UserEvent", b =>
@@ -389,7 +389,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.EventTypes.EventType", b =>
@@ -424,7 +424,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("EventTypes");
+                    b.ToTable("EventTypes", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.Invoices.Invoice", b =>
@@ -459,7 +459,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.Locations.Location", b =>
@@ -492,7 +492,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.Tenants.Tenant", b =>
@@ -543,7 +543,7 @@ namespace MobileApp.Host.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenants", (string)null);
                 });
 
             modelBuilder.Entity("MobileApp.Host.Users.User", b =>
