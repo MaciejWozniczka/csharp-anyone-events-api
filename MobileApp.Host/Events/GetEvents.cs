@@ -14,7 +14,7 @@ public class GetEvents : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get active events according to parameters")]
     [HttpGet("/api/events/")]
-    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, int distance, int? ageFrom, int? ageTo, SexType? sexTypes)
+    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, int distance, Guid? categoryId, Guid? eventTypeId, int? ageFrom, int? ageTo, SexType? sexTypes)
     {
         var user = await _currentUserAccessor.GetCurrentUser();
         var pagination = new PaginationArgs
@@ -22,15 +22,17 @@ public class GetEvents : ControllerBase
             Page = offset ?? 0,
             PageSize = limit ?? 10
         };
-        return await _mediator.Send(new GetEventsQuery(pagination, user, new Location { Latitude = user.CurrentLocation.Latitude, Longitude = user.CurrentLocation.Longitude, Distance = distance }, ageFrom, ageTo, sexTypes)).Process();
+        return await _mediator.Send(new GetEventsQuery(pagination, user, new Location { Latitude = user.CurrentLocation.Latitude, Longitude = user.CurrentLocation.Longitude, Distance = distance }, categoryId, eventTypeId, ageFrom, ageTo, sexTypes)).Process();
     }
 
     public class GetEventsQuery : IRequest<Result<GetEventsDto>>
     {
-        public GetEventsQuery(PaginationArgs paginationArgs, User user, Location location, int? ageFrom, int? ageTo, SexType? sexTypes)
+        public GetEventsQuery(PaginationArgs paginationArgs, User user, Location location, Guid? categoryId, Guid? eventTypeId, int? ageFrom, int? ageTo, SexType? sexTypes)
         {
             PaginationArgs = paginationArgs;
             Location = location;
+            CategoryId = categoryId;
+            EventTypeId = eventTypeId;
             UserAge = user.Age.Value;
             UserSexType = user.Sex.Value;
             ageFrom ??= 18;
@@ -42,6 +44,8 @@ public class GetEvents : ControllerBase
         }
         public PaginationArgs PaginationArgs { get; set; }
         public Location Location { get; set; }
+        public Guid? CategoryId { get; set; }
+        public Guid? EventTypeId { get; set; }
         public int UserAge { get; set; }
         public SexType UserSexType { get; set; }
         public int? AgeFrom { get; set; }
@@ -105,6 +109,8 @@ public class GetEvents : ControllerBase
                             && e.Creator.Age >= request.AgeFrom
                             && e.Creator.Age <= request.AgeTo
                             && (e.Creator.Sex == request.SexTypes || request.SexTypes == SexType.All || request.SexTypes == null)
+                            && (e.CategoryId == request.CategoryId || request.CategoryId == null)
+                            && (e.EventTypeId == request.EventTypeId || request.EventTypeId == null)
                             && !e.IsDeleted
                             && e.IsActive)
                 .Select(e => new EventsDto()
@@ -112,6 +118,7 @@ public class GetEvents : ControllerBase
                     Id = e.Id,
                     EventType = e.EventType.Name,
                     Category = e.Category.Name,
+                    Creator = e.Creator,
                     EventDateTime = e.EventDateTime,
                     Duration = e.Duration,
                     Location = e.Location,
@@ -128,9 +135,10 @@ public class GetEvents : ControllerBase
             var filteredEvents = events
                 .Where(e => new GeoCoordinate(request.Location.Latitude, request.Location.Longitude)
                     .GetDistanceTo(new GeoCoordinate(e.Location.Latitude, e.Location.Longitude)) <= request.Location.Distance)
+                .OrderBy(c => c.EventDateTime)
                 .ToList();
 
-            var result = new GetEventsDto()
+            var result = new GetEventsDto
             {
                 Limit = request.PaginationArgs.PageSize,
                 Offset = request.PaginationArgs.Page,
