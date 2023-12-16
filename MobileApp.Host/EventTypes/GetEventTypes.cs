@@ -12,7 +12,7 @@ public class GetEventTypes : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "EventTypes" }, Summary = "Get event types list")]
     [HttpGet("/api/eventTypes")]
-    public async Task<Result<List<GetEventTypesDto>>> GetCategoriesAsync([FromQuery] GetEventTypesQuery query)
+    public async Task<Result<List<GetEventTypesDto>>> GetEventTypesAsync([FromQuery] GetEventTypesQuery query)
     {
         return await _mediator.Send(query);
     }
@@ -23,16 +23,18 @@ public class GetEventTypes : ControllerBase
 
     public class GetEventTypesDto
     {
+        public Guid Id { get; set; }
+        public Guid CategoryId { get; set; }
         public string Name { get; set; }
-        public string Type { get; set; }
-        public string Picture { get; set; }
+        public string? Type { get; set; }
+        public string? Picture { get; set; }
     }
 
     public class MapperProfile : Profile
     {
         public MapperProfile()
         {
-            CreateMap<Category, GetEventTypesDto>();
+            CreateMap<EventType, GetEventTypesDto>();
         }
     }
 
@@ -48,7 +50,7 @@ public class GetEventTypes : ControllerBase
 
         public async Task<Result<List<GetEventTypesDto>>> Handle(GetEventTypesQuery request, CancellationToken cancellationToken)
         {
-            var result = await _db.Categories
+            var result = await _db.EventTypes
                 .Where(c => c.IsDeleted == false)
                 .ProjectTo<GetEventTypesDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
