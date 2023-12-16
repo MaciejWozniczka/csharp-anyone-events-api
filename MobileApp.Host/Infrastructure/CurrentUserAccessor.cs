@@ -29,6 +29,8 @@ public class CurrentUserAccessor : ICurrentUserAccessor
 
         if (emailClaim == null) return null;
 
-        return await _db.Users.FirstOrDefaultAsync(u => u.NormalizedEmail == emailClaim.Value.ToUpper());
+        return await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+            .Include(c => c.CurrentLocation)
+            .FirstOrDefaultAsync();
     }
 }
