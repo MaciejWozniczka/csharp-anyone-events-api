@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Categories;
+﻿using MobileApp.Host.Users;
+
+namespace MobileApp.Host.Categories;
 
 [ApiController]
 public class ManageCategory : ControllerBase
@@ -30,31 +32,16 @@ public class ManageCategory : ControllerBase
         [JsonIgnore]
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public string Picture { get; set; }
-        [JsonIgnore]
-        public bool IsDeleted { get; set; }
-        [JsonIgnore]
-        public DateTime CreateDate { get; set; }
-    }
-
-    public class MapperProfile : Profile
-    {
-        public MapperProfile()
-        {
-            CreateMap<ManageCategoryCommand, Category>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-        }
+        public string? Description { get; set; }
+        public string? Picture { get; set; }
     }
 
     public class ManageCategoryCommandHandler : IRequestHandler<ManageCategoryCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        private readonly IMapper _mapper;
-        public ManageCategoryCommandHandler(DataContext db, IMapper mapper)
+        public ManageCategoryCommandHandler(DataContext db)
         {
             _db = db;
-            _mapper = mapper;
         }
 
         public async Task<Result<Guid>> Handle(ManageCategoryCommand request, CancellationToken cancellationToken)
@@ -64,28 +51,32 @@ public class ManageCategory : ControllerBase
 
             if (isAdding)
             {
-                category = new Category();
-
-                request.Id = Guid.NewGuid();
-                request.CreateDate = DateTime.Now;
-                request.IsDeleted = false;
+                category = new Category()
+                {
+                    Name = request.Name,
+                    Description = request.Description,
+                    Picture = request.Picture
+                };
 
                 await _db.AddAsync(category, cancellationToken);
             }
             else
             {
-                request.CreateDate = DateTime.Now;
-
-                category = await _db.Categories
-                    .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+                category = await _db.Categories.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
                 if (category == null)
                 {
                     return Result.NotFound<Guid>(request.Id);
                 }
+
+                if (request.Name != null) category.Name = request.Name;
+                if (request.Description != null) category.Description = request.Description;
+                if (request.Picture != null) category.Picture = request.Picture;
+
+                _db.Update(category);
             }
 
-            category = _mapper.Map(request, category);
+            await _db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(category.Id);
         }
