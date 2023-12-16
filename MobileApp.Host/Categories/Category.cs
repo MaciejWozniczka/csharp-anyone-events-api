@@ -3,8 +3,8 @@
 public class Category : BaseModel
 {
     public string Name { get; set; }
-    public string Description { get; set; }
-    public string Picture { get; set; }
-    public List<EventType> EventTypes { get; set; }
-    public List<UserEvent> Events { get; set; }
+    public string? Description { get; set; }
+    public string? Picture { get; set; }
+    public List<EventType>? EventTypes { get; set; }
+    public List<UserEvent>? Events { get; set; }
 }
