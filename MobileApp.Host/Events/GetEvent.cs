@@ -28,7 +28,15 @@ public class GetEvent : ControllerBase
 
     public class GetEventDto
     {
+        public GetEventDto()
+        {
+            Cooperators = new List<User>();
+            UsersPending = new List<User>();
+            UsersAssigned = new List<User>();
+        }
         public User Creator { get; set; }
+        public List<User> Cooperators { get; set; }
+        public List<User> UsersPending { get; set; }
         public List<User> UsersAssigned { get; set; }
         public string EventType { get; set; }
         public string Category { get; set; }
@@ -40,7 +48,7 @@ public class GetEvent : ControllerBase
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string Street { get; set; }
-        public string StreeNumber { get; set; }
+        public string StreetNumber { get; set; }
         public string ApartmentNumber { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
@@ -65,6 +73,10 @@ public class GetEvent : ControllerBase
                 .Where(e => e.Id == request.Id && !e.IsDeleted)
                 .Select(e => new GetEventDto()
                 {
+                    Creator = e.Creator,
+                    Cooperators = e.Cooperators,
+                    UsersPending = e.UsersPending,
+                    UsersAssigned = e.UsersAssigned,
                     EventType = e.EventType.Name,
                     Category = e.Category.Name,
                     EventDateTime = e.EventDateTime,
@@ -75,7 +87,7 @@ public class GetEvent : ControllerBase
                     City = e.Address.City,
                     PostalCode = e.Address.PostalCode,
                     Street = e.Address.Street,
-                    StreeNumber = e.Address.HouseNumber,
+                    StreetNumber = e.Address.HouseNumber,
                     ApartmentNumber = e.Address.ApartmentNumber,
                     ShortDescription = e.ShortDescription,
                     Description = e.Description,
