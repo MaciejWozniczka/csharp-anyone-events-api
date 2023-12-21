@@ -4,6 +4,7 @@ public interface ICurrentUserAccessor
 {
     string? GetUserEmail();
     Task<User?> GetCurrentUser();
+    Task<User?> GetCurrentUserWithEvents();
 }
 
 public class CurrentUserAccessor : ICurrentUserAccessor
@@ -31,6 +32,21 @@ public class CurrentUserAccessor : ICurrentUserAccessor
 
         return await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
             .Include(c => c.CurrentLocation)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<User?> GetCurrentUserWithEvents()
+    {
+        var emailClaim = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+
+        if (emailClaim == null) return null;
+
+        return await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+            .Include(u => u.CurrentLocation)
+            .Include(u => u.EventsCreated)
+            .Include(u => u.EventsCooperated)
+            .Include(u => u.EventsPending)
+            .Include(u => u.EventsAssigned)
             .FirstOrDefaultAsync();
     }
 }
