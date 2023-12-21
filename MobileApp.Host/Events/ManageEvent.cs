@@ -45,6 +45,7 @@ public class ManageEvent : ControllerBase
         public Guid CategoryId { get; set; }
         public string CreatorId { get; set; }
         public List<string> Cooperators { get; set; }
+        public List<string> CooperatorsPending { get; set; }
         public List<string> UsersPending { get; set; }
         public List<string> UsersAssigned { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
@@ -63,9 +64,11 @@ public class ManageEvent : ControllerBase
     public class ManageEventCommandHandler : IRequestHandler<ManageEventCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        public ManageEventCommandHandler(DataContext db)
+        private readonly ICurrentUserAccessor _currentUserAccessor;
+        public ManageEventCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
         {
             _db = db;
+            _currentUserAccessor = currentUserAccessor;
         }
 
         public async Task<Result<Guid>> Handle(ManageEventCommand request, CancellationToken cancellationToken)
@@ -75,6 +78,8 @@ public class ManageEvent : ControllerBase
 
             UserEvent userEvent;
             var isAdding = request.Id == Guid.Empty;
+
+            var currentUser = _currentUserAccessor.GetCurrentUser();
 
             if (isAdding)
             {
@@ -94,12 +99,13 @@ public class ManageEvent : ControllerBase
                     AgeFrom = request.AgeFrom,
                     AgeTo = request.AgeTo,
                     SexTypes = request.SexTypes ?? new List<SexType> { SexType.All },
+                    CooperatorsPending = new List<User>(),
                     Cooperators = new List<User>(),
                     UsersPending = new List<User>(),
                     UsersAssigned = new List<User>()
                 };
 
-                foreach (var userId in request.UsersAssigned)
+                foreach (var userId in request.CooperatorsPending)
                 {
                     var user = await _db.Users
                         .Where(u => u.Id == userId)
@@ -108,7 +114,7 @@ public class ManageEvent : ControllerBase
                     if (user == null)
                         continue;
 
-                    userEvent.Cooperators.Add(user);
+                    userEvent.CooperatorsPending.Add(user);
                 }
 
                 await _db.AddAsync(userEvent, cancellationToken);
@@ -117,6 +123,7 @@ public class ManageEvent : ControllerBase
             {
                 userEvent = await _db.Events
                     .Where(c => c.Id == request.Id)
+                    .Include(e => e.CooperatorsPending)
                     .Include(e => e.Cooperators)
                     .Include(e => e.UsersPending)
                     .Include(e => e.UsersAssigned)
@@ -144,19 +151,38 @@ public class ManageEvent : ControllerBase
 
                 if (request.Cooperators.Count > 0)
                 {
+                    foreach (var userId in request.CooperatorsPending)
+                    {
+                        if (userEvent.CooperatorsPending.Select(u => u.Id).ToList().Contains(userId))
+                            continue;
+
+                        var user = await _db.Users
+                            .Where(u => u.Id == userId && !u.IsDeleted)
+                            .FirstOrDefaultAsync(cancellationToken);
+
+                        if (user == null)
+                            continue;
+
+                        userEvent.CooperatorsPending.Add(user);
+                    }
+                }
+
+                if (request.Cooperators.Count > 0)
+                {
                     foreach (var userId in request.Cooperators)
                     {
                         if (userEvent.Cooperators.Select(u => u.Id).ToList().Contains(userId))
                             continue;
 
                         var user = await _db.Users
-                            .Where(u => u.Id == userId)
+                            .Where(u => u.Id == userId && !u.IsDeleted)
                             .FirstOrDefaultAsync(cancellationToken);
 
                         if (user == null)
                             continue;
 
                         userEvent.Cooperators.Add(user);
+                        userEvent.CooperatorsPending.Remove(user);
                     }
                 }
 
@@ -168,7 +194,7 @@ public class ManageEvent : ControllerBase
                             continue;
 
                         var user = await _db.Users
-                            .Where(u => u.Id == userId)
+                            .Where(u => u.Id == userId && !u.IsDeleted)
                             .FirstOrDefaultAsync(cancellationToken);
 
                         if (user == null)
@@ -186,13 +212,14 @@ public class ManageEvent : ControllerBase
                             continue;
 
                         var user = await _db.Users
-                            .Where(u => u.Id == userId)
+                            .Where(u => u.Id == userId && !u.IsDeleted)
                             .FirstOrDefaultAsync(cancellationToken);
 
                         if (user == null)
                             continue;
 
                         userEvent.UsersAssigned.Add(user);
+                        userEvent.UsersPending.Remove(user);
                     }
                 }
 
