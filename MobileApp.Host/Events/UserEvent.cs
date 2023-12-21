@@ -5,6 +5,10 @@ public class UserEvent : BaseModel
     public UserEvent()
     {
         IsActive = true;
+        Cooperators = new List<User>();
+        UsersPending = new List<User>();
+        UsersAssigned = new List<User>();
+        SexTypes = new List<SexType>();
     }
     public Guid EventTypeId { get; set; }
     public EventType EventType { get; set; }
@@ -12,6 +16,8 @@ public class UserEvent : BaseModel
     public Category Category { get; set; }
     public string CreatorId { get; set; }
     public User Creator { get; set; }
+    public List<User>? Cooperators { get; set; }
+    public List<User>? UsersPending { get; set; }
     public List<User>? UsersAssigned { get; set; }
     public DateTimeOffset EventDateTime { get; set; }
     public int Duration { get; set; }

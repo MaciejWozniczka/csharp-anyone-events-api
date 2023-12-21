@@ -25,9 +25,19 @@ public class DataContext : IdentityDbContext<User>
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<UserEvent>()
+            .HasMany(e => e.Cooperators)
+            .WithMany(u => u.EventsCooperated)
+            .UsingEntity(j => j.ToTable("EventUserCooperated"));
+
+        modelBuilder.Entity<UserEvent>()
+            .HasMany(e => e.UsersPending)
+            .WithMany(u => u.EventsPending)
+            .UsingEntity(j => j.ToTable("EventUserPending"));
+
+        modelBuilder.Entity<UserEvent>()
             .HasMany(e => e.UsersAssigned)
             .WithMany(u => u.EventsAssigned)
-            .UsingEntity(j => j.ToTable("EventUser"));
+            .UsingEntity(j => j.ToTable("EventUserAssigned"));
 
         base.OnModelCreating(modelBuilder);
     }
