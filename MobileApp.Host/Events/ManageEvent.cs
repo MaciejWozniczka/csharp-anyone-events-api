@@ -31,7 +31,9 @@ public class ManageEvent : ControllerBase
     {
         public ManageEventCommand()
         {
-            UsersAssigned = new List<User>();
+            Cooperators = new List<string>();
+            UsersPending = new List<string>();
+            UsersAssigned = new List<string>();
             AgeFrom = 18;
             AgeTo = 99;
             SexTypes = new List<SexType>();
@@ -42,7 +44,9 @@ public class ManageEvent : ControllerBase
         public Guid EventTypeId { get; set; }
         public Guid CategoryId { get; set; }
         public string CreatorId { get; set; }
-        public List<User>? UsersAssigned { get; set; }
+        public List<string> Cooperators { get; set; }
+        public List<string> UsersPending { get; set; }
+        public List<string> UsersAssigned { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
         public int Duration { get; set; }
         public Location Location { get; set; }
@@ -89,14 +93,34 @@ public class ManageEvent : ControllerBase
                     PeopleLimit = request.PeopleLimit,
                     AgeFrom = request.AgeFrom,
                     AgeTo = request.AgeTo,
-                    SexTypes = request.SexTypes ?? new List<SexType> { SexType.All }
+                    SexTypes = request.SexTypes ?? new List<SexType> { SexType.All },
+                    Cooperators = new List<User>(),
+                    UsersPending = new List<User>(),
+                    UsersAssigned = new List<User>()
                 };
+
+                foreach (var userId in request.UsersAssigned)
+                {
+                    var user = await _db.Users
+                        .Where(u => u.Id == userId)
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    if (user == null)
+                        continue;
+
+                    userEvent.Cooperators.Add(user);
+                }
 
                 await _db.AddAsync(userEvent, cancellationToken);
             }
             else
             {
-                userEvent = await _db.Events.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+                userEvent = await _db.Events
+                    .Where(c => c.Id == request.Id)
+                    .Include(e => e.Cooperators)
+                    .Include(e => e.UsersPending)
+                    .Include(e => e.UsersAssigned)
+                    .FirstOrDefaultAsync(cancellationToken);
 
                 if (userEvent == null)
                 {
@@ -117,6 +141,60 @@ public class ManageEvent : ControllerBase
                 if (request.AgeFrom != null) userEvent.AgeFrom = request.AgeFrom;
                 if (request.AgeTo != null) userEvent.AgeTo = request.AgeTo;
                 if (request.SexTypes != null) userEvent.SexTypes = request.SexTypes;
+
+                if (request.Cooperators.Count > 0)
+                {
+                    foreach (var userId in request.Cooperators)
+                    {
+                        if (userEvent.Cooperators.Select(u => u.Id).ToList().Contains(userId))
+                            continue;
+
+                        var user = await _db.Users
+                            .Where(u => u.Id == userId)
+                            .FirstOrDefaultAsync(cancellationToken);
+
+                        if (user == null)
+                            continue;
+
+                        userEvent.Cooperators.Add(user);
+                    }
+                }
+
+                if (request.UsersPending.Count > 0)
+                {
+                    foreach (var userId in request.UsersPending)
+                    {
+                        if (userEvent.UsersPending.Select(u => u.Id).ToList().Contains(userId))
+                            continue;
+
+                        var user = await _db.Users
+                            .Where(u => u.Id == userId)
+                            .FirstOrDefaultAsync(cancellationToken);
+
+                        if (user == null)
+                            continue;
+
+                        userEvent.UsersPending.Add(user);
+                    }
+                }
+
+                if (request.UsersAssigned.Count > 0)
+                {
+                    foreach (var userId in request.UsersAssigned)
+                    {
+                        if (userEvent.UsersAssigned.Select(u => u.Id).ToList().Contains(userId))
+                            continue;
+
+                        var user = await _db.Users
+                            .Where(u => u.Id == userId)
+                            .FirstOrDefaultAsync(cancellationToken);
+
+                        if (user == null)
+                            continue;
+
+                        userEvent.UsersAssigned.Add(user);
+                    }
+                }
 
                 _db.Update(userEvent);
             }
