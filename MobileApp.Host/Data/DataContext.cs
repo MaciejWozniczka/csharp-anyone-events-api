@@ -30,6 +30,11 @@ public class DataContext : IdentityDbContext<User>
             .UsingEntity(j => j.ToTable("EventUserCooperated"));
 
         modelBuilder.Entity<UserEvent>()
+            .HasMany(e => e.CooperatorsPending)
+            .WithMany(u => u.EventsCooperationPending)
+            .UsingEntity(j => j.ToTable("EventUserCooperationPending"));
+
+        modelBuilder.Entity<UserEvent>()
             .HasMany(e => e.UsersPending)
             .WithMany(u => u.EventsPending)
             .UsingEntity(j => j.ToTable("EventUserPending"));

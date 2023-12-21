@@ -28,6 +28,7 @@ public class User : IdentityUser
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletingDate { get; set; }
     public List<UserEvent>? EventsCreated { get; set; }
+    public List<UserEvent>? EventsCooperationPending { get; set; }
     public List<UserEvent>? EventsCooperated { get; set; }
     public List<UserEvent>? EventsPending { get; set; }
     public List<UserEvent>? EventsAssigned { get; set; }

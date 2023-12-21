@@ -31,11 +31,13 @@ public class GetEvent : ControllerBase
         public GetEventDto()
         {
             Cooperators = new List<User>();
+            CooperatorsPending = new List<User>();
             UsersPending = new List<User>();
             UsersAssigned = new List<User>();
         }
         public User Creator { get; set; }
         public List<User> Cooperators { get; set; }
+        public List<User> CooperatorsPending { get; set; }
         public List<User> UsersPending { get; set; }
         public List<User> UsersAssigned { get; set; }
         public string EventType { get; set; }
@@ -75,6 +77,7 @@ public class GetEvent : ControllerBase
                 {
                     Creator = e.Creator,
                     Cooperators = e.Cooperators,
+                    CooperatorsPending = e.CooperatorsPending,
                     UsersPending = e.UsersPending,
                     UsersAssigned = e.UsersAssigned,
                     EventType = e.EventType.Name,
