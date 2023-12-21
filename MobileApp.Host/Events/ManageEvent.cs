@@ -79,10 +79,16 @@ public class ManageEvent : ControllerBase
             UserEvent userEvent;
             var isAdding = request.Id == Guid.Empty;
 
-            var currentUser = _currentUserAccessor.GetCurrentUser();
+            var currentUserEvents = await _currentUserAccessor.GetCurrentUserEvents();
 
             if (isAdding)
             {
+                if (currentUserEvents.Any(e => (e.EventDateTime >= request.EventDateTime && e.EventDateTime.DateTime.AddMinutes(e.Duration) <= request.EventDateTime)
+                                               || (e.EventDateTime.DateTime.AddMinutes(e.Duration) <= request.EventDateTime && e.EventDateTime >= request.EventDateTime)))
+                {
+                    return Result.BadRequest<Guid>("Użytkownik jest już zapisany na wydarzenia w tym terminie");
+                }
+
                 userEvent = new UserEvent()
                 {
                     EventTypeId = request.EventTypeId,
@@ -132,6 +138,14 @@ public class ManageEvent : ControllerBase
                 if (userEvent == null)
                 {
                     return Result.NotFound<Guid>(request.Id);
+                }
+
+                currentUserEvents.Remove(userEvent);
+
+                if (currentUserEvents.Any(e => (e.EventDateTime >= request.EventDateTime && e.EventDateTime.DateTime.AddMinutes(e.Duration) <= request.EventDateTime)
+                                               || (e.EventDateTime.DateTime.AddMinutes(e.Duration) <= request.EventDateTime && e.EventDateTime >= request.EventDateTime)))
+                {
+                    return Result.BadRequest<Guid>("Użytkownik jest już zapisany na wydarzenia w tym terminie");
                 }
 
                 if (request.EventTypeId != null) userEvent.EventTypeId = request.EventTypeId;
