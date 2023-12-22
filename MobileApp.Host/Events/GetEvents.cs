@@ -117,7 +117,7 @@ public class GetEvents : ControllerBase
                 {
                     Id = e.Id,
                     EventType = e.EventType.Name,
-                    Category = e.Category.Name,
+                    Category = e.EventType.Category.Name,
                     Creator = e.Creator,
                     EventDateTime = e.EventDateTime,
                     Duration = e.Duration,

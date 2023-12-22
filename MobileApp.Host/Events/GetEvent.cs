@@ -66,7 +66,7 @@ public class GetEvent : ControllerBase
                 .Select(e => new GetEventDto()
                 {
                     EventType = e.EventType.Name,
-                    Category = e.Category.Name,
+                    Category = e.EventType.Category.Name,
                     EventDateTime = e.EventDateTime,
                     Duration = e.Duration,
                     Location = e.Location,

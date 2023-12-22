@@ -61,7 +61,6 @@ public class ManageUser : ControllerBase
             if (request.Country != null) user.Country = request.Country;
             if (request.Nationality != null) user.Nationality = request.Nationality;
             if (request.Sex != null) user.Sex = request.Sex;
-            if (request.Languages != null) user.Languages = request.Languages;
             if (request.Picture != null) user.Picture = request.Picture;
             if (request.Desciption != null) user.Desciption = request.Desciption;
             if (request.PhoneCountryCode != null) user.PhoneCountryCode = request.PhoneCountryCode;

@@ -2,9 +2,12 @@
 
 public class Category : BaseModel
 {
+    public Category()
+    {
+        EventTypes = new List<EventType>();
+    }
     public string Name { get; set; }
     public string? Description { get; set; }
     public string? Picture { get; set; }
-    public List<EventType>? EventTypes { get; set; }
-    public List<UserEvent>? Events { get; set; }
+    public List<EventType> EventTypes { get; set; }
 }

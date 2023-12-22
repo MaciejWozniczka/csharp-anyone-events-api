@@ -18,7 +18,6 @@ public class User : IdentityUser
     public Location? CurrentLocation { get; set; }
     public string? Nationality { get; set; }
     public SexType? Sex { get; set; }
-    public List<string>? Languages { get; set; }
     public string? Picture { get; set; }
     public string? Desciption { get; set; }
     public int? PhoneNumber { get; set; }
@@ -27,6 +26,7 @@ public class User : IdentityUser
     public DateTimeOffset CreateDate { get; set; }
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletingDate { get; set; }
+    [InverseProperty("Creator")]
     public List<UserEvent>? EventsCreated { get; set; }
     public List<UserEvent>? EventsAssigned { get; set; }
 }

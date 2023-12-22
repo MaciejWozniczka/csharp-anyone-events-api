@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Events;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MobileApp.Host.Events;
 
 public class UserEvent : BaseModel
 {
@@ -9,10 +11,10 @@ public class UserEvent : BaseModel
     public Guid EventTypeId { get; set; }
     public EventType EventType { get; set; }
     public Guid CategoryId { get; set; }
-    public Category Category { get; set; }
     public string CreatorId { get; set; }
+    [ForeignKey("CreatorId")]
     public User Creator { get; set; }
-    public List<User>? UsersAssigned { get; set; }
+    public List<User> UsersAssigned { get; set; }
     public DateTimeOffset EventDateTime { get; set; }
     public int Duration { get; set; }
     public Location Location { get; set; }
@@ -23,6 +25,7 @@ public class UserEvent : BaseModel
     public int PeopleLimit { get; set; }
     public int? AgeFrom { get; set; }
     public int? AgeTo { get; set; }
+    [NotMapped]
     public List<SexType>? SexTypes { get; set; }
     public bool IsActive { get; set; }
 }
