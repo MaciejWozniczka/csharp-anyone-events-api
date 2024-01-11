@@ -69,12 +69,13 @@ public class GetEvents : ControllerBase
     {
         public EventsDto()
         {
-            UsersAssigned = new List<User>();
+            Cooperators = new List<User>();
             SexTypes = new List<SexType>();
         }
         public Guid Id { get; set; }
         public User Creator { get; set; }
-        public List<User> UsersAssigned { get; set; }
+        public List<User> Cooperators { get; set; }
+        public int UsersAssignedCount { get; set; }
         public string EventType { get; set; }
         public string Category { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
@@ -119,6 +120,8 @@ public class GetEvents : ControllerBase
                     EventType = e.EventType.Name,
                     Category = e.EventType.Category.Name,
                     Creator = e.Creator,
+                    Cooperators = e.Cooperators,
+                    UsersAssignedCount = e.UsersAssigned.Count,
                     EventDateTime = e.EventDateTime,
                     Duration = e.Duration,
                     Location = e.Location,

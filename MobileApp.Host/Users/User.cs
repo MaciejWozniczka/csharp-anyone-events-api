@@ -28,5 +28,8 @@ public class User : IdentityUser
     public DateTimeOffset? DeletingDate { get; set; }
     [InverseProperty("Creator")]
     public List<UserEvent>? EventsCreated { get; set; }
+    public List<UserEvent>? EventsCooperationPending { get; set; }
+    public List<UserEvent>? EventsCooperated { get; set; }
+    public List<UserEvent>? EventsPending { get; set; }
     public List<UserEvent>? EventsAssigned { get; set; }
 }
