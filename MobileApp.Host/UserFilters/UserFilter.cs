@@ -10,13 +10,11 @@ public class UserFilter : BaseModel
     public Guid CategoryId { get; set; }
     public Guid? EventTypeId { get; set; }
     public bool IsCategoryFilter { get; set; }
-    public Guid LocationId { get; set; }
-    public Location Location { get; set; }
+    public Guid? LocationId { get; set; }
+    public Location? Location { get; set; }
     public int? AgeFrom { get; set; }
     public int? AgeTo { get; set; }
     public SexType? SexTypes { get; set; }
-    public DateTime? DateFrom { get; set; }
-    public DateTime? DateTo { get; set;}
-    public DateTime? TimeFrom { get; set;}
-    public DateTime? TimeTo { get; set;}
+    public DateTime? DateTimeFrom { get; set; }
+    public DateTime? DateTimeTo { get; set;}
 }
