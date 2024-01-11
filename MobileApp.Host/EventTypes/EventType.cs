@@ -7,5 +7,4 @@ public class EventType : BaseModel
     public string Name { get; set; }
     public string? Type { get; set; }
     public string? Picture { get; set; }
-    public List<UserEvent>? Events { get; set; }
 }

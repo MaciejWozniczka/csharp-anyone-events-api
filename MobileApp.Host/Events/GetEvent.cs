@@ -81,7 +81,7 @@ public class GetEvent : ControllerBase
                     UsersPending = e.UsersPending,
                     UsersAssigned = e.UsersAssigned,
                     EventType = e.EventType.Name,
-                    Category = e.Category.Name,
+                    Category = e.EventType.Category.Name,
                     EventDateTime = e.EventDateTime,
                     Duration = e.Duration,
                     Location = e.Location,

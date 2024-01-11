@@ -118,7 +118,7 @@ public class GetEvents : ControllerBase
                 {
                     Id = e.Id,
                     EventType = e.EventType.Name,
-                    Category = e.Category.Name,
+                    Category = e.EventType.Category.Name,
                     Creator = e.Creator,
                     Cooperators = e.Cooperators,
                     UsersAssignedCount = e.UsersAssigned.Count,

@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Events;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MobileApp.Host.Events;
 
 public class UserEvent : BaseModel
 {
@@ -14,7 +16,6 @@ public class UserEvent : BaseModel
     public Guid EventTypeId { get; set; }
     public EventType EventType { get; set; }
     public Guid CategoryId { get; set; }
-    public Category Category { get; set; }
     public string CreatorId { get; set; }
     public User Creator { get; set; }
     public List<User>? Cooperators { get; set; }
