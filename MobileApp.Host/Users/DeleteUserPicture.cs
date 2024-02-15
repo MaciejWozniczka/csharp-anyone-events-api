@@ -12,16 +12,14 @@ public class DeleteUserPicture : ControllerBase
 
     [Authorize]
     [SwaggerOperation(Tags = new[] { "User" }, Summary = "Add user picture")]
-    [HttpPost("/api/user/picture")]
-    public async Task<Result<string>> Import(IFormFile file)
+    [HttpDelete("/api/user/picture")]
+    public async Task<Result<string>> Import()
     {
-        return await _mediator.Send(new DeleteUserPictureCommand() { DataFile = file });
+        return await _mediator.Send(new DeleteUserPictureCommand());
     }
 
     public class DeleteUserPictureCommand : IRequest<Result<string>>
     {
-        [JsonIgnore]
-        public IFormFile? DataFile { get; set; }
     }
 
     public class DeleteUserPictureHandler : IRequestHandler<DeleteUserPictureCommand, Result<string>>
