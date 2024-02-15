@@ -11,7 +11,7 @@ public class AddEventPicture : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "User" }, Summary = "Add event picture")]
+    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Add event picture")]
     [HttpPost("/api/event/picture/")]
     public async Task<Result<Guid>> Import(IFormFile file, Guid eventId)
     {

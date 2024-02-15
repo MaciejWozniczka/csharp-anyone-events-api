@@ -12,7 +12,7 @@ public class GetCurrentUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "User" }, Summary = "Get current user")]
+    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Get current user")]
     [HttpGet("/api/user/")]
     public async Task<Result<GetCurrentUserDto>> GetCurrentUserAsync()
     {

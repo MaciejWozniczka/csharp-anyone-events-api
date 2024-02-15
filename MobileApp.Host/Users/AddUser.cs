@@ -10,7 +10,7 @@ public class AddUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "User" }, Summary = "Add user")]
+    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Add user")]
     [HttpPost("/api/user")]
     public async Task<Result> AddUserAsync([FromBody] AddUserQuery addUserRequestBody)
     {

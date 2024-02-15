@@ -11,7 +11,7 @@ public class DeleteUserPicture : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "User" }, Summary = "Add user picture")]
+    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Add user picture")]
     [HttpDelete("/api/user/picture")]
     public async Task<Result<string>> Import()
     {

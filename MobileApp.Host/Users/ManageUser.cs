@@ -13,7 +13,7 @@ public class ManageUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "User" }, Summary = "Change user")]
+    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Change user")]
     [HttpPut("/api/user/{id}")]
     public async Task<Result<string>> ManageUserAsync(string id, ManageUserCommand command)
     {
