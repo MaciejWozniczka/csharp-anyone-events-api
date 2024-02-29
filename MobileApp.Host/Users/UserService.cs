@@ -7,7 +7,7 @@ namespace MobileApp.Host.Users;
 
 public interface IUserService
 {
-    Task<Result> AddUser(string email, string password);
+    Task<Result<Guid>> AddUser(string email, string password);
     Task<Result> ChangePassword(string email, string password, CancellationToken cancellationToken);
     Task<Result<TokenDto>> CreateToken(string email, string password, CancellationToken cancellationToken);
 }
@@ -31,7 +31,7 @@ public class UserService : IUserService
         _tokenOptions = tokenOptions.Value;
         roleName = "user";
     }
-    public async Task<Result> AddUser(string email, string password)
+    public async Task<Result<Guid>> AddUser(string email, string password)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -56,13 +56,13 @@ public class UserService : IUserService
 
                 await _userManager.AddToRoleAsync(newUser, role.Name);
 
-                return Result.Ok("The user has been created");
+                return Result.Ok(Guid.Parse(newUser.Id));
             }
 
-            return Result.BadRequest("Failed to create the user");
+            return Result.BadRequest<Guid>("Failed to create the user");
         }
 
-        return Result.Ok("The user already exists");
+        return Result.Ok(Guid.Parse(existingUser.Id));
     }
 
     public async Task<Result> ChangePassword(string currentPassword, string newPassword, CancellationToken cancellationToken)

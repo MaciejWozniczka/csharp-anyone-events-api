@@ -1,4 +1,5 @@
-﻿using MobileApp.Host.Events;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using MobileApp.Host.Events;
 using static MobileApp.Host.Events.ManageEvent;
 using static MobileApp.Host.Users.ManageUser;
 
@@ -16,26 +17,26 @@ public class SetCurrentLocation : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Set current location")]
     [HttpPut("/api/user/{id}/location")]
-    public async Task<Result<string>> SetCurrentLocationAsync(string id, SetCurrentLocationCommand command)
+    public async Task<Result<Guid>> SetCurrentLocationAsync(Guid id, SetCurrentLocationCommand command)
     {
         return await _mediator.Send(command.Set(p => p.Id = id));
     }
 
-    public class SetCurrentLocationCommand : IRequest<Result<string>>
+    public class SetCurrentLocationCommand : IRequest<Result<Guid>>
     {
-        public SetCurrentLocationCommand(string id, double latitude, double longitude)
+        public SetCurrentLocationCommand(Guid id, double latitude, double longitude)
         {
             Id = id;
             Latitude = latitude;
             Longitude = longitude;
         }
         [JsonIgnore]
-        public string? Id { get; set; }
+        public Guid Id { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }
 
-    public class SetCurrentLocationCommandHandler : IRequestHandler<SetCurrentLocationCommand, Result<string>>
+    public class SetCurrentLocationCommandHandler : IRequestHandler<SetCurrentLocationCommand, Result<Guid>>
     {
         private readonly DataContext _db;
         public SetCurrentLocationCommandHandler(DataContext db)
@@ -43,15 +44,17 @@ public class SetCurrentLocation : ControllerBase
             _db = db;
         }
 
-        public async Task<Result<string>> Handle(SetCurrentLocationCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(SetCurrentLocationCommand request, CancellationToken cancellationToken)
         {
+            var userId = request.Id.ToString();
+
             var user = await _db.Users
                 .Include(u => u.CurrentLocation)
-                .FirstOrDefaultAsync(u => u.Id == request.Id && !u.IsDeleted, cancellationToken);
+                .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted, cancellationToken);
 
             if (user == null)
             {
-                return Result.NotFound(request.Id);
+                return Result.NotFound<Guid>(request.Id);
             }
 
             var newLocation = new Location()
@@ -59,7 +62,7 @@ public class SetCurrentLocation : ControllerBase
                 Latitude = request.Latitude,
                 Longitude = request.Longitude,
                 Distance = 0,
-                UserId = request.Id
+                UserId = user.Id
             };
 
             _db.Locations.Add(newLocation);
@@ -69,7 +72,7 @@ public class SetCurrentLocation : ControllerBase
             _db.Update(user);
             await _db.SaveChangesAsync(cancellationToken);
 
-            return Result.Ok(user.Id);
+            return Result.Ok(Guid.Parse(user.Id));
         }
     }
 }

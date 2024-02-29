@@ -15,15 +15,15 @@ public class ManageUser : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Change user")]
     [HttpPut("/api/user/{id}")]
-    public async Task<Result<string>> ManageUserAsync(string id, ManageUserCommand command)
+    public async Task<Result<Guid>> ManageUserAsync(Guid id, ManageUserCommand command)
     {
         return await _mediator.Send(command.Set(p => p.Id = id));
     }
 
-    public class ManageUserCommand : IRequest<Result<string>>
+    public class ManageUserCommand : IRequest<Result<Guid>>
     {
         [JsonIgnore]
-        public string? Id { get; set; }
+        public Guid? Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public int? Age { get; set; }
@@ -38,7 +38,7 @@ public class ManageUser : ControllerBase
         public UserType? UserType { get; set; }
     }
 
-    public class ManageUserCommandHandler : IRequestHandler<ManageUserCommand, Result<string>>
+    public class ManageUserCommandHandler : IRequestHandler<ManageUserCommand, Result<Guid>>
     {
         private readonly DataContext _db;
         public ManageUserCommandHandler(DataContext db)
@@ -46,13 +46,15 @@ public class ManageUser : ControllerBase
             _db = db;
         }
 
-        public async Task<Result<string>> Handle(ManageUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(ManageUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == request.Id && !u.IsDeleted, cancellationToken);
+            var userId = request.Id.ToString();
+
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted, cancellationToken);
 
             if (user == null)
             {
-                return Result.NotFound(request.Id);
+                return Result.NotFound<Guid>(userId);
             }
 
             if (request.FirstName != null) user.FirstName = request.FirstName;
@@ -70,7 +72,7 @@ public class ManageUser : ControllerBase
             _db.Update(user);
             await _db.SaveChangesAsync(cancellationToken);
 
-            return Result.Ok(user.Id);
+            return Result.Ok(Guid.Parse(user.Id));
         }
     }
 }

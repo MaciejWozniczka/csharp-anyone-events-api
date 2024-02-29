@@ -11,12 +11,12 @@ public class AddUser : ControllerBase
 
     [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Add user")]
     [HttpPost("/api/user")]
-    public async Task<Result> AddUserAsync([FromBody] AddUserQuery addUserRequestBody)
+    public async Task<Result<Guid>> AddUserAsync([FromBody] AddUserQuery addUserRequestBody)
     {
         return await _mediator.Send(new AddUserQuery() { Email = addUserRequestBody.Email, Password = addUserRequestBody.Password, RepeatedPassword = addUserRequestBody.RepeatedPassword });
     }
 
-    public class AddUserQuery : IRequest<Result>
+    public class AddUserQuery : IRequest<Result<Guid>>
     {
         public string Email { get; set; }
         public string Password { get; set; }
@@ -36,7 +36,7 @@ public class AddUser : ControllerBase
         }
     }
 
-    public class AddUserQueryHandler : IRequestHandler<AddUserQuery, Result>
+    public class AddUserQueryHandler : IRequestHandler<AddUserQuery, Result<Guid>>
     {
         public IValidator<AddUserQuery> _validator { get; set; }
         public readonly IUserService _tokenService;
@@ -45,7 +45,7 @@ public class AddUser : ControllerBase
             _validator = validator;
             _tokenService = tokenService;
         }
-        public async Task<Result> Handle(AddUserQuery request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(AddUserQuery request, CancellationToken cancellationToken)
         {
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
 
@@ -55,7 +55,7 @@ public class AddUser : ControllerBase
             }
 
             if (request.Password != request.RepeatedPassword)
-                return Result.BadRequest("Passwords should be the same");
+                return Result.BadRequest<Guid>("Passwords should be the same");
 
             return await _tokenService.AddUser(request.Email, request.Password);
         }
