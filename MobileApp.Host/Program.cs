@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.PostgreSql;
 using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Diagnostics;
 using Serilog.Context;
@@ -34,7 +35,7 @@ services.AddHangfire(c => c
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
-    .UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection")));
+    .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection"))));
 
 services.AddHangfireServer();
 

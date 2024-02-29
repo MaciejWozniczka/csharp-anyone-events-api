@@ -52,8 +52,7 @@ public class Module : IModule
 
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-            //options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
