@@ -1,6 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0
 LABEL author="maciej.wozniczka@outlook.com"
 
+RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get clean
+RUN apt-get update -o Acquire::CompressionTypes::Order::=gz
+
 RUN apt-get update
 RUN apt-get install -y curl
 RUN apt-get install -y libpng-dev libjpeg-dev curl libxi6 build-essential libgl1-mesa-glx
