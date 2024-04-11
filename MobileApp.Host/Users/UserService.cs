@@ -104,18 +104,27 @@ public class UserService : IUserService
         var signingCredentials = new SigningCredentials(
             securityKey, SecurityAlgorithms.HmacSha256);
 
-        var claimsForToken = new List<Claim> { new Claim("sub", user.Email) };
+        var claimsForAccessToken = new List<Claim> { new Claim("sub", user.Email) };
 
         var jwtSecurityToken = new JwtSecurityToken(
             _tokenOptions.Issuer,
             _tokenOptions.Audience,
-            claimsForToken,
+            claimsForAccessToken,
             DateTime.UtcNow,
             DateTime.UtcNow.AddHours(1),
             signingCredentials);
 
-        var tokenToReturn = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
-        return Result.Ok(new TokenDto { Token = tokenToReturn, Expiry = DateTime.UtcNow.AddHours(1) });
+        var refreshToken = Guid.NewGuid().ToString();
+
+        var authenticationResult = new TokenDto
+        {
+            AccessToken = accessToken,
+            AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
+            RefreshToken = refreshToken
+        };
+
+        return Result.Ok(authenticationResult);
     }
 }
