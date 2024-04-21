@@ -13,14 +13,13 @@ public class AddUser : ControllerBase
     [HttpPost("/api/user")]
     public async Task<Result<Guid>> AddUserAsync([FromBody] AddUserQuery addUserRequestBody)
     {
-        return await _mediator.Send(new AddUserQuery() { Email = addUserRequestBody.Email, Password = addUserRequestBody.Password, RepeatedPassword = addUserRequestBody.RepeatedPassword });
+        return await _mediator.Send(new AddUserQuery() { Email = addUserRequestBody.Email, Password = addUserRequestBody.Password });
     }
 
     public class AddUserQuery : IRequest<Result<Guid>>
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public string RepeatedPassword { get; set; }
     }
 
     public class AddUserValidator : AbstractValidator<AddUserQuery>
@@ -30,8 +29,6 @@ public class AddUser : ControllerBase
             RuleFor(p => p.Email)
                 .NotEmpty();
             RuleFor(p => p.Password)
-                .NotEmpty();
-            RuleFor(p => p.RepeatedPassword)
                 .NotEmpty();
         }
     }
@@ -53,9 +50,6 @@ public class AddUser : ControllerBase
             {
                 return validationResult.ToResult<Guid>();
             }
-
-            if (request.Password != request.RepeatedPassword)
-                return Result.BadRequest<Guid>("Passwords should be the same");
 
             return await _tokenService.AddUser(request.Email, request.Password);
         }
