@@ -2,6 +2,8 @@
 
 public class TokenDto
 {
-    public string Token { get; set; }
-    public DateTimeOffset Expiry { get; set; }
+    public string AccessToken { get; set; }
+    public string RefreshToken { get; set; }
+    public DateTimeOffset AccessTokenExpiry { get; set; }
+    public DateTimeOffset RefreshTokenExpiry { get; set; }
 }
