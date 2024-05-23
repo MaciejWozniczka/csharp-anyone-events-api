@@ -33,5 +33,4 @@ public class User : IdentityUser
     public List<UserEvent>? EventsPending { get; set; }
     public List<UserEvent>? EventsAssigned { get; set; }
     public string? RefreshToken { get; set; }
-    public DateTimeOffset? RefreshTokenExpiryTime { get; set; }
 }

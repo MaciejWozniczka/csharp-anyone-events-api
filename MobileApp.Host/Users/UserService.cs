@@ -120,7 +120,6 @@ public class UserService : IUserService
         var refreshToken = Guid.NewGuid().ToString();
 
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
         _db.Update(user);
         await _db.SaveChangesAsync(cancellationToken);
@@ -129,8 +128,7 @@ public class UserService : IUserService
         {
             AccessToken = accessToken,
             AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
-            RefreshToken = refreshToken,
-            RefreshTokenExpiry = user.RefreshTokenExpiryTime.Value
+            RefreshToken = refreshToken
         };
 
         return Result.Ok(authenticationResult);
@@ -139,7 +137,7 @@ public class UserService : IUserService
     public async Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         var user = await _db.Users
-            .Where(u => u.RefreshToken == refreshToken && u.RefreshTokenExpiryTime > DateTime.UtcNow)
+            .Where(u => u.RefreshToken == refreshToken)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (user == null)
@@ -163,7 +161,6 @@ public class UserService : IUserService
         var newRefreshToken = Guid.NewGuid().ToString();
         
         user.RefreshToken = newRefreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
         _db.Update(user);
         await _db.SaveChangesAsync(cancellationToken);
@@ -172,8 +169,7 @@ public class UserService : IUserService
         {
             AccessToken = accessToken,
             AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
-            RefreshToken = newRefreshToken,
-            RefreshTokenExpiry = user.RefreshTokenExpiryTime.Value
+            RefreshToken = newRefreshToken
         };
 
         return Result.Ok(authenticationResult);
