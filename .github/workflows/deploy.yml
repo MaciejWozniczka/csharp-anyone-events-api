@@ -16,9 +16,13 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
+      - name: SSH login to remote server
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
+
       - name: Copy files to external server
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} scp -P ${{ secrets.SSH_PORT }} -r * ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/MobileApp/
+          scp -P ${{ secrets.SSH_PORT }} -r * ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/MobileApp/
 
       - name: Run deployment script on server
         env:
