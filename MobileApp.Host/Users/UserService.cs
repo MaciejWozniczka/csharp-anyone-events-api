@@ -127,4 +127,30 @@ public class UserService : IUserService
 
         return Result.Ok(authenticationResult);
     }
+
+    public async Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecretKey));
+        var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var claimsForAccessToken = new List<Claim> { new Claim("sub", "userEmail") };
+        var jwtSecurityToken = new JwtSecurityToken(
+            _tokenOptions.Issuer,
+            _tokenOptions.Audience,
+            claimsForAccessToken,
+            DateTime.UtcNow,
+            DateTime.UtcNow.AddHours(1),
+            signingCredentials);
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
+        var newRefreshToken = Guid.NewGuid().ToString();
+
+        var authenticationResult = new TokenDto
+        {
+            AccessToken = accessToken,
+            AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
+            RefreshToken = newRefreshToken
+        };
+
+        return Result.Ok(authenticationResult);
+    }
 }
