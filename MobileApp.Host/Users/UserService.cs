@@ -119,6 +119,12 @@ public class UserService : IUserService
 
         var refreshToken = Guid.NewGuid().ToString();
 
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+        _db.Update(user);
+        await _db.SaveChangesAsync(cancellationToken);
+
         var authenticationResult = new TokenDto
         {
             AccessToken = accessToken,
@@ -131,9 +137,18 @@ public class UserService : IUserService
 
     public async Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
+        var user = await _db.Users
+            .Where(u => u.RefreshToken == refreshToken && u.RefreshTokenExpiryTime > DateTime.UtcNow)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (user == null)
+            return Result.NotFound<TokenDto>();
+
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecretKey));
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        var claimsForAccessToken = new List<Claim> { new Claim("sub", "userEmail") };
+
+        var claimsForAccessToken = new List<Claim> { new Claim("sub", user.Email) };
+
         var jwtSecurityToken = new JwtSecurityToken(
             _tokenOptions.Issuer,
             _tokenOptions.Audience,
@@ -141,9 +156,16 @@ public class UserService : IUserService
             DateTime.UtcNow,
             DateTime.UtcNow.AddHours(1),
             signingCredentials);
+
         var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
         var newRefreshToken = Guid.NewGuid().ToString();
+        
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+        _db.Update(user);
+        await _db.SaveChangesAsync(cancellationToken);
 
         var authenticationResult = new TokenDto
         {
