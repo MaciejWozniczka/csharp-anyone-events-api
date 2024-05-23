@@ -19,6 +19,7 @@ public class AuthorizeUser : ControllerBase
     {
         public string? Email { get; set; }
         public string? Password { get; set; }
+        public string? RefreshToken { get; set; }
     }
     public class GetTokenQueryHandler : IRequestHandler<AuthorizeUsernCommand, Result<TokenDto>>
     {
@@ -30,10 +31,13 @@ public class AuthorizeUser : ControllerBase
 
         public async Task<Result<TokenDto>> Handle(AuthorizeUsernCommand request, CancellationToken cancellationToken)
         {
-
             if (request.Email != null && request.Password != null)
             {
                 return await _tokenService.CreateToken(request.Email, request.Password, cancellationToken);
+            }
+            else if (request.RefreshToken != null)
+            {
+                return await _tokenService.RefreshTokenAsync(request.RefreshToken, cancellationToken);
             }
 
             return Result.BadRequest<TokenDto>("BadRequest");

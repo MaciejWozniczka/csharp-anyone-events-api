@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 using TokenOption = MobileApp.Host.Infrastructure.TokenOption;
 
@@ -9,9 +10,7 @@ public interface IUserService
     Task<Result<Guid>> AddUser(string email, string password);
     Task<Result> ChangePassword(string email, string password, CancellationToken cancellationToken);
     Task<Result<TokenDto>> CreateToken(string email, string password, CancellationToken cancellationToken);
-    Task<Result<TokenDto>> CreateNewToken(List<Claim> authClaims);
-    string GenerateRefreshToken();
-    ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token);
+    Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 }
 
 public class UserService : IUserService
@@ -90,8 +89,8 @@ public class UserService : IUserService
     public async Task<Result<TokenDto>> CreateToken(string email, string password, CancellationToken cancellationToken)
     {
         var user = await _db.Users
-        .Where(u => u.UserName == email)
-        .FirstOrDefaultAsync(cancellationToken);
+            .Where(u => u.UserName == email)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (user == null)
             return Result.NotFound<TokenDto>();
@@ -116,66 +115,67 @@ public class UserService : IUserService
             DateTime.UtcNow.AddHours(1),
             signingCredentials);
 
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
+        var refreshToken = Guid.NewGuid().ToString();
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+        _db.Update(user);
+        await _db.SaveChangesAsync(cancellationToken);
+
         var authenticationResult = new TokenDto
         {
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+            AccessToken = accessToken,
             AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
-            RefreshToken = GenerateRefreshToken(),
-            RefreshTokenExpiry = DateTime.UtcNow.AddDays(7)
+            RefreshToken = refreshToken,
+            RefreshTokenExpiry = user.RefreshTokenExpiryTime.Value
         };
 
         return Result.Ok(authenticationResult);
     }
 
-    public async Task<Result<TokenDto>> CreateNewToken(List<Claim> authClaims)
+    public async Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
-        var securityKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_tokenOptions.SecretKey));
+        var user = await _db.Users
+            .Where(u => u.RefreshToken == refreshToken && u.RefreshTokenExpiryTime > DateTime.UtcNow)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (user == null)
+            return Result.NotFound<TokenDto>();
+
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecretKey));
+        var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claimsForAccessToken = new List<Claim> { new Claim("sub", user.Email) };
 
         var jwtSecurityToken = new JwtSecurityToken(
             _tokenOptions.Issuer,
             _tokenOptions.Audience,
-            expires: DateTime.Now.AddHours(1),
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecretKey)), SecurityAlgorithms.HmacSha256)
-        );
+            claimsForAccessToken,
+            DateTime.UtcNow,
+            DateTime.UtcNow.AddHours(1),
+            signingCredentials);
+
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
+        var newRefreshToken = Guid.NewGuid().ToString();
+        
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+        _db.Update(user);
+        await _db.SaveChangesAsync(cancellationToken);
 
         var authenticationResult = new TokenDto
         {
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+            AccessToken = accessToken,
             AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
-            RefreshToken = GenerateRefreshToken(),
-            RefreshTokenExpiry = DateTime.UtcNow.AddDays(7)
+            RefreshToken = newRefreshToken,
+            RefreshTokenExpiry = user.RefreshTokenExpiryTime.Value
         };
 
         return Result.Ok(authenticationResult);
-    }
-
-    public string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
-    }
-
-    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
-    {
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false,
-            ValidateIssuer = false,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecretKey)),
-            ValidateLifetime = false
-        };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-
-        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-            throw new SecurityTokenException("Invalid token");
-
-        return principal;
     }
 }
