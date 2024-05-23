@@ -14,14 +14,13 @@ public class ChangePassword : ControllerBase
     [HttpPut("/api/changepassword")]
     public async Task<Result> ChangePasswordAsync([FromBody] ChangePasswordQuery changePasswordRequestBody)
     {
-        return await _mediator.Send(new ChangePasswordQuery() { CurrentPassword = changePasswordRequestBody.CurrentPassword, NewPassword = changePasswordRequestBody.NewPassword, RepeatedNewPassword = changePasswordRequestBody.RepeatedNewPassword });
+        return await _mediator.Send(new ChangePasswordQuery() { CurrentPassword = changePasswordRequestBody.CurrentPassword, NewPassword = changePasswordRequestBody.NewPassword });
     }
 
     public class ChangePasswordQuery : IRequest<Result>
     {
         public string CurrentPassword { get; set; }
         public string NewPassword { get; set; }
-        public string RepeatedNewPassword { get; set; }
 
     }
 
@@ -32,8 +31,6 @@ public class ChangePassword : ControllerBase
             RuleFor(p => p.CurrentPassword)
                 .NotEmpty();
             RuleFor(p => p.NewPassword)
-                .NotEmpty();
-            RuleFor(p => p.RepeatedNewPassword)
                 .NotEmpty();
         }
     }
@@ -56,9 +53,6 @@ public class ChangePassword : ControllerBase
             {
                 return validationResult.ToResult<Guid>();
             }
-
-            if (request.NewPassword != request.RepeatedNewPassword)
-                return Result.BadRequest("New passwords should be the same");
 
             return await _tokenService.ChangePassword(request.CurrentPassword, request.NewPassword, cancellationToken);
         }

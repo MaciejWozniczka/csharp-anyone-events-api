@@ -1,4 +1,4 @@
-﻿namespace MobileApp.Host.Users;
+namespace MobileApp.Host.Users;
 
 public class TokenDto
 {
