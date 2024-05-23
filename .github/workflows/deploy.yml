@@ -1,11 +1,14 @@
 name: Deploy to External Server
+
 on:
   push:
     branches:
       - developer
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -15,7 +18,7 @@ jobs:
 
       - name: Copy files to external server
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} rsync -avz --no-perms --no-owner --no-group --delete . root@srv26.mikr.us:10210/
+          sshpass -p ${{ secrets.SSH_PASSWORD }} scp -P ${{ secrets.SSH_PORT }} -r * ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/MobileApp/
 
       - name: Run deployment script on server
         env:
@@ -23,7 +26,7 @@ jobs:
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -p 10210 root@srv26.mikr.us << 'EOF'
+          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd /root/MobileApp/Docker
             docker-compose down
             docker system prune -af
