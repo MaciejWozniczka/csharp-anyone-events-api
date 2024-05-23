@@ -13,12 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
-
       - name: Copy files to external server
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} scp -P ${{ secrets.SSH_PORT }} -r * ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/MobileApp/
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          scp -i ${{ secrets.SSH_PRIVATE_KEY }} -P ${{ secrets.SSH_PORT }} -r * ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/MobileApp/
 
       - name: Run deployment script on server
         env:
@@ -26,7 +24,7 @@ jobs:
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd /root/MobileApp/Docker
             docker-compose down
             docker system prune -af
