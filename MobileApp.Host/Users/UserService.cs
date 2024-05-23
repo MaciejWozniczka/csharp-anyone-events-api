@@ -10,6 +10,7 @@ public interface IUserService
     Task<Result<Guid>> AddUser(string email, string password);
     Task<Result> ChangePassword(string email, string password, CancellationToken cancellationToken);
     Task<Result<TokenDto>> CreateToken(string email, string password, CancellationToken cancellationToken);
+    Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 }
 
 public class UserService : IUserService
