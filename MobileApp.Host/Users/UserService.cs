@@ -129,7 +129,8 @@ public class UserService : IUserService
         {
             AccessToken = accessToken,
             AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
-            RefreshToken = refreshToken
+            RefreshToken = refreshToken,
+            RefreshTokenExpiry = user.RefreshTokenExpiryTime.Value
         };
 
         return Result.Ok(authenticationResult);
@@ -171,7 +172,8 @@ public class UserService : IUserService
         {
             AccessToken = accessToken,
             AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
-            RefreshToken = newRefreshToken
+            RefreshToken = newRefreshToken,
+            RefreshTokenExpiry = user.RefreshTokenExpiryTime.Value
         };
 
         return Result.Ok(authenticationResult);
