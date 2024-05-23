@@ -15,7 +15,7 @@ jobs:
 
       - name: Copy files to external server
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} rsync -avz --no-perms --no-owner --no-group --delete . ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }}/
+          sshpass -p ${{ secrets.SSH_PASSWORD }} rsync -avz --no-perms --no-owner --no-group --delete . root@srv26.mikr.us:10210/
 
       - name: Run deployment script on server
         env:
@@ -23,7 +23,7 @@ jobs:
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -p 10210 root@srv26.mikr.us << 'EOF'
             cd /root/MobileApp/Docker
             docker-compose down
             docker system prune -af
