@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.UserEvents;
+﻿using MobileApp.Host.Users;
+
+namespace MobileApp.Host.UserEvents;
 
 [ApiController]
 public class AddEventPendingUser : ControllerBase
@@ -10,21 +12,21 @@ public class AddEventPendingUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add pending user to event")]
+    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add pending user group to event")]
     [HttpPost("/api/event/pending/")]
-    public async Task<Result> AddEventPendingUserAsync(string userId, Guid eventId)
+    public async Task<Result> AddEventPendingUserAsync(List<string> userIds, Guid eventId)
     {
-        return await _mediator.Send(new AddEventPendingUserCommand(userId, eventId));
+        return await _mediator.Send(new AddEventPendingUserCommand(userIds, eventId));
     }
 
     public class AddEventPendingUserCommand : IRequest<Result>
     {
-        public AddEventPendingUserCommand(string userId, Guid eventId)
+        public AddEventPendingUserCommand(List<string> userIds, Guid eventId)
         {
-            UserId = userId;
+            UserIds = userIds;
             EventId = eventId;
         }
-        public string UserId { get; set; }
+        public List<string> UserIds { get; set; }
         public Guid EventId { get; set; }
     }
 
@@ -48,22 +50,28 @@ public class AddEventPendingUser : ControllerBase
                 return Result.NotFound("Event not found");
             }
 
-            var user = await _db.Users
-                .FirstOrDefaultAsync(u => u.Id == request.UserId && u.IsDeleted == false, cancellationToken);
+            userEvent.UsersPending ??= new List<UserGroup>();
+            var userGroup = new UserGroup();
 
-            if (user == null)
+            foreach (var userId in request.UserIds)
             {
-                return Result.NotFound("User not found");
+                var user = await _db.Users
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.IsDeleted == false, cancellationToken);
+
+                if (user == null)
+                {
+                    return Result.NotFound("User not found");
+                }
+
+                if (userEvent.UsersPending.SelectMany(g => g.Users).Any(u => u.Id == user.Id))
+                {
+                    return Result.Ok("User already added");
+                }
+
+                userGroup.Users.Add(user);
             }
 
-            userEvent.UsersPending ??= new List<User>();
-
-            if (userEvent.UsersPending.Select(u => u.Id).Contains(user.Id))
-            {
-                return Result.Ok("User already added");
-            }
-
-            userEvent.UsersPending.Add(user);
+            userEvent.UsersPending.Add(userGroup);
             await _db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();

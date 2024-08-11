@@ -49,6 +49,8 @@ public class CurrentUserAccessor : ICurrentUserAccessor
             .Include(u => u.EventsCooperated)
             .Include(u => u.EventsPending)
             .Include(u => u.EventsAssigned)
+            .Include(u => u.EventsInterested)
+            .Include(u => u.EventsSkipped)
             .FirstOrDefaultAsync();
     }
 
@@ -64,6 +66,8 @@ public class CurrentUserAccessor : ICurrentUserAccessor
             .Include(u => u.EventsCooperated)
             .Include(u => u.EventsPending)
             .Include(u => u.EventsAssigned)
+            .Include(u => u.EventsInterested)
+            .Include(u => u.EventsSkipped)
             .FirstOrDefaultAsync();
 
         var events = new List<UserEvent>();
@@ -73,6 +77,8 @@ public class CurrentUserAccessor : ICurrentUserAccessor
         events.AddRange(user.EventsCooperated);
         events.AddRange(user.EventsPending);
         events.AddRange(user.EventsAssigned);
+        events.AddRange(user.EventsInterested);
+        events.AddRange(user.EventsSkipped);
 
         return events.Where(e => !e.IsDeleted).ToList();
     }

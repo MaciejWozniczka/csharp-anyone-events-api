@@ -9,7 +9,7 @@ public class UserEvent : BaseModel
         IsActive = true;
         Cooperators = new List<User>();
         CooperatorsPending = new List<User>();
-        UsersPending = new List<User>();
+        UsersPending = new List<UserGroup>();
         UsersAssigned = new List<User>();
         SexTypes = new List<SexType>();
     }
@@ -20,8 +20,10 @@ public class UserEvent : BaseModel
     public User Creator { get; set; }
     public List<User>? Cooperators { get; set; }
     public List<User>? CooperatorsPending { get; set; }
-    public List<User>? UsersPending { get; set; }
+    public List<UserGroup>? UsersPending { get; set; }
     public List<User>? UsersAssigned { get; set; }
+    public List<User>? UsersInterested { get; set; }
+    public List<User>? UsersSkipped { get; set; }
     public DateTimeOffset EventDateTime { get; set; }
     public int Duration { get; set; }
     public Location Location { get; set; }

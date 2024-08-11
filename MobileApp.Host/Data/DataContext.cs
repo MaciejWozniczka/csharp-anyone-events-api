@@ -40,14 +40,19 @@ public class DataContext : IdentityDbContext<User>
             .UsingEntity(j => j.ToTable("EventUserCooperationPending"));
 
         modelBuilder.Entity<UserEvent>()
-            .HasMany(e => e.UsersPending)
-            .WithMany(u => u.EventsPending)
-            .UsingEntity(j => j.ToTable("EventUserPending"));
-
-        modelBuilder.Entity<UserEvent>()
             .HasMany(e => e.UsersAssigned)
             .WithMany(u => u.EventsAssigned)
             .UsingEntity(j => j.ToTable("EventUserAssigned"));
+
+        modelBuilder.Entity<UserEvent>()
+            .HasMany(e => e.UsersInterested)
+            .WithMany(u => u.EventsInterested)
+            .UsingEntity(j => j.ToTable("EventUserInterested"));
+
+        modelBuilder.Entity<UserEvent>()
+            .HasMany(e => e.UsersSkipped)
+            .WithMany(u => u.EventsSkipped)
+            .UsingEntity(j => j.ToTable("EventUserSkipped"));
 
         base.OnModelCreating(modelBuilder);
     }

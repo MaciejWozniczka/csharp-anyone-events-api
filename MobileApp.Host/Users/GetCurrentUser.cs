@@ -29,7 +29,7 @@ public class GetCurrentUser : ControllerBase
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public int? Age { get; set; }
-        public Country? Country { get; set; }
+        public string? Country { get; set; }
         public SexType? Sex { get; set; }
         public string? Picture { get; set; }
         public string? Desciption { get; set; }

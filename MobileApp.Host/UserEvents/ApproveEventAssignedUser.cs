@@ -57,12 +57,15 @@ public class ApproveEventAssignedUser : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.UsersPending ??= new List<User>();
+            userEvent.UsersPending ??= new List<UserGroup>();
             userEvent.UsersAssigned ??= new List<User>();
 
-            if (userEvent.UsersPending.Select(u => u.Id).Contains(user.Id))
+            if (userEvent.UsersPending.SelectMany(g => g.Users).ToList().Select(u => u.Id).Contains(user.Id))
             {
-                userEvent.UsersPending.Remove(user);
+                foreach (var group in userEvent.UsersPending)
+                {
+                    group.Users.Remove(user);
+                }
             }
 
             if (userEvent.UsersAssigned.Select(u => u.Id).Contains(user.Id))

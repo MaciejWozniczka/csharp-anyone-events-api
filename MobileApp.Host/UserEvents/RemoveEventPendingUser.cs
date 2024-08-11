@@ -56,11 +56,14 @@ public class RemoveEventPendingUser : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.UsersPending ??= new List<User>();
+            userEvent.UsersPending ??= new List<UserGroup>();
 
-            if (userEvent.UsersPending.Select(u => u.Id).Contains(user.Id))
+            if (userEvent.UsersPending.SelectMany(g => g.Users).ToList().Select(u => u.Id).Contains(user.Id))
             {
-                userEvent.UsersPending.Remove(user);
+                foreach (var group in userEvent.UsersPending)
+                {
+                    group.Users.Remove(user);
+                }
             }
 
             await _db.SaveChangesAsync(cancellationToken);
