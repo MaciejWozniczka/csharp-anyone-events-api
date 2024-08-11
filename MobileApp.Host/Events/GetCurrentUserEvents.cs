@@ -30,6 +30,8 @@ public class GetCurrentUserEvents : ControllerBase
             EventsCooperated = new List<UserEvent>();
             EventsPending = new List<UserEvent>();
             EventsAssigned = new List<UserEvent>();
+            EventsInterested = new List<UserEvent>();
+            EventsSkipped = new List<UserEvent>();
         }
         public string Id { get; set; }
         public List<UserEvent>? EventsCreated { get; set; }
@@ -37,6 +39,8 @@ public class GetCurrentUserEvents : ControllerBase
         public List<UserEvent>? EventsCooperated { get; set; }
         public List<UserEvent>? EventsPending { get; set; }
         public List<UserEvent>? EventsAssigned { get; set; }
+        public List<UserEvent>? EventsInterested { get; set; }
+        public List<UserEvent>? EventsSkipped { get; set; }
     }
 
     public class GetCurrentUserEventsDtoQueryHandler : IRequestHandler<GetCurrentUserEventsQuery, Result<GetCurrentUserEventsDto>>
@@ -63,7 +67,9 @@ public class GetCurrentUserEvents : ControllerBase
                 EventsCooperationPending = currentUser.EventsCooperationPending,
                 EventsCooperated = currentUser.EventsCooperated,
                 EventsPending = currentUser.EventsPending,
-                EventsAssigned = currentUser.EventsAssigned
+                EventsAssigned = currentUser.EventsAssigned,
+                EventsInterested = currentUser.EventsInterested,
+                EventsSkipped = currentUser.EventsSkipped
             };
 
             return Result.Ok(result);

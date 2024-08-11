@@ -1,4 +1,5 @@
 ﻿using MobileApp.Host.EventTypes;
+using MobileApp.Host.Users;
 
 namespace MobileApp.Host.Events;
 
@@ -32,8 +33,11 @@ public class ManageEvent : ControllerBase
         public ManageEventCommand()
         {
             Cooperators = new List<string>();
+            CooperatorsPending = new List<string>();
             UsersPending = new List<string>();
             UsersAssigned = new List<string>();
+            UsersInterested = new List<string>();
+            UsersSkipped = new List<string>();
             AgeFrom = 18;
             AgeTo = 99;
             SexTypes = new List<SexType>();
@@ -48,6 +52,8 @@ public class ManageEvent : ControllerBase
         public List<string> CooperatorsPending { get; set; }
         public List<string> UsersPending { get; set; }
         public List<string> UsersAssigned { get; set; }
+        public List<string> UsersInterested { get; set; }
+        public List<string> UsersSkipped { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
         public int Duration { get; set; }
         public Location Location { get; set; }
@@ -107,7 +113,7 @@ public class ManageEvent : ControllerBase
                     SexTypes = request.SexTypes ?? new List<SexType> { SexType.All },
                     CooperatorsPending = new List<User>(),
                     Cooperators = new List<User>(),
-                    UsersPending = new List<User>(),
+                    UsersPending = new List<UserGroup>(),
                     UsersAssigned = new List<User>()
                 };
 
@@ -133,6 +139,8 @@ public class ManageEvent : ControllerBase
                     .Include(e => e.Cooperators)
                     .Include(e => e.UsersPending)
                     .Include(e => e.UsersAssigned)
+                    .Include(e => e.UsersSkipped)
+                    .Include(e => e.UsersInterested)
                     .FirstOrDefaultAsync(cancellationToken);
 
                 if (userEvent == null)
@@ -202,9 +210,11 @@ public class ManageEvent : ControllerBase
 
                 if (request.UsersPending.Count > 0)
                 {
+                    var eventGroup = new UserGroup();
+
                     foreach (var userId in request.UsersPending)
                     {
-                        if (userEvent.UsersPending.Select(u => u.Id).ToList().Contains(userId))
+                        if (userEvent.UsersPending.SelectMany(g => g.Users).Any(u => u.Id == userId))
                             continue;
 
                         var user = await _db.Users
@@ -214,8 +224,10 @@ public class ManageEvent : ControllerBase
                         if (user == null)
                             continue;
 
-                        userEvent.UsersPending.Add(user);
+                        eventGroup.Users.Add(user);
                     }
+
+                    userEvent.UsersPending.Add(eventGroup);
                 }
 
                 if (request.UsersAssigned.Count > 0)
@@ -233,7 +245,47 @@ public class ManageEvent : ControllerBase
                             continue;
 
                         userEvent.UsersAssigned.Add(user);
-                        userEvent.UsersPending.Remove(user);
+                        
+                        foreach (var group in userEvent.UsersPending)
+                        {
+                            group.Users.Remove(user);
+                        }
+                    }
+                }
+
+                if (request.UsersInterested.Count > 0)
+                {
+                    foreach (var userId in request.UsersInterested)
+                    {
+                        if (userEvent.UsersInterested.Select(u => u.Id).ToList().Contains(userId))
+                            continue;
+
+                        var user = await _db.Users
+                            .Where(u => u.Id == userId && !u.IsDeleted)
+                            .FirstOrDefaultAsync(cancellationToken);
+
+                        if (user == null)
+                            continue;
+
+                        userEvent.UsersInterested.Add(user);
+                    }
+                }
+
+                if (request.UsersSkipped.Count > 0)
+                {
+                    foreach (var userId in request.UsersSkipped)
+                    {
+                        if (userEvent.UsersSkipped.Select(u => u.Id).ToList().Contains(userId))
+                            continue;
+
+                        var user = await _db.Users
+                            .Where(u => u.Id == userId && !u.IsDeleted)
+                            .FirstOrDefaultAsync(cancellationToken);
+
+                        if (user == null)
+                            continue;
+
+                        userEvent.UsersSkipped.Add(user);
                     }
                 }
 
