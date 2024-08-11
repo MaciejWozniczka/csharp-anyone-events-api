@@ -14,20 +14,22 @@ public class AddEventPendingUser : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add pending user group to event")]
     [HttpPost("/api/event/pending/")]
-    public async Task<Result> AddEventPendingUserAsync(List<string> userIds, Guid eventId)
+    public async Task<Result> AddEventPendingUserAsync(List<string> userIds, Guid eventId, string shortText)
     {
-        return await _mediator.Send(new AddEventPendingUserCommand(userIds, eventId));
+        return await _mediator.Send(new AddEventPendingUserCommand(userIds, eventId, shortText));
     }
 
     public class AddEventPendingUserCommand : IRequest<Result>
     {
-        public AddEventPendingUserCommand(List<string> userIds, Guid eventId)
+        public List<string> UserIds { get; set; }
+        public Guid EventId { get; set; }
+        public string ShortText { get; set; }
+        public AddEventPendingUserCommand(List<string> userIds, Guid eventId, string shortText)
         {
             UserIds = userIds;
             EventId = eventId;
+            ShortText = shortText;
         }
-        public List<string> UserIds { get; set; }
-        public Guid EventId { get; set; }
     }
 
     public class AddEventPendingUserCommandHandler : IRequestHandler<AddEventPendingUserCommand, Result>
@@ -51,7 +53,11 @@ public class AddEventPendingUser : ControllerBase
             }
 
             userEvent.UsersPending ??= new List<UserGroup>();
-            var userGroup = new UserGroup();
+
+            var userGroup = new UserGroup
+            {
+                ShortText = request.ShortText
+            };
 
             foreach (var userId in request.UserIds)
             {
