@@ -12,7 +12,7 @@ public class User : IdentityUser
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public int? Age { get; set; }
-    public Country? Country { get; set; }
+    public string? Country { get; set; }
     public Guid? CurrentLocationId { get; set; }
     [ForeignKey("CurrentLocationId")]
     public Location? CurrentLocation { get; set; }
@@ -28,6 +28,8 @@ public class User : IdentityUser
     public DateTimeOffset? DeletingDate { get; set; }
     [InverseProperty("Creator")]
     public List<UserEvent>? EventsCreated { get; set; }
+    public List<UserEvent>? EventsSkipped { get; set; }
+    public List<UserEvent>? EventsInterested { get; set; }
     public List<UserEvent>? EventsCooperationPending { get; set; }
     public List<UserEvent>? EventsCooperated { get; set; }
     public List<UserEvent>? EventsPending { get; set; }
