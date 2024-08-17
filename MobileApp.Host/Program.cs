@@ -15,8 +15,7 @@ services.AddLogging(loggingBuilder =>
     loggingBuilder.AddSerilog(dispose: true);
 });
 
-builder.Host.UseSerilog((host,
-    log) =>
+builder.Host.UseSerilog((host, log) =>
 {
     log.Enrich.FromLogContext();
     log.MinimumLevel.Warning();
@@ -31,13 +30,13 @@ builder.Host.UseSerilog((host,
 
 new MobileApp.Host.Module().GetServices(services, configuration);
 
-//services.AddHangfire(c => c
-//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-//    .UseSimpleAssemblyNameTypeSerializer()
-//    .UseRecommendedSerializerSettings()
-//    .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection"))));
+services.AddHangfire(c => c
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection"))));
 
-//services.AddHangfireServer();
+services.AddHangfireServer();
 
 services.AddSpaStaticFiles(c =>
 {
@@ -80,22 +79,22 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-//app.UseHangfireDashboard("/hangfire", new DashboardOptions
-//{
-//    DashboardTitle = "Hangfire",
-//    Authorization = new[]
-//    {
-//        new HangfireCustomBasicAuthenticationFilter{
-//            User = builder.Configuration.GetSection("HangfireSettings:UserName").Value,
-//            Pass = builder.Configuration.GetSection("HangfireSettings:Password").Value
-//        }
-//    }
-//});
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    DashboardTitle = "Hangfire",
+    Authorization = new[]
+    {
+        new HangfireCustomBasicAuthenticationFilter{
+            User = builder.Configuration.GetSection("HangfireSettings:UserName").Value,
+            Pass = builder.Configuration.GetSection("HangfireSettings:Password").Value
+        }
+    }
+});
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    //endpoints.MapHangfireDashboard();
+    endpoints.MapHangfireDashboard();
 });
 
 app.UseSwagger();
@@ -115,7 +114,7 @@ app.UseSpa(spa =>
 
 GlobalConfiguration.Configuration.UseSerilogLogProvider();
 
-//BackgroundJob.Enqueue<ApplicationStart>(s => s.Start());
+BackgroundJob.Enqueue<ApplicationStart>(s => s.Start());
 
 new MobileApp.Host.Module().Run(app.Services);
 
