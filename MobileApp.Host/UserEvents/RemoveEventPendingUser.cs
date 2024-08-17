@@ -12,19 +12,19 @@ public class RemoveEventPendingUser : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove pending user from event")]
     [HttpDelete("/api/event/pending/")]
-    public async Task<Result> RemoveEventPendingUserAsync(string userId, Guid eventId)
+    public async Task<Result> RemoveEventPendingUserAsync(List<string> userIds, Guid eventId)
     {
-        return await _mediator.Send(new RemoveEventPendingUserCommand(userId, eventId));
+        return await _mediator.Send(new RemoveEventPendingUserCommand(userIds, eventId));
     }
 
     public class RemoveEventPendingUserCommand : IRequest<Result>
     {
-        public RemoveEventPendingUserCommand(string userId, Guid eventId)
+        public RemoveEventPendingUserCommand(List<string> userIds, Guid eventId)
         {
-            UserId = userId;
+            UserIds = userIds;
             EventId = eventId;
         }
-        public string UserId { get; set; }
+        public List<string> UserIds { get; set; }
         public Guid EventId { get; set; }
     }
 
@@ -41,6 +41,7 @@ public class RemoveEventPendingUser : ControllerBase
             var userEvent = await _db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
                 .Include(userEvent => userEvent.UsersPending)
+                .Include(userEvent => userEvent.GroupsPending)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (userEvent == null)
@@ -49,21 +50,24 @@ public class RemoveEventPendingUser : ControllerBase
             }
 
             var user = await _db.Users
-                .FirstOrDefaultAsync(u => u.Id == request.UserId && u.IsDeleted == false, cancellationToken);
+                .FirstOrDefaultAsync(u => request.UserIds.Contains(u.Id) && u.IsDeleted == false, cancellationToken);
 
             if (user == null)
             {
-                return Result.NotFound("User not found");
+                return Result.NotFound("Users not found");
             }
 
-            userEvent.UsersPending ??= new List<UserGroup>();
+            userEvent.GroupsPending ??= new List<UserGroup>();
+            userEvent.UsersPending ??= new List<User>();
 
-            if (userEvent.UsersPending.SelectMany(g => g.Users).ToList().Select(u => u.Id).Contains(user.Id))
+            if (userEvent.GroupsPending.SelectMany(g => g.Users).Select(u => u.UserId).Contains(user.Id))
             {
-                foreach (var group in userEvent.UsersPending)
+                foreach (var group in userEvent.GroupsPending.Where(g => g.Users.Select(u => u.UserId).Contains(user.Id)))
                 {
-                    group.Users.Remove(user);
+                    group.Users.Remove(group.Users.FirstOrDefault(pu => pu.UserId == user.Id));
                 }
+
+                userEvent.UsersPending.Remove(user);
             }
 
             await _db.SaveChangesAsync(cancellationToken);

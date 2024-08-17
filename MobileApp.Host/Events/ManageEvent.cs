@@ -32,12 +32,6 @@ public class ManageEvent : ControllerBase
     {
         public ManageEventCommand()
         {
-            Cooperators = new List<string>();
-            CooperatorsPending = new List<string>();
-            UsersPending = new List<string>();
-            UsersAssigned = new List<string>();
-            UsersInterested = new List<string>();
-            UsersSkipped = new List<string>();
             AgeFrom = 18;
             AgeTo = 99;
             SexTypes = new List<SexType>();
@@ -48,12 +42,7 @@ public class ManageEvent : ControllerBase
         public Guid EventTypeId { get; set; }
         public Guid CategoryId { get; set; }
         public string CreatorId { get; set; }
-        public List<string> Cooperators { get; set; }
         public List<string> CooperatorsPending { get; set; }
-        public List<string> UsersPending { get; set; }
-        public List<string> UsersAssigned { get; set; }
-        public List<string> UsersInterested { get; set; }
-        public List<string> UsersSkipped { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
         public int Duration { get; set; }
         public Location Location { get; set; }
@@ -113,8 +102,10 @@ public class ManageEvent : ControllerBase
                     SexTypes = request.SexTypes ?? new List<SexType> { SexType.All },
                     CooperatorsPending = new List<User>(),
                     Cooperators = new List<User>(),
-                    UsersPending = new List<UserGroup>(),
-                    UsersAssigned = new List<User>()
+                    UsersPending = new List<User>(),
+                    UsersAssigned = new List<User>(),
+                    UsersInterested = new List<User>(),
+                    UsersSkipped = new List<User>()
                 };
 
                 foreach (var userId in request.CooperatorsPending)
@@ -134,26 +125,12 @@ public class ManageEvent : ControllerBase
             else
             {
                 userEvent = await _db.Events
-                    .Where(c => c.Id == request.Id)
-                    .Include(e => e.CooperatorsPending)
-                    .Include(e => e.Cooperators)
-                    .Include(e => e.UsersPending)
-                    .Include(e => e.UsersAssigned)
-                    .Include(e => e.UsersSkipped)
-                    .Include(e => e.UsersInterested)
+                    .Where(c => c.Id == request.Id && c.IsDeleted == false)
                     .FirstOrDefaultAsync(cancellationToken);
 
                 if (userEvent == null)
                 {
                     return Result.NotFound<Guid>(request.Id);
-                }
-
-                currentUserEvents.Remove(userEvent);
-
-                if (currentUserEvents.Any(e => (e.EventDateTime >= request.EventDateTime && e.EventDateTime.DateTime.AddMinutes(e.Duration) <= request.EventDateTime)
-                                               || (e.EventDateTime.DateTime.AddMinutes(e.Duration) <= request.EventDateTime && e.EventDateTime >= request.EventDateTime)))
-                {
-                    return Result.BadRequest<Guid>("Użytkownik jest już zapisany na wydarzenia w tym terminie");
                 }
 
                 if (request.EventTypeId != null) userEvent.EventTypeId = request.EventTypeId;
@@ -170,124 +147,6 @@ public class ManageEvent : ControllerBase
                 if (request.AgeFrom != null) userEvent.AgeFrom = request.AgeFrom;
                 if (request.AgeTo != null) userEvent.AgeTo = request.AgeTo;
                 if (request.SexTypes != null) userEvent.SexTypes = request.SexTypes;
-
-                if (request.Cooperators.Count > 0)
-                {
-                    foreach (var userId in request.CooperatorsPending)
-                    {
-                        if (userEvent.CooperatorsPending.Select(u => u.Id).ToList().Contains(userId))
-                            continue;
-
-                        var user = await _db.Users
-                            .Where(u => u.Id == userId && !u.IsDeleted)
-                            .FirstOrDefaultAsync(cancellationToken);
-
-                        if (user == null)
-                            continue;
-
-                        userEvent.CooperatorsPending.Add(user);
-                    }
-                }
-
-                if (request.Cooperators.Count > 0)
-                {
-                    foreach (var userId in request.Cooperators)
-                    {
-                        if (userEvent.Cooperators.Select(u => u.Id).ToList().Contains(userId))
-                            continue;
-
-                        var user = await _db.Users
-                            .Where(u => u.Id == userId && !u.IsDeleted)
-                            .FirstOrDefaultAsync(cancellationToken);
-
-                        if (user == null)
-                            continue;
-
-                        userEvent.Cooperators.Add(user);
-                        userEvent.CooperatorsPending.Remove(user);
-                    }
-                }
-
-                if (request.UsersPending.Count > 0)
-                {
-                    var eventGroup = new UserGroup();
-
-                    foreach (var userId in request.UsersPending)
-                    {
-                        if (userEvent.UsersPending.SelectMany(g => g.Users).Any(u => u.Id == userId))
-                            continue;
-
-                        var user = await _db.Users
-                            .Where(u => u.Id == userId && !u.IsDeleted)
-                            .FirstOrDefaultAsync(cancellationToken);
-
-                        if (user == null)
-                            continue;
-
-                        eventGroup.Users.Add(user);
-                    }
-
-                    userEvent.UsersPending.Add(eventGroup);
-                }
-
-                if (request.UsersAssigned.Count > 0)
-                {
-                    foreach (var userId in request.UsersAssigned)
-                    {
-                        if (userEvent.UsersAssigned.Select(u => u.Id).ToList().Contains(userId))
-                            continue;
-
-                        var user = await _db.Users
-                            .Where(u => u.Id == userId && !u.IsDeleted)
-                            .FirstOrDefaultAsync(cancellationToken);
-
-                        if (user == null)
-                            continue;
-
-                        userEvent.UsersAssigned.Add(user);
-                        
-                        foreach (var group in userEvent.UsersPending)
-                        {
-                            group.Users.Remove(user);
-                        }
-                    }
-                }
-
-                if (request.UsersInterested.Count > 0)
-                {
-                    foreach (var userId in request.UsersInterested)
-                    {
-                        if (userEvent.UsersInterested.Select(u => u.Id).ToList().Contains(userId))
-                            continue;
-
-                        var user = await _db.Users
-                            .Where(u => u.Id == userId && !u.IsDeleted)
-                            .FirstOrDefaultAsync(cancellationToken);
-
-                        if (user == null)
-                            continue;
-
-                        userEvent.UsersInterested.Add(user);
-                    }
-                }
-
-                if (request.UsersSkipped.Count > 0)
-                {
-                    foreach (var userId in request.UsersSkipped)
-                    {
-                        if (userEvent.UsersSkipped.Select(u => u.Id).ToList().Contains(userId))
-                            continue;
-
-                        var user = await _db.Users
-                            .Where(u => u.Id == userId && !u.IsDeleted)
-                            .FirstOrDefaultAsync(cancellationToken);
-
-                        if (user == null)
-                            continue;
-
-                        userEvent.UsersSkipped.Add(user);
-                    }
-                }
 
                 _db.Update(userEvent);
             }

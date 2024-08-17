@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace MobileApp.Host.Events;
 
 public class UserEvent : BaseModel
@@ -9,8 +7,11 @@ public class UserEvent : BaseModel
         IsActive = true;
         Cooperators = new List<User>();
         CooperatorsPending = new List<User>();
-        UsersPending = new List<UserGroup>();
+        UsersPending = new List<User>();
+        GroupsPending = new List<UserGroup>();
         UsersAssigned = new List<User>();
+        UsersInterested = new List<User>();
+        UsersSkipped = new List<User>();
         SexTypes = new List<SexType>();
     }
     public Guid EventTypeId { get; set; }
@@ -20,7 +21,8 @@ public class UserEvent : BaseModel
     public User Creator { get; set; }
     public List<User>? Cooperators { get; set; }
     public List<User>? CooperatorsPending { get; set; }
-    public List<UserGroup>? UsersPending { get; set; }
+    public List<User>? UsersPending { get; set; }
+    public List<UserGroup>? GroupsPending { get; set; }
     public List<User>? UsersAssigned { get; set; }
     public List<User>? UsersInterested { get; set; }
     public List<User>? UsersSkipped { get; set; }

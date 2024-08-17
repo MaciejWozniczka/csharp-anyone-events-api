@@ -1,4 +1,4 @@
-﻿using MobileApp.Host.Users;
+﻿ using MobileApp.Host.Users;
 
 namespace MobileApp.Host.UserEvents;
 
@@ -44,6 +44,7 @@ public class AddEventPendingUser : ControllerBase
         {
             var userEvent = await _db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
+                .Include(userEvent => userEvent.GroupsPending)
                 .Include(userEvent => userEvent.UsersPending)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -52,32 +53,32 @@ public class AddEventPendingUser : ControllerBase
                 return Result.NotFound("Event not found");
             }
 
-            userEvent.UsersPending ??= new List<UserGroup>();
+            userEvent.GroupsPending ??= new List<UserGroup>();
+            userEvent.UsersPending ??= new List<User>();
 
             var userGroup = new UserGroup
             {
                 ShortText = request.ShortText
             };
 
+            var users = new List<User>();
+
             foreach (var userId in request.UserIds)
             {
                 var user = await _db.Users
                     .FirstOrDefaultAsync(u => u.Id == userId && u.IsDeleted == false, cancellationToken);
 
-                if (user == null)
+                if (user == null || userEvent.UsersPending.Contains(user) || userEvent.GroupsPending.SelectMany(g => g.Users).Select(u => u.UserId).Contains(userId))
                 {
-                    return Result.NotFound("User not found");
+                    continue;
                 }
 
-                if (userEvent.UsersPending.SelectMany(g => g.Users).Any(u => u.Id == user.Id))
-                {
-                    return Result.Ok("User already added");
-                }
-
-                userGroup.Users.Add(user);
+                userGroup.Users.Add(new PendingUser { UserId = user.Id });
+                users.Add(user);
             }
 
-            userEvent.UsersPending.Add(userGroup);
+            userEvent.GroupsPending.Add(userGroup);
+            userEvent.UsersPending.AddRange(users);
             await _db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();
