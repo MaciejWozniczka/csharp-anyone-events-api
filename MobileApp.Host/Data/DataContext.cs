@@ -54,6 +54,11 @@ public class DataContext : IdentityDbContext<User>
             .WithMany(u => u.EventsSkipped)
             .UsingEntity(j => j.ToTable("EventUserSkipped"));
 
+        modelBuilder.Entity<UserEvent>()
+            .HasMany(e => e.UsersPending)
+            .WithMany(u => u.EventsPending)
+            .UsingEntity(j => j.ToTable("EventUserPending"));
+
         base.OnModelCreating(modelBuilder);
     }
 
