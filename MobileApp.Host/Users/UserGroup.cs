@@ -1,7 +1,14 @@
 ﻿namespace MobileApp.Host.Users;
 
-public class UserGroup
+public class UserGroup : BaseModel
 {
-    public List<User> Users { get; set; }
+    public List<PendingUser> Users { get; set; }
     public string ShortText { get; set; }
+    public bool IsVisible { get; set; } = false;
+}
+
+public class PendingUser
+{
+    public string UserId { get; set; }
+    public bool Accepted { get; set; } = false;
 }
