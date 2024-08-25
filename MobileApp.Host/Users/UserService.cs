@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using MobileApp.Host.Infrastructure;
 using System.Text;
 using TokenOption = MobileApp.Host.Infrastructure.TokenOption;
 
@@ -60,10 +59,12 @@ public class UserService : IUserService
                 return Result.Ok(Guid.Parse(newUser.Id));
             }
 
-            return Result.BadRequest<Guid>("Failed to create the user");
+            return Result.BadRequest<Guid>($"Failed to create the user - {result.Errors.FirstOrDefault().Description}");
         }
-
-        return Result.Ok(Guid.Parse(existingUser.Id));
+        else
+        {
+            return Result.BadRequest<Guid>($"The user already exists");
+        }
     }
 
     public async Task<Result> ChangePassword(string currentPassword, string newPassword, CancellationToken cancellationToken)
