@@ -52,7 +52,7 @@ public class Module : IModule
 
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseNpgsql("Host=localhost;Database=MobileApp;Username=postgres;Password=jG1cv1L81%8Y;");
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 

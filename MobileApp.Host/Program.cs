@@ -88,6 +88,6 @@ app.UseSpa(spa =>
     }
 });
 
-new MobileApp.Host.Module().Run(app.Services);
+await new MobileApp.Host.Module().Run(app.Services);
 
 app.Run();
