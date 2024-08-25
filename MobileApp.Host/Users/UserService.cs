@@ -90,7 +90,7 @@ public class UserService : IUserService
     public async Task<Result<TokenDto>> CreateToken(string email, string password, CancellationToken cancellationToken)
     {
         var user = await _db.Users
-            .Where(u => u.UserName == email)
+            .Where(u => u.UserName.ToLower() == email.ToLower())
             .FirstOrDefaultAsync(cancellationToken);
 
         if (user == null)
