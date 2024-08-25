@@ -1,6 +1,3 @@
-using Hangfire;
-using Hangfire.PostgreSql;
-using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Diagnostics;
 using Serilog.Context;
 
@@ -29,14 +26,6 @@ builder.Host.UseSerilog((host, log) =>
 });
 
 new MobileApp.Host.Module().GetServices(services, configuration);
-
-services.AddHangfire(c => c
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection"))));
-
-services.AddHangfireServer();
 
 services.AddSpaStaticFiles(c =>
 {
@@ -79,22 +68,9 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-app.UseHangfireDashboard("/hangfire", new DashboardOptions
-{
-    DashboardTitle = "Hangfire",
-    Authorization = new[]
-    {
-        new HangfireCustomBasicAuthenticationFilter{
-            User = builder.Configuration.GetSection("HangfireSettings:UserName").Value,
-            Pass = builder.Configuration.GetSection("HangfireSettings:Password").Value
-        }
-    }
-});
-
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapHangfireDashboard();
 });
 
 app.UseSwagger();
@@ -111,10 +87,6 @@ app.UseSpa(spa =>
         spa.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
     }
 });
-
-GlobalConfiguration.Configuration.UseSerilogLogProvider();
-
-BackgroundJob.Enqueue<ApplicationStart>(s => s.Start());
 
 new MobileApp.Host.Module().Run(app.Services);
 
