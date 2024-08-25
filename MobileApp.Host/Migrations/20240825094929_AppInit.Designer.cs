@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MobileApp.Host.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240718122209_Initialization")]
-    partial class Initialization
+    [Migration("20240825094929_AppInit")]
+    partial class AppInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -472,6 +472,38 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("UserFilters");
                 });
 
+            modelBuilder.Entity("MobileApp.Host.Users.PendingUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Accepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("UserGroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserGroupId");
+
+                    b.ToTable("PendingUser");
+                });
+
             modelBuilder.Entity("MobileApp.Host.Users.User", b =>
                 {
                     b.Property<string>("Id")
@@ -583,6 +615,38 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("MobileApp.Host.Users.UserGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ShortText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserEventId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserEventId");
+
+                    b.ToTable("UserGroup");
+                });
+
             modelBuilder.Entity("UserUserEvent", b =>
                 {
                     b.Property<string>("CooperatorsId")
@@ -615,21 +679,6 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("UserUserEvent2", b =>
                 {
-                    b.Property<Guid>("EventsPendingId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("UsersPendingId")
-                        .HasColumnType("text");
-
-                    b.HasKey("EventsPendingId", "UsersPendingId");
-
-                    b.HasIndex("UsersPendingId");
-
-                    b.ToTable("EventUserPending", (string)null);
-                });
-
-            modelBuilder.Entity("UserUserEvent3", b =>
-                {
                     b.Property<Guid>("EventsAssignedId")
                         .HasColumnType("uuid");
 
@@ -641,6 +690,51 @@ namespace MobileApp.Host.Migrations
                     b.HasIndex("UsersAssignedId");
 
                     b.ToTable("EventUserAssigned", (string)null);
+                });
+
+            modelBuilder.Entity("UserUserEvent3", b =>
+                {
+                    b.Property<Guid>("EventsInterestedId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UsersInterestedId")
+                        .HasColumnType("text");
+
+                    b.HasKey("EventsInterestedId", "UsersInterestedId");
+
+                    b.HasIndex("UsersInterestedId");
+
+                    b.ToTable("EventUserInterested", (string)null);
+                });
+
+            modelBuilder.Entity("UserUserEvent4", b =>
+                {
+                    b.Property<Guid>("EventsSkippedId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UsersSkippedId")
+                        .HasColumnType("text");
+
+                    b.HasKey("EventsSkippedId", "UsersSkippedId");
+
+                    b.HasIndex("UsersSkippedId");
+
+                    b.ToTable("EventUserSkipped", (string)null);
+                });
+
+            modelBuilder.Entity("UserUserEvent5", b =>
+                {
+                    b.Property<Guid>("EventsPendingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UsersPendingId")
+                        .HasColumnType("text");
+
+                    b.HasKey("EventsPendingId", "UsersPendingId");
+
+                    b.HasIndex("UsersPendingId");
+
+                    b.ToTable("EventUserPending", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -758,6 +852,13 @@ namespace MobileApp.Host.Migrations
                     b.Navigation("Location");
                 });
 
+            modelBuilder.Entity("MobileApp.Host.Users.PendingUser", b =>
+                {
+                    b.HasOne("MobileApp.Host.Users.UserGroup", null)
+                        .WithMany("Users")
+                        .HasForeignKey("UserGroupId");
+                });
+
             modelBuilder.Entity("MobileApp.Host.Users.User", b =>
                 {
                     b.HasOne("MobileApp.Host.Locations.Location", "CurrentLocation")
@@ -765,6 +866,13 @@ namespace MobileApp.Host.Migrations
                         .HasForeignKey("CurrentLocationId");
 
                     b.Navigation("CurrentLocation");
+                });
+
+            modelBuilder.Entity("MobileApp.Host.Users.UserGroup", b =>
+                {
+                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                        .WithMany("GroupsPending")
+                        .HasForeignKey("UserEventId");
                 });
 
             modelBuilder.Entity("UserUserEvent", b =>
@@ -801,21 +909,6 @@ namespace MobileApp.Host.Migrations
                 {
                     b.HasOne("MobileApp.Host.Events.UserEvent", null)
                         .WithMany()
-                        .HasForeignKey("EventsPendingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MobileApp.Host.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersPendingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("UserUserEvent3", b =>
-                {
-                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
-                        .WithMany()
                         .HasForeignKey("EventsAssignedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -827,14 +920,69 @@ namespace MobileApp.Host.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UserUserEvent3", b =>
+                {
+                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                        .WithMany()
+                        .HasForeignKey("EventsInterestedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MobileApp.Host.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersInterestedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserUserEvent4", b =>
+                {
+                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                        .WithMany()
+                        .HasForeignKey("EventsSkippedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MobileApp.Host.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersSkippedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserUserEvent5", b =>
+                {
+                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                        .WithMany()
+                        .HasForeignKey("EventsPendingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MobileApp.Host.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersPendingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MobileApp.Host.Categories.Category", b =>
                 {
                     b.Navigation("EventTypes");
                 });
 
+            modelBuilder.Entity("MobileApp.Host.Events.UserEvent", b =>
+                {
+                    b.Navigation("GroupsPending");
+                });
+
             modelBuilder.Entity("MobileApp.Host.Users.User", b =>
                 {
                     b.Navigation("EventsCreated");
+                });
+
+            modelBuilder.Entity("MobileApp.Host.Users.UserGroup", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }
