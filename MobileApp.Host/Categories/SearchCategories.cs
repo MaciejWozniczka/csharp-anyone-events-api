@@ -9,7 +9,7 @@ public class SearchCategories : ControllerBase
         _mediator = mediator;
     }
 
-    //[Authorize]
+    [Authorize]
     [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Search categories by text")]
     [HttpGet("/api/categories/{text}")]
     public async Task<Result<List<SearchCategoriesDto>>> SearchCategoriesAsync(string text)
