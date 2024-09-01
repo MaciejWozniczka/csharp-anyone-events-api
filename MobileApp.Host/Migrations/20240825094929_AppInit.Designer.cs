@@ -531,7 +531,7 @@ namespace MobileApp.Host.Migrations
                     b.Property<DateTimeOffset?>("DeletingDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Desciption")
+                    b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("Email")

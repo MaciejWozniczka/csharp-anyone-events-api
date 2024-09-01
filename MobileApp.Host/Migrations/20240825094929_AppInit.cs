@@ -144,7 +144,7 @@ namespace MobileApp.Host.Migrations
                     Nationality = table.Column<string>(type: "text", nullable: true),
                     Sex = table.Column<int>(type: "integer", nullable: true),
                     Picture = table.Column<string>(type: "text", nullable: true),
-                    Desciption = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     PhoneNumber = table.Column<int>(type: "integer", nullable: true),
                     PhoneCountryCode = table.Column<string>(type: "text", nullable: true),
                     UserType = table.Column<int>(type: "integer", nullable: true),
