@@ -6,6 +6,7 @@ public interface ICurrentUserAccessor
     Task<User?> GetCurrentUser();
     Task<User?> GetCurrentUserWithEvents();
     Task<List<UserEvent>?> GetCurrentUserEvents();
+    Task<List<UserEvent>?> GetCurrentUserWithEventsByType(Events.EventTypes type);
 }
 
 public class CurrentUserAccessor : ICurrentUserAccessor
@@ -52,6 +53,55 @@ public class CurrentUserAccessor : ICurrentUserAccessor
             .Include(u => u.EventsInterested)
             .Include(u => u.EventsSkipped)
             .FirstOrDefaultAsync();
+    }
+    public async Task<List<UserEvent>> GetCurrentUserWithEventsByType(Events.EventTypes type)
+    {
+        var emailClaim = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+
+        if (emailClaim == null) return null;
+
+        var userEvents = new User();
+
+        switch (type)
+        {
+            case Events.EventTypes.EventsCreated:
+                userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+                    .Include(u => u.EventsCreated)
+                    .FirstOrDefaultAsync();
+                return userEvents.EventsCreated;
+            case Events.EventTypes.EventsCooperationPending:
+                userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+                    .Include(u => u.EventsCooperationPending)
+                    .FirstOrDefaultAsync();
+                return userEvents.EventsCooperationPending;
+            case Events.EventTypes.EventsCooperated:
+                userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+                    .Include(u => u.EventsCooperated)
+                    .FirstOrDefaultAsync();
+                return userEvents.EventsCooperated;
+            case Events.EventTypes.EventsPending:
+                userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+                    .Include(u => u.EventsPending)
+                    .FirstOrDefaultAsync();
+                return userEvents.EventsPending;
+            case Events.EventTypes.EventsAssigned:
+                userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+                    .Include(u => u.EventsAssigned)
+                    .FirstOrDefaultAsync();
+                return userEvents.EventsAssigned;
+            case Events.EventTypes.EventsInterested:
+                userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+                    .Include(u => u.EventsInterested)
+                    .FirstOrDefaultAsync();
+                return userEvents.EventsInterested;
+            case Events.EventTypes.EventsSkipped:
+                userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
+                    .Include(u => u.EventsSkipped)
+                    .FirstOrDefaultAsync();
+                return userEvents.EventsSkipped;
+            default:
+                return new List<UserEvent>();
+        }
     }
 
     public async Task<List<UserEvent>?> GetCurrentUserEvents()
