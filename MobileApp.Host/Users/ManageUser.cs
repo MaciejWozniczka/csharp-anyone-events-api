@@ -46,7 +46,9 @@ public class ManageUser : ControllerBase
         {
             var userId = request.Id.ToString();
 
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted, cancellationToken);
+            var user = await _db.Users
+                .Where(u => u.Id == userId && !u.IsDeleted)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
             {
