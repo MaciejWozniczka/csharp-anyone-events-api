@@ -19,7 +19,7 @@ public class User : IdentityUser
     public string? Nationality { get; set; }
     public SexType? Sex { get; set; }
     public string? Picture { get; set; }
-    public string? Desciption { get; set; }
+    public string? Description { get; set; }
     public int? PhoneNumber { get; set; }
     public string? PhoneCountryCode { get; set; }
     public UserType? UserType { get; set; }

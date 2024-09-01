@@ -32,7 +32,7 @@ public class GetCurrentUser : ControllerBase
         public string? Country { get; set; }
         public SexType? Sex { get; set; }
         public string? Picture { get; set; }
-        public string? Desciption { get; set; }
+        public string? Description { get; set; }
         public int? PhoneNumber { get; set; }
         public string? PhoneCountryCode { get; set; }
         public UserType? UserType { get; set; }
@@ -64,7 +64,7 @@ public class GetCurrentUser : ControllerBase
                 Country = user.Country,
                 Sex = user.Sex,
                 Picture = user.Picture,
-                Desciption = user.Desciption,
+                Description = user.Description,
                 PhoneNumber = user.PhoneNumber,
                 PhoneCountryCode = user.PhoneCountryCode,
                 UserType = user.UserType

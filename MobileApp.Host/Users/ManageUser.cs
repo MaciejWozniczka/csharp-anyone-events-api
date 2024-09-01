@@ -1,7 +1,4 @@
-﻿using MobileApp.Host.Events;
-using static MobileApp.Host.Events.ManageEvent;
-
-namespace MobileApp.Host.Users;
+﻿namespace MobileApp.Host.Users;
 
 [ApiController]
 public class ManageUser : ControllerBase
@@ -30,9 +27,8 @@ public class ManageUser : ControllerBase
         public string? Country { get; set; }
         public string? Nationality { get; set; }
         public SexType? Sex { get; set; }
-        public List<string>? Languages { get; set; }
         public string? Picture { get; set; }
-        public string? Desciption { get; set; }
+        public string? Description { get; set; }
         public int? PhoneNumber { get; set; }
         public string? PhoneCountryCode { get; set; }
         public UserType? UserType { get; set; }
@@ -64,7 +60,7 @@ public class ManageUser : ControllerBase
             if (request.Nationality != null) user.Nationality = request.Nationality;
             if (request.Sex != null) user.Sex = request.Sex;
             if (request.Picture != null) user.Picture = request.Picture;
-            if (request.Desciption != null) user.Desciption = request.Desciption;
+            if (request.Description != null) user.Description = request.Description;
             if (request.PhoneCountryCode != null) user.PhoneCountryCode = request.PhoneCountryCode;
             if (request.PhoneNumber != null) user.PhoneNumber = request.PhoneNumber;
             if (request.UserType != null) user.UserType = request.UserType;
