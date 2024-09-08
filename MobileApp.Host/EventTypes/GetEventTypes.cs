@@ -27,7 +27,6 @@ public class GetEventTypes : ControllerBase
         public Guid CategoryId { get; set; }
         public string Name { get; set; }
         public string? Type { get; set; }
-        public string? Picture { get; set; }
     }
 
     public class MapperProfile : Profile

@@ -26,7 +26,6 @@ public class GetCategories : ControllerBase
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
-        public string? Picture { get; set; }
     }
 
     public class MapperProfile : Profile
