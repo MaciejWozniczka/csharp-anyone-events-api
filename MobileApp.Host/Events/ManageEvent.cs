@@ -1,7 +1,4 @@
-﻿using MobileApp.Host.EventTypes;
-using MobileApp.Host.Users;
-
-namespace MobileApp.Host.Events;
+﻿namespace MobileApp.Host.Events;
 
 [ApiController]
 public class ManageEvent : ControllerBase

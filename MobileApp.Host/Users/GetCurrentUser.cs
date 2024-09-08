@@ -1,6 +1,4 @@
-﻿using static MobileApp.Host.EventTypes.GetEventTypesByCategoryId;
-
-namespace MobileApp.Host.Users;
+﻿namespace MobileApp.Host.Users;
 
 [ApiController]
 public class GetCurrentUser : ControllerBase

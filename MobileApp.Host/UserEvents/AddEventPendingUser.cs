@@ -1,6 +1,4 @@
-﻿ using MobileApp.Host.Users;
-
-namespace MobileApp.Host.UserEvents;
+﻿ namespace MobileApp.Host.UserEvents;
 
 [ApiController]
 public class AddEventPendingUser : ControllerBase

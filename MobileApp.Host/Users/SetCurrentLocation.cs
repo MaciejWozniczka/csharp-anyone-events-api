@@ -1,9 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using MobileApp.Host.Events;
-using static MobileApp.Host.Events.ManageEvent;
-using static MobileApp.Host.Users.ManageUser;
-
-namespace MobileApp.Host.Users;
+﻿namespace MobileApp.Host.Users;
 
 [ApiController]
 public class SetCurrentLocation : ControllerBase

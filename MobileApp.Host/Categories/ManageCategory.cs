@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Users;
-
-namespace MobileApp.Host.Categories;
+﻿namespace MobileApp.Host.Categories;
 
 [ApiController]
 public class ManageCategory : ControllerBase

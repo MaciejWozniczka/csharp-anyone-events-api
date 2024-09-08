@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace MobileApp.Host.Locations;
+﻿namespace MobileApp.Host.Locations;
 
 public class Location : BaseModel
 {

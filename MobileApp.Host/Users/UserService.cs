@@ -1,4 +1,3 @@
-using MobileApp.Host.Infrastructure;
 using System.Text;
 using TokenOption = MobileApp.Host.Infrastructure.TokenOption;
 

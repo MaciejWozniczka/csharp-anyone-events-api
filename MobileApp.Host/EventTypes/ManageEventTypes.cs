@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Categories;
-
-namespace MobileApp.Host.EventTypes;
+﻿namespace MobileApp.Host.EventTypes;
 
 [ApiController]
 public class ManageEventTypes : ControllerBase
