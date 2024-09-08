@@ -56,7 +56,8 @@ public class AddEventPendingUser : ControllerBase
 
             var userGroup = new UserGroup
             {
-                ShortText = request.ShortText
+                ShortText = request.ShortText,
+                IsVisible = request.UserIds.Count == 1
             };
 
             var users = new List<User>();
