@@ -10,5 +10,5 @@ public class UserGroup : BaseModel
 public class PendingUser : BaseModel
 {
     public string UserId { get; set; }
-    public bool Accepted { get; set; } = false;
+    public bool? Accepted { get; set; }
 }
