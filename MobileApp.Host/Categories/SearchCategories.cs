@@ -30,7 +30,7 @@ public class SearchCategories : ControllerBase
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string? Type { get; set; }
+        public string Type { get; set; }
     }
 
     public class SearchCategoriesQueryHandler : IRequestHandler<SearchCategoriesQuery, Result<List<SearchCategoriesDto>>>
@@ -43,7 +43,7 @@ public class SearchCategories : ControllerBase
 
         public async Task<Result<List<SearchCategoriesDto>>> Handle(SearchCategoriesQuery request, CancellationToken cancellationToken)
         {
-            if (request.Text.Length >= 2)
+            if (request.Text != null && request.Text.Length >= 2)
             {
                 var categories = await _db.Categories
                     .Where(c => c.IsDeleted == false 
@@ -57,7 +57,7 @@ public class SearchCategories : ControllerBase
                     .ToListAsync(cancellationToken);
 
                 var eventTypes = await _db.EventTypes
-                    .Where(c => c.IsDeleted == false
+                    .Where(c => c.IsDeleted == false 
                                 && c.Name.ToLower().Contains(request.Text.ToLower()))
                     .Select(c => new SearchCategoriesDto
                     {
