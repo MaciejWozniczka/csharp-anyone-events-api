@@ -63,7 +63,7 @@ public class ApproveEventPendingUserToGroup : ControllerBase
 
             userEvent.GroupsPending
                 .SelectMany(userGroup => userGroup.Users)
-                .Where(user => user.UserId == currentUser.Id)
+                .Where(user => user.UserId == currentUser.Id && user.IsDeleted == false)
                 .ToList()
                 .ForEach(user => user.Accepted = true);
 
