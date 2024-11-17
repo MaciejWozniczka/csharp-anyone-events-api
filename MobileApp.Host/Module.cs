@@ -12,6 +12,12 @@ public class Module : IModule
 {
     public void GetServices(IServiceCollection services, ConfigurationManager configuration)
     {
+        services.AddDbContext<DataContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
+
         services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,12 +55,6 @@ public class Module : IModule
                 cfg.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<DataContext>();
-
-        services.AddDbContext<DataContext>(options =>
-        {
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        });
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddMediatR(typeof(Program));

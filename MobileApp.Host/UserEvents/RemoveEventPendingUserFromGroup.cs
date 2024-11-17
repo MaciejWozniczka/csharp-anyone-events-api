@@ -11,7 +11,7 @@ public class RemoveEventPendingUserFromGroup : ControllerBase
 
     [Authorize]
     [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove user from pending group in event")]
-    [HttpPost("/api/event/pending/reject")]
+    [HttpDelete("/api/event/pending/reject")]
     public async Task<Result> RemoveEventPendingUserFromGroupAsync(Guid groupId, Guid eventId)
     {
         return await _mediator.Send(new RemoveEventPendingUserFromGroupCommand(groupId, eventId));
