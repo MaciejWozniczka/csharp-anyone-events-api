@@ -62,7 +62,7 @@ public class GetCurrentUser : ControllerBase
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Age = user.Age,
+                Age = user.CalculateAge(),
                 Nationality = new CultureInfo(user.Nationality ?? "").NativeName,
                 Languages = user.Languages != null ? user.Languages.Select(language => new CultureInfo(language ?? "").NativeName).ToList() : new List<string>(),
                 Sex = user.Sex,

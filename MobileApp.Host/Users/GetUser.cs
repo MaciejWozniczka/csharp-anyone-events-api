@@ -63,12 +63,12 @@ public class GetUser : ControllerBase
                 return Result.NotFound<GetUserDto>("User not found");
             }
 
-            var result = new GetUserDto()
+            var result = new GetUserDto
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Age = user.Age,
+                Age = user.CalculateAge(),
                 Nationality = new CultureInfo(user.Nationality ?? "").NativeName,
                 Languages = user.Languages != null ? user.Languages.Select(language => new CultureInfo(language ?? "").NativeName).ToList() : new List<string>(),
                 Sex = user.Sex,

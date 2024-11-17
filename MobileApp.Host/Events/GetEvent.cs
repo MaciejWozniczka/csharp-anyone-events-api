@@ -112,7 +112,7 @@ public class GetEvent : ControllerBase
                         Id = e.CreatorId,
                         FirstName = e.Creator.FirstName,
                         LastName = e.Creator.LastName,
-                        Age = e.Creator.Age,
+                        Age = e.Creator.CalculateAge(),
                         Nationality = e.Creator.Nationality,
                         Sex = e.Creator.Sex,
                         Picture = e.Creator.Picture
@@ -123,7 +123,7 @@ public class GetEvent : ControllerBase
                             Id = u.Id,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
-                            Age = u.Age,
+                            Age = u.CalculateAge(),
                             Nationality = e.Creator.Nationality,
                             Sex = u.Sex,
                             Picture = u.Picture
@@ -135,7 +135,7 @@ public class GetEvent : ControllerBase
                             Id = u.Id,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
-                            Age = u.Age,
+                            Age = u.CalculateAge(),
                             Nationality = e.Creator.Nationality,
                             Sex = u.Sex,
                             Picture = u.Picture
@@ -147,7 +147,7 @@ public class GetEvent : ControllerBase
                             Id = u.Id,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
-                            Age = u.Age,
+                            Age = u.CalculateAge(),
                             Nationality = e.Creator.Nationality,
                             Sex = u.Sex,
                             Picture = u.Picture
@@ -162,7 +162,7 @@ public class GetEvent : ControllerBase
                                 Id = u.UserId,
                                 FirstName = u.FirstName,
                                 LastName = u.LastName,
-                                Age = u.Age,
+                                Age = u.CalculateAge(),
                                 Nationality = e.Creator.Nationality,
                                 Sex = u.Sex,
                                 Picture = u.Picture,
@@ -179,7 +179,7 @@ public class GetEvent : ControllerBase
                             Id = u.Id,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
-                            Age = u.Age,
+                            Age = u.CalculateAge(),
                             Nationality = e.Creator.Nationality,
                             Sex = u.Sex,
                             Picture = u.Picture
@@ -191,7 +191,7 @@ public class GetEvent : ControllerBase
                             Id = u.Id,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
-                            Age = u.Age,
+                            Age = u.CalculateAge(),
                             Nationality = e.Creator.Nationality,
                             Sex = u.Sex,
                             Picture = u.Picture
@@ -203,7 +203,7 @@ public class GetEvent : ControllerBase
                             Id = u.Id,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
-                            Age = u.Age,
+                            Age = u.CalculateAge(),
                             Nationality = e.Creator.Nationality,
                             Sex = u.Sex,
                             Picture = u.Picture

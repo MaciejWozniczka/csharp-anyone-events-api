@@ -35,7 +35,7 @@ public class GetEvents : ControllerBase
             Location = location;
             CategoryId = categoryId;
             EventTypeId = eventTypeId;
-            UserAge = user.Age.Value;
+            UserAge = user.CalculateAge();
             UserSexType = user.Sex.Value;
             ageFrom ??= 18;
             AgeFrom = ageFrom;
@@ -120,8 +120,8 @@ public class GetEvents : ControllerBase
                             && e.AgeTo >= request.UserAge
                             && (e.SexTypes.Contains(request.UserSexType) || e.SexTypes == null || e.SexTypes == new List<SexType>() || e.SexTypes == new List<SexType>{ SexType.All })
                             && (e.UsersAssigned.Count < e.PeopleLimit || e.PeopleLimit == 0)
-                            && e.Creator.Age >= request.AgeFrom
-                            && e.Creator.Age <= request.AgeTo
+                            && e.Creator.CalculateAge() >= request.AgeFrom
+                            && e.Creator.CalculateAge() <= request.AgeTo
                             && (e.Creator.Sex == request.SexTypes || request.SexTypes == SexType.All || request.SexTypes == null)
                             && (e.CategoryId == request.CategoryId || request.CategoryId == null)
                             && (e.EventTypeId == request.EventTypeId || request.EventTypeId == null)
@@ -137,7 +137,7 @@ public class GetEvents : ControllerBase
                         Id = e.CreatorId,
                         FirstName = e.Creator.FirstName,
                         LastName = e.Creator.LastName,
-                        Age = e.Creator.Age,
+                        Age = e.Creator.CalculateAge(),
                         Nationality = e.Creator.Nationality,
                         Sex = e.Creator.Sex,
                         Picture = e.Creator.Picture
@@ -148,7 +148,7 @@ public class GetEvents : ControllerBase
                             Id = u.Id,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
-                            Age = u.Age,
+                            Age = u.CalculateAge(),
                             Nationality = e.Creator.Nationality,
                             Sex = u.Sex,
                             Picture = u.Picture

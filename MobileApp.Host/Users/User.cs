@@ -11,7 +11,7 @@ public class User : IdentityUser
     }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    public int? Age { get; set; }
+    public int? BirthdayYear { get; set; }
     public Guid? CurrentLocationId { get; set; }
     [ForeignKey("CurrentLocationId")]
     public Location? CurrentLocation { get; set; }
@@ -35,4 +35,9 @@ public class User : IdentityUser
     public List<UserEvent>? EventsPending { get; set; }
     public List<UserEvent>? EventsAssigned { get; set; }
     public string? RefreshToken { get; set; }
+
+    public int CalculateAge()
+    {
+        return DateTime.Now.Year - BirthdayYear.Value;
+    }
 }
