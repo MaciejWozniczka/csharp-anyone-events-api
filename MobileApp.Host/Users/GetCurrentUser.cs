@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Users;
+﻿using System.Globalization;
+using System.Reflection.Metadata;
+
+namespace MobileApp.Host.Users;
 
 [ApiController]
 public class GetCurrentUser : ControllerBase
@@ -53,13 +56,25 @@ public class GetCurrentUser : ControllerBase
                 return Result.NotFound<GetCurrentUserDto>("User not found");
             }
 
+            string country;
+
+            if (user.Country != null)
+            {
+                var culture = new CultureInfo(user.Country);
+                country = culture.NativeName;
+            }
+            else
+            {
+                country = "";
+            }
+
             var result = new GetCurrentUserDto()
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Age = user.Age,
-                Country = user.Country,
+                Country = country,
                 Sex = user.Sex,
                 Picture = user.Picture,
                 Description = user.Description,
