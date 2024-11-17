@@ -77,8 +77,15 @@ public class GetEvent : ControllerBase
         public bool IsVisible { get; set; } = false;
     }
 
-    public class GetEventPendingUserDto : GetEventUserDto
+    public class GetEventPendingUserDto
     {
+        public string Id { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public int? Age { get; set; }
+        public string? Nationality { get; set; }
+        public SexType? Sex { get; set; }
+        public string? Picture { get; set; }
         public bool? Accepted { get; set; }
     }
 
@@ -156,19 +163,20 @@ public class GetEvent : ControllerBase
                     GroupsPending = e.GroupsPending
                         .Select(ug => new GetEventUserGroupDto()
                         {
-                            Users = ug.Users.
-                            Select(u => new GetEventPendingUserDto()
-                            {
-                                Id = u.UserId,
-                                FirstName = u.FirstName,
-                                LastName = u.LastName,
-                                Age = u.CalculateAge(),
-                                Nationality = e.Creator.Nationality,
-                                Sex = u.Sex,
-                                Picture = u.Picture,
-                                Accepted = u.Accepted
-                            })
-                            .ToList(),
+                            Users = _db.Users
+                                .Where(u => ug.Users.Select(ids => ids.UserId).ToList().Contains(u.Id))
+                                .ToList()
+                                .Select(u => new GetEventPendingUserDto()
+                                {
+                                    Id = u.Id,
+                                    FirstName = u.FirstName,
+                                    LastName = u.LastName,
+                                    Nationality = u.Nationality,
+                                    Sex = u.Sex,
+                                    Picture = u.Picture,
+                                    Age = u.CalculateAge(),
+                                    Accepted = ug.Users.FirstOrDefault(pu => pu.UserId == u.Id).Accepted
+                                }).ToList(),
                             IsVisible = ug.IsVisible,
                             ShortText = ug.ShortText
                         })
