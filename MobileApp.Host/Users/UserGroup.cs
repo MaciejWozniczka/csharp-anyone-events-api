@@ -7,7 +7,7 @@ public class UserGroup : BaseModel
     public bool IsVisible { get; set; } = false;
 }
 
-public class PendingUser : BaseModel
+public class PendingUser : User
 {
     public string UserId { get; set; }
     public bool? Accepted { get; set; }

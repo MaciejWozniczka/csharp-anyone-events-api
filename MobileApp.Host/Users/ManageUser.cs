@@ -24,7 +24,7 @@ public class ManageUser : ControllerBase
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public int? Age { get; set; }
-        public string? Country { get; set; }
+        public List<string>? Languages { get; set; }
         public string? Nationality { get; set; }
         public SexType? Sex { get; set; }
         public string? Picture { get; set; }
@@ -58,7 +58,7 @@ public class ManageUser : ControllerBase
             if (request.FirstName != null) user.FirstName = request.FirstName;
             if (request.LastName != null) user.LastName = request.LastName;
             if (request.Age != null) user.Age = request.Age;
-            if (request.Country != null) user.Country = request.Country;
+            if (request.Languages != null) user.Languages = request.Languages;
             if (request.Nationality != null) user.Nationality = request.Nationality;
             if (request.Sex != null) user.Sex = request.Sex;
             if (request.Picture != null) user.Picture = request.Picture;

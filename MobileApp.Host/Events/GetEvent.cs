@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Events;
+﻿using MobileApp.Host.Extensions;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MobileApp.Host.Events;
 
 [ApiController]
 public class GetEvent : ControllerBase
@@ -30,22 +33,22 @@ public class GetEvent : ControllerBase
     {
         public GetEventDto()
         {
-            Cooperators = new List<User>();
-            CooperatorsPending = new List<User>();
-            UsersPending = new List<User>();
-            GroupsPending = new List<UserGroup>();
-            UsersAssigned = new List<User>();
-            UsersSkipped = new List<User>();
-            UsersInterested = new List<User>();
+            Cooperators = new List<GetEventUserDto>();
+            CooperatorsPending = new List<GetEventUserDto>();
+            UsersPending = new List<GetEventUserDto>();
+            GroupsPending = new List<GetEventUserGroupDto>();
+            UsersAssigned = new List<GetEventUserDto>();
+            UsersSkipped = new List<GetEventUserDto>();
+            UsersInterested = new List<GetEventUserDto>();
         }
-        public User Creator { get; set; }
-        public List<User> Cooperators { get; set; }
-        public List<User> CooperatorsPending { get; set; }
-        public List<User> UsersPending { get; set; }
-        public List<UserGroup> GroupsPending { get; set; }
-        public List<User> UsersAssigned { get; set; }
-        public List<User> UsersInterested { get; set; }
-        public List<User> UsersSkipped { get; set; }
+        public GetEventUserDto Creator { get; set; }
+        public List<GetEventUserDto> Cooperators { get; set; }
+        public List<GetEventUserDto> CooperatorsPending { get; set; }
+        public List<GetEventUserDto> UsersPending { get; set; }
+        public List<GetEventUserGroupDto> GroupsPending { get; set; }
+        public List<GetEventUserDto> UsersAssigned { get; set; }
+        public List<GetEventUserDto> UsersInterested { get; set; }
+        public List<GetEventUserDto> UsersSkipped { get; set; }
         public string EventType { get; set; }
         public string Category { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
@@ -67,6 +70,29 @@ public class GetEvent : ControllerBase
         public List<SexType>? SexTypes { get; set; }
     }
 
+    public class GetEventUserGroupDto
+    {
+        public List<GetEventPendingUserDto> Users { get; set; }
+        public string ShortText { get; set; }
+        public bool IsVisible { get; set; } = false;
+    }
+
+    public class GetEventPendingUserDto : GetEventUserDto
+    {
+        public bool? Accepted { get; set; }
+    }
+
+    public class GetEventUserDto
+    {
+        public string Id { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public int? Age { get; set; }
+        public string? Nationality { get; set; }
+        public SexType? Sex { get; set; }
+        public string? Picture { get; set; }
+    }
+
     public class GetEventDtoQueryHandler : IRequestHandler<GetEventQuery, Result<GetEventDto>>
     {
         private readonly DataContext _db;
@@ -79,16 +105,110 @@ public class GetEvent : ControllerBase
         {
             var result = await _db.Events
                 .Where(e => e.Id == request.Id && !e.IsDeleted)
-                .Select(e => new GetEventDto()
+                .Select(e => new GetEventDto
                 {
-                    Creator = e.Creator,
-                    Cooperators = e.Cooperators,
-                    CooperatorsPending = e.CooperatorsPending,
-                    UsersPending = e.UsersPending,
-                    GroupsPending = e.GroupsPending,
-                    UsersAssigned = e.UsersAssigned,
-                    UsersInterested = e.UsersInterested,
-                    UsersSkipped = e.UsersSkipped,
+                    Creator = new GetEventUserDto()
+                    {
+                        Id = e.CreatorId,
+                        FirstName = e.Creator.FirstName,
+                        LastName = e.Creator.LastName,
+                        Age = e.Creator.Age,
+                        Nationality = e.Creator.Nationality,
+                        Sex = e.Creator.Sex,
+                        Picture = e.Creator.Picture
+                    },
+                    Cooperators = e.Cooperators
+                        .Select(u => new GetEventUserDto()
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Age = u.Age,
+                            Nationality = e.Creator.Nationality,
+                            Sex = u.Sex,
+                            Picture = u.Picture
+                        })
+                        .ToList(),
+                    CooperatorsPending = e.CooperatorsPending
+                        .Select(u => new GetEventUserDto()
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Age = u.Age,
+                            Nationality = e.Creator.Nationality,
+                            Sex = u.Sex,
+                            Picture = u.Picture
+                        })
+                        .ToList(),
+                    UsersPending = e.UsersPending
+                        .Select(u => new GetEventUserDto()
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Age = u.Age,
+                            Nationality = e.Creator.Nationality,
+                            Sex = u.Sex,
+                            Picture = u.Picture
+                        })
+                        .ToList(),
+                    GroupsPending = e.GroupsPending
+                        .Select(ug => new GetEventUserGroupDto()
+                        {
+                            Users = ug.Users.
+                            Select(u => new GetEventPendingUserDto()
+                            {
+                                Id = u.UserId,
+                                FirstName = u.FirstName,
+                                LastName = u.LastName,
+                                Age = u.Age,
+                                Nationality = e.Creator.Nationality,
+                                Sex = u.Sex,
+                                Picture = u.Picture,
+                                Accepted = u.Accepted
+                            })
+                            .ToList(),
+                            IsVisible = ug.IsVisible,
+                            ShortText = ug.ShortText
+                        })
+                        .ToList(),
+                    UsersAssigned = e.UsersAssigned
+                        .Select(u => new GetEventUserDto()
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Age = u.Age,
+                            Nationality = e.Creator.Nationality,
+                            Sex = u.Sex,
+                            Picture = u.Picture
+                        })
+                        .ToList(),
+                    UsersInterested = e.UsersInterested
+                        .Select(u => new GetEventUserDto()
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Age = u.Age,
+                            Nationality = e.Creator.Nationality,
+                            Sex = u.Sex,
+                            Picture = u.Picture
+                        })
+                        .ToList(),
+                    UsersSkipped = e.UsersSkipped
+                        .Select(u => new GetEventUserDto()
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Age = u.Age,
+                            Nationality = e.Creator.Nationality,
+                            Sex = u.Sex,
+                            Picture = u.Picture
+                        })
+                        .ToList(),
                     EventType = e.EventType.Name,
                     Category = e.EventType.Category.Name,
                     EventDateTime = e.EventDateTime,

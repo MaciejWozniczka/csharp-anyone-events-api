@@ -12,11 +12,11 @@ public class User : IdentityUser
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public int? Age { get; set; }
-    public string? Country { get; set; }
     public Guid? CurrentLocationId { get; set; }
     [ForeignKey("CurrentLocationId")]
     public Location? CurrentLocation { get; set; }
     public string? Nationality { get; set; }
+    public List<string>? Languages { get; set; }
     public SexType? Sex { get; set; }
     public string? Picture { get; set; }
     public string? Description { get; set; }

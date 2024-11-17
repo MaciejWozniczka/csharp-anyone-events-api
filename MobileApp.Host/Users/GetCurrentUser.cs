@@ -30,7 +30,8 @@ public class GetCurrentUser : ControllerBase
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public int? Age { get; set; }
-        public string? Country { get; set; }
+        public string? Nationality { get; set; }
+        public List<string>? Languages { get; set; }
         public SexType? Sex { get; set; }
         public string? Picture { get; set; }
         public string? Description { get; set; }
@@ -56,25 +57,14 @@ public class GetCurrentUser : ControllerBase
                 return Result.NotFound<GetCurrentUserDto>("User not found");
             }
 
-            string country;
-
-            if (user.Country != null)
-            {
-                var culture = new CultureInfo(user.Country);
-                country = culture.NativeName;
-            }
-            else
-            {
-                country = "";
-            }
-
             var result = new GetCurrentUserDto()
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Age = user.Age,
-                Country = country,
+                Nationality = new CultureInfo(user.Nationality ?? "").NativeName,
+                Languages = user.Languages != null ? user.Languages.Select(language => new CultureInfo(language ?? "").NativeName).ToList() : new List<string>(),
                 Sex = user.Sex,
                 Picture = user.Picture,
                 Description = user.Description,
