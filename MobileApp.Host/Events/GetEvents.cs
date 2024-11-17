@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Events;
+﻿using static MobileApp.Host.Events.GetEvent;
+
+namespace MobileApp.Host.Events;
 
 [ApiController]
 public class GetEvents : ControllerBase
@@ -69,12 +71,12 @@ public class GetEvents : ControllerBase
     {
         public EventsDto()
         {
-            Cooperators = new List<User>();
+            Cooperators = new List<GetEventsUserDto>();
             SexTypes = new List<SexType>();
         }
         public Guid Id { get; set; }
-        public User Creator { get; set; }
-        public List<User> Cooperators { get; set; }
+        public GetEventsUserDto Creator { get; set; }
+        public List<GetEventsUserDto> Cooperators { get; set; }
         public int UsersAssignedCount { get; set; }
         public string EventType { get; set; }
         public string Category { get; set; }
@@ -88,6 +90,17 @@ public class GetEvents : ControllerBase
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
         public List<SexType>? SexTypes { get; set; }
+    }
+
+    public class GetEventsUserDto
+    {
+        public string Id { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public int? Age { get; set; }
+        public string? Nationality { get; set; }
+        public SexType? Sex { get; set; }
+        public string? Picture { get; set; }
     }
 
     public class GetEventsQueryHandler : IRequestHandler<GetEventsQuery, Result<GetEventsDto>>
@@ -119,8 +132,28 @@ public class GetEvents : ControllerBase
                     Id = e.Id,
                     EventType = e.EventType.Name,
                     Category = e.EventType.Category.Name,
-                    Creator = e.Creator,
-                    Cooperators = e.Cooperators,
+                    Creator = new GetEventsUserDto()
+                    {
+                        Id = e.CreatorId,
+                        FirstName = e.Creator.FirstName,
+                        LastName = e.Creator.LastName,
+                        Age = e.Creator.Age,
+                        Nationality = e.Creator.Nationality,
+                        Sex = e.Creator.Sex,
+                        Picture = e.Creator.Picture
+                    },
+                    Cooperators = e.Cooperators
+                        .Select(u => new GetEventsUserDto()
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Age = u.Age,
+                            Nationality = e.Creator.Nationality,
+                            Sex = u.Sex,
+                            Picture = u.Picture
+                        })
+                        .ToList(),
                     UsersAssignedCount = e.UsersAssigned.Count,
                     EventDateTime = e.EventDateTime,
                     Duration = e.Duration,

@@ -81,7 +81,7 @@ public class ManageEvent : ControllerBase
                     return Result.BadRequest<Guid>("Użytkownik jest już zapisany na wydarzenia w tym terminie");
                 }
 
-                userEvent = new UserEvent()
+                userEvent = new UserEvent
                 {
                     EventTypeId = request.EventTypeId,
                     CategoryId = request.CategoryId,

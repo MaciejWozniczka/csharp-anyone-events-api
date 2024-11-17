@@ -28,7 +28,17 @@ public class GetCurrentUserEventsByTypes : ControllerBase
 
     public class GetCurrentUserEventsByTypesDto
     {
-        public List<UserEvent> Events { get; set; } = new();
+        public List<GetCurrentUserEventsByTypesRecordDto> Events { get; set; } = new();
+    }
+
+    public class GetCurrentUserEventsByTypesRecordDto
+    {
+        public Guid Id { get; set; }
+        public DateTimeOffset EventDateTime { get; set; }
+        public Location Location { get; set; }
+        public string ShortDescription { get; set; }
+        public string? Description { get; set; }
+        public string? Picture { get; set; }
     }
 
     public class GetCurrentUserEventsByTypesDtoQueryHandler : IRequestHandler<GetCurrentUserEventsByTypesQuery, Result<GetCurrentUserEventsByTypesDto>>
@@ -51,6 +61,16 @@ public class GetCurrentUserEventsByTypes : ControllerBase
             var result = new GetCurrentUserEventsByTypesDto
             {
                 Events = currentUserEventsByType
+                    .Select(e => new GetCurrentUserEventsByTypesRecordDto
+                    {
+                        Id = e.Id,
+                        EventDateTime = e.EventDateTime,
+                        Location = e.Location,
+                        ShortDescription = e.ShortDescription,
+                        Description = e.Description,
+                        Picture = e.Picture
+                    })
+                    .ToList()
             };
 
             return Result.Ok(result);

@@ -25,22 +25,30 @@ public class GetCurrentUserEvents : ControllerBase
     {
         public GetCurrentUserEventsDto()
         {
-            EventsCreated = new List<UserEvent>();
-            EventsCooperationPending = new List<UserEvent>();
-            EventsCooperated = new List<UserEvent>();
-            EventsPending = new List<UserEvent>();
-            EventsAssigned = new List<UserEvent>();
-            EventsInterested = new List<UserEvent>();
-            EventsSkipped = new List<UserEvent>();
+            EventsCreated = new List<GetCurrentUserEventsRecordDto>();
+            EventsCooperationPending = new List<GetCurrentUserEventsRecordDto>();
+            EventsCooperated = new List<GetCurrentUserEventsRecordDto>();
+            EventsPending = new List<GetCurrentUserEventsRecordDto>();
+            EventsAssigned = new List<GetCurrentUserEventsRecordDto>();
+            EventsInterested = new List<GetCurrentUserEventsRecordDto>();
         }
         public string Id { get; set; }
-        public List<UserEvent>? EventsCreated { get; set; }
-        public List<UserEvent>? EventsCooperationPending { get; set; }
-        public List<UserEvent>? EventsCooperated { get; set; }
-        public List<UserEvent>? EventsPending { get; set; }
-        public List<UserEvent>? EventsAssigned { get; set; }
-        public List<UserEvent>? EventsInterested { get; set; }
-        public List<UserEvent>? EventsSkipped { get; set; }
+        public List<GetCurrentUserEventsRecordDto>? EventsCreated { get; set; }
+        public List<GetCurrentUserEventsRecordDto>? EventsCooperationPending { get; set; }
+        public List<GetCurrentUserEventsRecordDto>? EventsCooperated { get; set; }
+        public List<GetCurrentUserEventsRecordDto>? EventsPending { get; set; }
+        public List<GetCurrentUserEventsRecordDto>? EventsAssigned { get; set; }
+        public List<GetCurrentUserEventsRecordDto>? EventsInterested { get; set; }
+    }
+
+    public class GetCurrentUserEventsRecordDto
+    {
+        public Guid Id { get; set; }
+        public DateTimeOffset EventDateTime { get; set; }
+        public Location Location { get; set; }
+        public string ShortDescription { get; set; }
+        public string? Description { get; set; }
+        public string? Picture { get; set; }
     }
 
     public class GetCurrentUserEventsDtoQueryHandler : IRequestHandler<GetCurrentUserEventsQuery, Result<GetCurrentUserEventsDto>>
@@ -60,16 +68,70 @@ public class GetCurrentUserEvents : ControllerBase
                 return Result.NotFound<GetCurrentUserEventsDto>("User not found");
             }
 
-            var result = new GetCurrentUserEventsDto()
+            var result = new GetCurrentUserEventsDto
             {
                 Id = currentUser.Id,
-                EventsCreated = currentUser.EventsCreated,
-                EventsCooperationPending = currentUser.EventsCooperationPending,
-                EventsCooperated = currentUser.EventsCooperated,
-                EventsPending = currentUser.EventsPending,
-                EventsAssigned = currentUser.EventsAssigned,
-                EventsInterested = currentUser.EventsInterested,
-                EventsSkipped = currentUser.EventsSkipped
+                EventsCreated = currentUser.EventsCreated
+                    .Select(e => new GetCurrentUserEventsRecordDto()
+                    {
+                        Id = e.Id,
+                        EventDateTime = e.EventDateTime,
+                        Location = e.Location,
+                        ShortDescription = e.ShortDescription,
+                        Description = e.Description,
+                        Picture = e.Picture
+                    })
+                    .ToList(),
+                EventsCooperationPending = currentUser.EventsCooperationPending.Select(e => new GetCurrentUserEventsRecordDto()
+                    {
+                        Id = e.Id,
+                        EventDateTime = e.EventDateTime,
+                        Location = e.Location,
+                        ShortDescription = e.ShortDescription,
+                        Description = e.Description,
+                        Picture = e.Picture
+                    })
+                    .ToList(),
+                EventsCooperated = currentUser.EventsCooperated.Select(e => new GetCurrentUserEventsRecordDto()
+                    {
+                        Id = e.Id,
+                        EventDateTime = e.EventDateTime,
+                        Location = e.Location,
+                        ShortDescription = e.ShortDescription,
+                        Description = e.Description,
+                        Picture = e.Picture
+                    })
+                    .ToList(),
+                EventsPending = currentUser.EventsPending.Select(e => new GetCurrentUserEventsRecordDto()
+                    {
+                        Id = e.Id,
+                        EventDateTime = e.EventDateTime,
+                        Location = e.Location,
+                        ShortDescription = e.ShortDescription,
+                        Description = e.Description,
+                        Picture = e.Picture
+                    })
+                    .ToList(),
+                EventsAssigned = currentUser.EventsAssigned.Select(e => new GetCurrentUserEventsRecordDto()
+                    {
+                        Id = e.Id,
+                        EventDateTime = e.EventDateTime,
+                        Location = e.Location,
+                        ShortDescription = e.ShortDescription,
+                        Description = e.Description,
+                        Picture = e.Picture
+                    })
+                    .ToList(),
+                EventsInterested = currentUser.EventsInterested.Select(e => new GetCurrentUserEventsRecordDto()
+                    {
+                        Id = e.Id,
+                        EventDateTime = e.EventDateTime,
+                        Location = e.Location,
+                        ShortDescription = e.ShortDescription,
+                        Description = e.Description,
+                        Picture = e.Picture
+                    })
+                    .ToList()
             };
 
             return Result.Ok(result);
