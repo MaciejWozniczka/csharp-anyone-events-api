@@ -1,25 +1,25 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class RemoveEventSkippedPerson : ControllerBase
+public class RemoveEventSkippedUser : ControllerBase
 {
     private readonly IMediator _mediator;
-    public RemoveEventSkippedPerson(IMediator mediator)
+    public RemoveEventSkippedUser(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove skipped person from event")]
+    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove skipped user from event")]
     [HttpDelete("/api/event/skipped/")]
-    public async Task<Result> RemoveEventSkippedPersonAsync(string userId, Guid eventId)
+    public async Task<Result> RemoveEventSkippedUserAsync(string userId, Guid eventId)
     {
-        return await _mediator.Send(new RemoveEventSkippedPersonCommand(userId, eventId));
+        return await _mediator.Send(new RemoveEventSkippedUserCommand(userId, eventId));
     }
 
-    public class RemoveEventSkippedPersonCommand : IRequest<Result>
+    public class RemoveEventSkippedUserCommand : IRequest<Result>
     {
-        public RemoveEventSkippedPersonCommand(string userId, Guid eventId)
+        public RemoveEventSkippedUserCommand(string userId, Guid eventId)
         {
             UserId = userId;
             EventId = eventId;
@@ -28,15 +28,17 @@ public class RemoveEventSkippedPerson : ControllerBase
         public Guid EventId { get; set; }
     }
 
-    public class RemoveEventSkippedPersonCommandHandler : IRequestHandler<RemoveEventSkippedPersonCommand, Result>
+    public class RemoveEventSkippedUserCommandHandler : IRequestHandler<RemoveEventSkippedUserCommand, Result>
     {
         private readonly DataContext _db;
-        public RemoveEventSkippedPersonCommandHandler(DataContext db)
+        private readonly ILogger<RemoveEventSkippedUserCommandHandler> _logger;
+        public RemoveEventSkippedUserCommandHandler(DataContext db, ILogger<RemoveEventSkippedUserCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
-        public async Task<Result> Handle(RemoveEventSkippedPersonCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(RemoveEventSkippedUserCommand request, CancellationToken cancellationToken)
         {
             var userEvent = await _db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
@@ -62,6 +64,8 @@ public class RemoveEventSkippedPerson : ControllerBase
             {
                 userEvent.UsersSkipped.Remove(user);
             }
+
+            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Removing event skipped user");
 
             await _db.SaveChangesAsync(cancellationToken);
 

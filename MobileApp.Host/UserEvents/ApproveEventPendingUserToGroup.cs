@@ -32,10 +32,12 @@ public class ApproveEventPendingUserToGroup : ControllerBase
     {
         private readonly DataContext _db;
         private readonly ICurrentUserAccessor _currentUserAccessor;
-        public ApproveEventPendingUserToGroupCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
+        private readonly ILogger<ApproveEventPendingUserToGroupCommandHandler> _logger;
+        public ApproveEventPendingUserToGroupCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<ApproveEventPendingUserToGroupCommandHandler> logger)
         {
             _db = db;
             _currentUserAccessor = currentUserAccessor;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(ApproveEventPendingUserToGroupCommand request, CancellationToken cancellationToken)
@@ -66,6 +68,8 @@ public class ApproveEventPendingUserToGroup : ControllerBase
                 .Where(user => user.UserId == currentUser.Id && user.IsDeleted == false)
                 .ToList()
                 .ForEach(user => user.Accepted = true);
+
+            _logger.LogInformation($"[Group: {request.GroupId}][Event: {request.EventId}] Approving pending user to group");
 
             await _db.SaveChangesAsync(cancellationToken);
 

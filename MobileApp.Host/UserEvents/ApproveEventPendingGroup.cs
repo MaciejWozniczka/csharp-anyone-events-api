@@ -31,9 +31,11 @@ public class ApproveEventPendingGroup : ControllerBase
     public class ApproveEventPendingGroupCommandHandler : IRequestHandler<ApproveEventPendingGroupCommand, Result>
     {
         private readonly DataContext _db;
-        public ApproveEventPendingGroupCommandHandler(DataContext db)
+        private readonly ILogger<ApproveEventPendingGroupCommandHandler> _logger;
+        public ApproveEventPendingGroupCommandHandler(DataContext db, ILogger<ApproveEventPendingGroupCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(ApproveEventPendingGroupCommand request, CancellationToken cancellationToken)
@@ -64,6 +66,8 @@ public class ApproveEventPendingGroup : ControllerBase
                 }
                 userEvent.UsersPending.Remove(user);
             }
+
+            _logger.LogInformation($"[Group: {request.GroupId}][Event: {request.EventId}] Approving event pending group");
 
             var pendingGroup = userEvent.GroupsPending.FirstOrDefault(g => g.Id == request.GroupId);
             userEvent.GroupsPending.Remove(pendingGroup);

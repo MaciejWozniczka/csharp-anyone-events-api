@@ -31,9 +31,11 @@ public class RemoveEventAssignedUser : ControllerBase
     public class RemoveEventAssignedUserCommandHandler : IRequestHandler<RemoveEventAssignedUserCommand, Result>
     {
         private readonly DataContext _db;
-        public RemoveEventAssignedUserCommandHandler(DataContext db)
+        private readonly ILogger<RemoveEventAssignedUserCommandHandler> _logger;
+        public RemoveEventAssignedUserCommandHandler(DataContext db, ILogger<RemoveEventAssignedUserCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(RemoveEventAssignedUserCommand request, CancellationToken cancellationToken)
@@ -62,6 +64,8 @@ public class RemoveEventAssignedUser : ControllerBase
             {
                 userEvent.UsersAssigned.Remove(user);
             }
+
+            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Removing assigned user from event");
 
             await _db.SaveChangesAsync(cancellationToken);
 

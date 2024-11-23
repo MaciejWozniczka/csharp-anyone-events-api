@@ -1,25 +1,25 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class AddEventSkippedPerson : ControllerBase
+public class AddEventSkippedUser : ControllerBase
 {
     private readonly IMediator _mediator;
-    public AddEventSkippedPerson(IMediator mediator)
+    public AddEventSkippedUser(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add skipped Person to event")]
+    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add skipped user to event")]
     [HttpPost("/api/event/skipped/")]
-    public async Task<Result> AddEventSkippedPersonAsync(string userId, Guid eventId)
+    public async Task<Result> AddEventSkippedUserAsync(string userId, Guid eventId)
     {
-        return await _mediator.Send(new AddEventSkippedPersonCommand(userId, eventId));
+        return await _mediator.Send(new AddEventSkippedUserCommand(userId, eventId));
     }
 
-    public class AddEventSkippedPersonCommand : IRequest<Result>
+    public class AddEventSkippedUserCommand : IRequest<Result>
     {
-        public AddEventSkippedPersonCommand(string userId, Guid eventId)
+        public AddEventSkippedUserCommand(string userId, Guid eventId)
         {
             UserId = userId;
             EventId = eventId;
@@ -28,15 +28,17 @@ public class AddEventSkippedPerson : ControllerBase
         public Guid EventId { get; set; }
     }
 
-    public class AddEventSkippedPersonCommandHandler : IRequestHandler<AddEventSkippedPersonCommand, Result>
+    public class AddEventSkippedUserCommandHandler : IRequestHandler<AddEventSkippedUserCommand, Result>
     {
         private readonly DataContext _db;
-        public AddEventSkippedPersonCommandHandler(DataContext db)
+        private readonly ILogger<AddEventSkippedUserCommandHandler> _logger;
+        public AddEventSkippedUserCommandHandler(DataContext db, ILogger<AddEventSkippedUserCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
-        public async Task<Result> Handle(AddEventSkippedPersonCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddEventSkippedUserCommand request, CancellationToken cancellationToken)
         {
             var userEvent = await _db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
@@ -62,6 +64,8 @@ public class AddEventSkippedPerson : ControllerBase
             {
                 return Result.Ok("User already added");
             }
+
+            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Adding skip user to event");
 
             userEvent.UsersSkipped.Add(user);
             await _db.SaveChangesAsync(cancellationToken);

@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Users;
+﻿using static MobileApp.Host.Users.AddUser;
+
+namespace MobileApp.Host.Users;
 
 [ApiController]
 public class AddUserPicture : ControllerBase
@@ -28,10 +30,12 @@ public class AddUserPicture : ControllerBase
     {
         private readonly DataContext _db;
         private readonly ICurrentUserAccessor _currentUserAccessor;
-        public AddUserPictureHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
+        private readonly ILogger<AddUserPictureHandler> _logger;
+        public AddUserPictureHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<AddUserPictureHandler> logger)
         {
             _db = db;
             _currentUserAccessor = currentUserAccessor;
+            _logger = logger;
         }
 
         public async Task<Result<string>> Handle(AddUserPictureCommand request, CancellationToken cancellationToken)
@@ -45,6 +49,8 @@ public class AddUserPicture : ControllerBase
                 var content = Convert.ToBase64String(bytes);
                 currentUser.Picture = content;
             }
+
+            _logger.LogInformation($"[User: {currentUser.Id}] Adding user picture");
 
             _db.Update(currentUser);
             await _db.SaveChangesAsync(cancellationToken);

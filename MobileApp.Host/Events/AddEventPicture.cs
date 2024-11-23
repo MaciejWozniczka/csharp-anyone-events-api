@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Events;
+﻿using MobileApp.Host.Categories;
+
+namespace MobileApp.Host.Events;
 
 [ApiController]
 public class AddEventPicture : ControllerBase
@@ -29,9 +31,11 @@ public class AddEventPicture : ControllerBase
     public class AddEventPictureHandler : IRequestHandler<AddEventPictureCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        public AddEventPictureHandler(DataContext db)
+        private readonly ILogger<AddEventPictureHandler> _logger;
+        public AddEventPictureHandler(DataContext db, ILogger<AddEventPictureHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(AddEventPictureCommand request, CancellationToken cancellationToken)
@@ -47,6 +51,8 @@ public class AddEventPicture : ControllerBase
                 var content = Convert.ToBase64String(bytes);
                 userEvent.Picture = content;
             }
+
+            _logger.LogInformation($"[Event: {request.EventId}] Adding event picture");
 
             _db.Update(userEvent);
             await _db.SaveChangesAsync(cancellationToken);

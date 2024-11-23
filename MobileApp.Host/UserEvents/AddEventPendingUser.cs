@@ -33,9 +33,11 @@ public class AddEventPendingUser : ControllerBase
     public class AddEventPendingUserCommandHandler : IRequestHandler<AddEventPendingUserCommand, Result>
     {
         private readonly DataContext _db;
-        public AddEventPendingUserCommandHandler(DataContext db)
+        private readonly ILogger<AddEventPendingUserCommandHandler> _logger;
+        public AddEventPendingUserCommandHandler(DataContext db, ILogger<AddEventPendingUserCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(AddEventPendingUserCommand request, CancellationToken cancellationToken)
@@ -75,6 +77,8 @@ public class AddEventPendingUser : ControllerBase
                 userGroup.Users.Add(new PendingUser { UserId = user.Id });
                 users.Add(user);
             }
+
+            _logger.LogInformation($"[Users: {string.Join(", ", request.UserIds)}][Event: {request.EventId}] Adding pending group to event");
 
             userEvent.GroupsPending.Add(userGroup);
             userEvent.UsersPending.AddRange(users);

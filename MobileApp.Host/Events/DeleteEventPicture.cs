@@ -27,9 +27,11 @@ public class DeleteEventPicture : ControllerBase
     public class DeleteEventPictureHandler : IRequestHandler<DeleteEventPictureCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        public DeleteEventPictureHandler(DataContext db)
+        private readonly ILogger<DeleteEventPictureHandler> _logger;
+        public DeleteEventPictureHandler(DataContext db, ILogger<DeleteEventPictureHandler> logger)
         {
-            _db = db; 
+            _db = db;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(DeleteEventPictureCommand request, CancellationToken cancellationToken)
@@ -38,7 +40,14 @@ public class DeleteEventPicture : ControllerBase
                 .Where(e => e.Id == request.EventId && !e.IsDeleted)
                 .FirstOrDefaultAsync(cancellationToken);
 
+            if (userEvent == null)
+            {
+                return Result.NotFound<Guid>();
+            }
+
             userEvent.Picture = null;
+
+            _logger.LogInformation($"[Event: {request.EventId}] Deleting event picture");
 
             _db.Update(userEvent);
             await _db.SaveChangesAsync(cancellationToken);

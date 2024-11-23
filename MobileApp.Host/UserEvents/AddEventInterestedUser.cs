@@ -1,25 +1,25 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class RemoveEventInterestedPerson : ControllerBase
+public class AddEventInterestedUser : ControllerBase
 {
     private readonly IMediator _mediator;
-    public RemoveEventInterestedPerson(IMediator mediator)
+    public AddEventInterestedUser(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove interested person from event")]
-    [HttpDelete("/api/event/interested/")]
-    public async Task<Result> RemoveEventInterestedPersonAsync(string userId, Guid eventId)
+    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add interested user to event")]
+    [HttpPost("/api/event/interested/")]
+    public async Task<Result> AddEventInterestedUserAsync(string userId, Guid eventId)
     {
-        return await _mediator.Send(new RemoveEventInterestedPersonCommand(userId, eventId));
+        return await _mediator.Send(new AddEventInterestedUserCommand(userId, eventId));
     }
 
-    public class RemoveEventInterestedPersonCommand : IRequest<Result>
+    public class AddEventInterestedUserCommand : IRequest<Result>
     {
-        public RemoveEventInterestedPersonCommand(string userId, Guid eventId)
+        public AddEventInterestedUserCommand(string userId, Guid eventId)
         {
             UserId = userId;
             EventId = eventId;
@@ -28,15 +28,17 @@ public class RemoveEventInterestedPerson : ControllerBase
         public Guid EventId { get; set; }
     }
 
-    public class RemoveEventInterestedPersonCommandHandler : IRequestHandler<RemoveEventInterestedPersonCommand, Result>
+    public class AddEventInterestedUserCommandHandler : IRequestHandler<AddEventInterestedUserCommand, Result>
     {
         private readonly DataContext _db;
-        public RemoveEventInterestedPersonCommandHandler(DataContext db)
+        private readonly ILogger<AddEventInterestedUserCommandHandler> _logger;
+        public AddEventInterestedUserCommandHandler(DataContext db, ILogger<AddEventInterestedUserCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
-        public async Task<Result> Handle(RemoveEventInterestedPersonCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddEventInterestedUserCommand request, CancellationToken cancellationToken)
         {
             var userEvent = await _db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
@@ -60,9 +62,12 @@ public class RemoveEventInterestedPerson : ControllerBase
 
             if (userEvent.UsersInterested.Select(u => u.Id).Contains(user.Id))
             {
-                userEvent.UsersInterested.Remove(user);
+                return Result.Ok("User already added");
             }
 
+            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Adding interested user to event");
+
+            userEvent.UsersInterested.Add(user);
             await _db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();

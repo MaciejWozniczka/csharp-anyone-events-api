@@ -37,9 +37,11 @@ public class ManageUser : ControllerBase
     public class ManageUserCommandHandler : IRequestHandler<ManageUserCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        public ManageUserCommandHandler(DataContext db)
+        private readonly ILogger<ManageUserCommandHandler> _logger;
+        public ManageUserCommandHandler(DataContext db, ILogger<ManageUserCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(ManageUserCommand request, CancellationToken cancellationToken)
@@ -66,6 +68,8 @@ public class ManageUser : ControllerBase
             if (request.PhoneCountryCode != null) user.PhoneCountryCode = request.PhoneCountryCode;
             if (request.PhoneNumber != null) user.PhoneNumber = request.PhoneNumber;
             if (request.UserType != null) user.UserType = request.UserType;
+
+            _logger.LogInformation($"[User: {user.Id}] Updating user");
 
             _db.Update(user);
             await _db.SaveChangesAsync(cancellationToken);

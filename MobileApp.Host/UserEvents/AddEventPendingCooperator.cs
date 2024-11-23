@@ -31,9 +31,11 @@ public class AddEventPendingCooperator : ControllerBase
     public class AddEventPendingCooperatorCommandHandler : IRequestHandler<AddEventPendingCooperatorCommand, Result>
     {
         private readonly DataContext _db;
-        public AddEventPendingCooperatorCommandHandler(DataContext db)
+        private readonly ILogger<AddEventPendingCooperatorCommandHandler> _logger;
+        public AddEventPendingCooperatorCommandHandler(DataContext db, ILogger<AddEventPendingCooperatorCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(AddEventPendingCooperatorCommand request, CancellationToken cancellationToken)
@@ -62,6 +64,8 @@ public class AddEventPendingCooperator : ControllerBase
             {
                 return Result.Ok("User already added");
             }
+
+            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Adding pending cooperator to event");
 
             userEvent.CooperatorsPending.Add(user);
             await _db.SaveChangesAsync(cancellationToken);

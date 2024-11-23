@@ -38,11 +38,11 @@ public class ChangePassword : ControllerBase
     public class ChangePasswordQueryHandler : IRequestHandler<ChangePasswordQuery, Result>
     {
         public IValidator<ChangePasswordQuery> _validator { get; set; }
-        public readonly IUserService _tokenService;
-        public ChangePasswordQueryHandler(IValidator<ChangePasswordQuery> validator, IUserService tokenService)
+        public readonly IUserService _userService;
+        public ChangePasswordQueryHandler(IValidator<ChangePasswordQuery> validator, IUserService userService)
         {
             _validator = validator;
-            _tokenService = tokenService;
+            _userService = userService;
         }
 
         public async Task<Result> Handle(ChangePasswordQuery request, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ public class ChangePassword : ControllerBase
                 return validationResult.ToResult<Guid>();
             }
 
-            return await _tokenService.ChangePassword(request.CurrentPassword, request.NewPassword, cancellationToken);
+            return await _userService.ChangePassword(request.CurrentPassword, request.NewPassword, cancellationToken);
         }
     }
 }

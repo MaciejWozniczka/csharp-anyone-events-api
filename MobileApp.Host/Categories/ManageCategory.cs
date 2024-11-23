@@ -37,9 +37,11 @@ public class ManageCategory : ControllerBase
     public class ManageCategoryCommandHandler : IRequestHandler<ManageCategoryCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        public ManageCategoryCommandHandler(DataContext db)
+        private readonly ILogger<ManageCategoryCommandHandler> _logger;
+        public ManageCategoryCommandHandler(DataContext db, ILogger<ManageCategoryCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(ManageCategoryCommand request, CancellationToken cancellationToken)
@@ -49,12 +51,14 @@ public class ManageCategory : ControllerBase
 
             if (isAdding)
             {
-                category = new Category()
+                category = new Category
                 {
                     Name = request.Name,
                     Description = request.Description,
                     Picture = request.Picture
                 };
+
+                _logger.LogInformation($"[Category: {request.Name}] Adding category");
 
                 await _db.AddAsync(category, cancellationToken);
             }
@@ -70,6 +74,8 @@ public class ManageCategory : ControllerBase
                 if (request.Name != null) category.Name = request.Name;
                 if (request.Description != null) category.Description = request.Description;
                 if (request.Picture != null) category.Picture = request.Picture;
+
+                _logger.LogInformation($"[Category: {request.Name}] Updating category");
 
                 _db.Update(category);
             }

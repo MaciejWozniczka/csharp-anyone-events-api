@@ -34,9 +34,11 @@ public class SetCurrentLocation : ControllerBase
     public class SetCurrentLocationCommandHandler : IRequestHandler<SetCurrentLocationCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        public SetCurrentLocationCommandHandler(DataContext db)
+        private readonly ILogger<SetCurrentLocationCommandHandler> _logger;
+        public SetCurrentLocationCommandHandler(DataContext db, ILogger<SetCurrentLocationCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(SetCurrentLocationCommand request, CancellationToken cancellationToken)
@@ -63,6 +65,8 @@ public class SetCurrentLocation : ControllerBase
             _db.Locations.Add(newLocation);
 
             user.CurrentLocation = newLocation;
+
+            _logger.LogInformation($"[User: {user.Id}] Setting user current location");
 
             _db.Update(user);
             await _db.SaveChangesAsync(cancellationToken);

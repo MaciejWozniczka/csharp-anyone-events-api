@@ -31,9 +31,11 @@ public class ApproveEventCooperator : ControllerBase
     public class ApproveEventCooperatorCommandHandler : IRequestHandler<ApproveEventCooperatorCommand, Result>
     {
         private readonly DataContext _db;
-        public ApproveEventCooperatorCommandHandler(DataContext db)
+        private readonly ILogger<ApproveEventCooperatorCommandHandler> _logger;
+        public ApproveEventCooperatorCommandHandler(DataContext db, ILogger<ApproveEventCooperatorCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(ApproveEventCooperatorCommand request, CancellationToken cancellationToken)
@@ -69,6 +71,8 @@ public class ApproveEventCooperator : ControllerBase
             {
                 return Result.Ok("User already added");
             }
+
+            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Approving event cooperator");
 
             userEvent.Cooperators.Add(user);
             await _db.SaveChangesAsync(cancellationToken);

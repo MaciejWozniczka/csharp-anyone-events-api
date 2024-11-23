@@ -57,10 +57,12 @@ public class ManageEvent : ControllerBase
     {
         private readonly DataContext _db;
         private readonly ICurrentUserAccessor _currentUserAccessor;
-        public ManageEventCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
+        private readonly ILogger<ManageEventCommandHandler> _logger;
+        public ManageEventCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<ManageEventCommandHandler> logger)
         {
             _db = db;
             _currentUserAccessor = currentUserAccessor;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(ManageEventCommand request, CancellationToken cancellationToken)
@@ -117,6 +119,8 @@ public class ManageEvent : ControllerBase
                     userEvent.CooperatorsPending.Add(user);
                 }
 
+                _logger.LogInformation($"[Event: {userEvent.Id}] Adding event");
+
                 await _db.AddAsync(userEvent, cancellationToken);
             }
             else
@@ -144,6 +148,8 @@ public class ManageEvent : ControllerBase
                 if (request.AgeFrom != null) userEvent.AgeFrom = request.AgeFrom;
                 if (request.AgeTo != null) userEvent.AgeTo = request.AgeTo;
                 if (request.SexTypes != null) userEvent.SexTypes = request.SexTypes;
+
+                _logger.LogInformation($"[Event: {userEvent.Id}] Updating event");
 
                 _db.Update(userEvent);
             }

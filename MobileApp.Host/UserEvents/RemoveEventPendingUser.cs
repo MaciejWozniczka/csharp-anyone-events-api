@@ -31,9 +31,11 @@ public class RemoveEventPendingUser : ControllerBase
     public class RemoveEventPendingUserCommandHandler : IRequestHandler<RemoveEventPendingUserCommand, Result>
     {
         private readonly DataContext _db;
-        public RemoveEventPendingUserCommandHandler(DataContext db)
+        private readonly ILogger<RemoveEventPendingUserCommandHandler> _logger;
+        public RemoveEventPendingUserCommandHandler(DataContext db, ILogger<RemoveEventPendingUserCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(RemoveEventPendingUserCommand request, CancellationToken cancellationToken)
@@ -69,6 +71,8 @@ public class RemoveEventPendingUser : ControllerBase
 
                 userEvent.UsersPending.Remove(user);
             }
+
+            _logger.LogInformation($"[Users: {string.Join(", ", request.UserIds)}][Event: {request.EventId}] Removing pending user group from event");
 
             await _db.SaveChangesAsync(cancellationToken);
 

@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Users;
+﻿using MobileApp.Host.UserFilters;
+using static MobileApp.Host.UserFilters.ManageUserFilters;
+
+namespace MobileApp.Host.Users;
 
 [ApiController]
 public class AddUser : ControllerBase
@@ -36,11 +39,13 @@ public class AddUser : ControllerBase
     public class AddUserQueryHandler : IRequestHandler<AddUserQuery, Result<Guid>>
     {
         public IValidator<AddUserQuery> _validator { get; set; }
-        public readonly IUserService _tokenService;
-        public AddUserQueryHandler(IValidator<AddUserQuery> validator, IUserService tokenService)
+        public readonly IUserService _userService;
+        private readonly ILogger<AddUserQueryHandler> _logger;
+        public AddUserQueryHandler(IValidator<AddUserQuery> validator, IUserService userService, ILogger<AddUserQueryHandler> logger)
         {
             _validator = validator;
-            _tokenService = tokenService;
+            _userService = userService;
+            _logger = logger;
         }
         public async Task<Result<Guid>> Handle(AddUserQuery request, CancellationToken cancellationToken)
         {
@@ -51,7 +56,11 @@ public class AddUser : ControllerBase
                 return validationResult.ToResult<Guid>();
             }
 
-            return await _tokenService.AddUser(request.Email, request.Password);
+            _logger.LogInformation($"[User: {request.Email}] Adding user");
+
+            var result = await _userService.AddUser(request.Email, request.Password);
+
+            return result;
         }
     }
 }

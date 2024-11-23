@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.UserFilters;
+﻿using static MobileApp.Host.Events.AddEventPicture;
+
+namespace MobileApp.Host.UserFilters;
 
 [ApiController]
 public class DeleteUserFilter : ControllerBase
@@ -29,9 +31,11 @@ public class DeleteUserFilter : ControllerBase
     public class DeleteUserFilterCommandHandler : IRequestHandler<DeleteUserFilterCommand, Result>
     {
         private readonly DataContext _db;
-        public DeleteUserFilterCommandHandler(DataContext db)
+        private readonly ILogger<DeleteUserFilterCommandHandler> _logger;
+        public DeleteUserFilterCommandHandler(DataContext db, ILogger<DeleteUserFilterCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(DeleteUserFilterCommand request, CancellationToken cancellationToken)
@@ -45,6 +49,8 @@ public class DeleteUserFilter : ControllerBase
             }
 
             userFilter.IsDeleted = true;
+
+            _logger.LogInformation($"[User: {userFilter.UserId}] Deleting user filters");
 
             return Result.Ok();
         }

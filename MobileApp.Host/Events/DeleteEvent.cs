@@ -29,9 +29,11 @@ public class DeleteEvent : ControllerBase
     public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand, Result>
     {
         private readonly DataContext _db;
-        public DeleteEventCommandHandler(DataContext db)
+        private readonly ILogger<DeleteEventCommandHandler> _logger;
+        public DeleteEventCommandHandler(DataContext db, ILogger<DeleteEventCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
@@ -43,6 +45,8 @@ public class DeleteEvent : ControllerBase
             {
                 return Result.NotFound<Guid>(request.Id);
             }
+
+            _logger.LogInformation($"[Event: {request.Id}] Deleting event");
 
             userEvent.IsDeleted = true;
 

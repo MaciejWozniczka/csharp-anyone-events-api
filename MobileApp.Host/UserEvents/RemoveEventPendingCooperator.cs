@@ -31,9 +31,11 @@ public class RemoveEventPendingCooperator : ControllerBase
     public class RemoveEventPendingCooperatorCommandHandler : IRequestHandler<RemoveEventPendingCooperatorCommand, Result>
     {
         private readonly DataContext _db;
-        public RemoveEventPendingCooperatorCommandHandler(DataContext db)
+        private readonly ILogger<RemoveEventPendingCooperatorCommandHandler> _logger;
+        public RemoveEventPendingCooperatorCommandHandler(DataContext db, ILogger<RemoveEventPendingCooperatorCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(RemoveEventPendingCooperatorCommand request, CancellationToken cancellationToken)
@@ -62,6 +64,8 @@ public class RemoveEventPendingCooperator : ControllerBase
             {
                 userEvent.CooperatorsPending.Remove(user);
             }
+
+            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Removing event pending cooperator");
 
             await _db.SaveChangesAsync(cancellationToken);
 

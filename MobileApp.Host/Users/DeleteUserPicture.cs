@@ -26,10 +26,12 @@ public class DeleteUserPicture : ControllerBase
     {
         private readonly DataContext _db;
         private readonly ICurrentUserAccessor _currentUserAccessor;
-        public DeleteUserPictureHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
+        private readonly ILogger<DeleteUserPictureHandler> _logger;
+        public DeleteUserPictureHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<DeleteUserPictureHandler> logger)
         {
             _db = db;
             _currentUserAccessor = currentUserAccessor;
+            _logger = logger;
         }
 
         public async Task<Result<string>> Handle(DeleteUserPictureCommand request, CancellationToken cancellationToken)
@@ -37,6 +39,8 @@ public class DeleteUserPicture : ControllerBase
             var currentUser = await _currentUserAccessor.GetCurrentUser();
 
             currentUser.Picture = null;
+
+            _logger.LogInformation($"[User: {currentUser.Id}] Deleting user picture");
 
             _db.Update(currentUser);
             await _db.SaveChangesAsync(cancellationToken);

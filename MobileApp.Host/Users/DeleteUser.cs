@@ -29,9 +29,11 @@ public class DeleteUser : ControllerBase
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result<string>>
     {
         private readonly DataContext _db;
-        public DeleteUserCommandHandler(DataContext db)
+        private readonly ILogger<DeleteUserCommandHandler> _logger;
+        public DeleteUserCommandHandler(DataContext db, ILogger<DeleteUserCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result<string>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
@@ -45,6 +47,8 @@ public class DeleteUser : ControllerBase
 
             user.IsDeleted = true;
             user.DeletingDate = DateTimeOffset.UtcNow;
+
+            _logger.LogInformation($"[User: {request.Id}] Deleting user");
 
             _db.Update(user);
             await _db.SaveChangesAsync(cancellationToken);

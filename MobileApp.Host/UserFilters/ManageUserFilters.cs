@@ -37,10 +37,12 @@ public class ManageUserFilters : ControllerBase
     {
         private readonly DataContext _db;
         private readonly ICurrentUserAccessor _currentUserAccessor;
-        public ManageUserFiltersCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
+        private readonly ILogger<ManageUserFiltersCommandHandler> _logger;
+        public ManageUserFiltersCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<ManageUserFiltersCommandHandler> logger)
         {
             _db = db;
             _currentUserAccessor = currentUserAccessor;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(ManageUserFiltersCommand request, CancellationToken cancellationToken)
@@ -67,6 +69,8 @@ public class ManageUserFilters : ControllerBase
             if (request.SexTypes != null) userFilter.SexTypes = request.SexTypes;
             if (request.DateTimeFrom != null) userFilter.DateTimeFrom = request.DateTimeFrom;
             if (request.DateTimeTo != null) userFilter.DateTimeTo = request.DateTimeTo;
+
+            _logger.LogInformation($"[User: {userFilter.UserId}] Adding user filters");
 
             await _db.UserFilters.AddAsync(userFilter, cancellationToken);
             await _db.SaveChangesAsync(cancellationToken);

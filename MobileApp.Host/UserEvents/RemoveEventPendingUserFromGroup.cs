@@ -32,10 +32,12 @@ public class RemoveEventPendingUserFromGroup : ControllerBase
     {
         private readonly DataContext _db;
         private readonly ICurrentUserAccessor _currentUserAccessor;
-        public RemoveEventPendingUserFromGroupCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
+        private readonly ILogger<RemoveEventPendingUserFromGroupCommandHandler> _logger;
+        public RemoveEventPendingUserFromGroupCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<RemoveEventPendingUserFromGroupCommandHandler> logger)
         {
             _db = db;
             _currentUserAccessor = currentUserAccessor;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(RemoveEventPendingUserFromGroupCommand request, CancellationToken cancellationToken)
@@ -72,6 +74,8 @@ public class RemoveEventPendingUserFromGroup : ControllerBase
                     .Remove(userEvent.UsersPending
                         .FirstOrDefault(user => user.Id == currentUser.Id && user.IsDeleted == false));
             }
+
+            _logger.LogInformation($"[Group: {request.GroupId}][Event: {request.EventId}] Removing user pending user from group in event");
 
             await _db.SaveChangesAsync(cancellationToken);
 

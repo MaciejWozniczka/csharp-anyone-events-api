@@ -38,9 +38,11 @@ public class ManageEventTypes : ControllerBase
     public class ManageEventTypeCommandHandler : IRequestHandler<ManageEventTypeCommand, Result<Guid>>
     {
         private readonly DataContext _db;
-        public ManageEventTypeCommandHandler(DataContext db)
+        private readonly ILogger<ManageEventTypeCommandHandler> _logger;
+        public ManageEventTypeCommandHandler(DataContext db, ILogger<ManageEventTypeCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(ManageEventTypeCommand request, CancellationToken cancellationToken)
@@ -58,6 +60,8 @@ public class ManageEventTypes : ControllerBase
                     Picture = request.Picture
                 };
 
+                _logger.LogInformation($"[EventType: {request.Name}] Adding event type");
+
                 await _db.AddAsync(eventType, cancellationToken);
             }
             else
@@ -73,6 +77,8 @@ public class ManageEventTypes : ControllerBase
                 if (request.Name != null) eventType.Name = request.Name;
                 if (request.Type != null) eventType.Type = request.Type;
                 if (request.Picture != null) eventType.Picture = request.Picture;
+
+                _logger.LogInformation($"[EventType: {request.Id}] Updating event type");
 
                 _db.Update(eventType);
             }

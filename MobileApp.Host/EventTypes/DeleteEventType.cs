@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.EventTypes;
+﻿using MobileApp.Host.Events;
+
+namespace MobileApp.Host.EventTypes;
 
 [ApiController]
 public class DeleteEventType : ControllerBase
@@ -29,9 +31,11 @@ public class DeleteEventType : ControllerBase
     public class DeleteEventTypeCommandHandler : IRequestHandler<DeleteEventTypeCommand, Result>
     {
         private readonly DataContext _db;
-        public DeleteEventTypeCommandHandler(DataContext db)
+        private readonly ILogger<DeleteEventTypeCommandHandler> _logger;
+        public DeleteEventTypeCommandHandler(DataContext db, ILogger<DeleteEventTypeCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(DeleteEventTypeCommand request, CancellationToken cancellationToken)
@@ -43,8 +47,9 @@ public class DeleteEventType : ControllerBase
             {
                 return Result.NotFound<Guid>(request.Id);
             }
-
             eventType.IsDeleted = true;
+
+            _logger.LogInformation($"[EventType: {request.Id}] Deleting event type");
 
             return Result.Ok();
         }

@@ -29,9 +29,11 @@ public class DeleteCategory : ControllerBase
     public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Result>
     {
         private readonly DataContext _db;
-        public DeleteCategoryCommandHandler(DataContext db)
+        private readonly ILogger<DeleteCategoryCommandHandler> _logger;
+        public DeleteCategoryCommandHandler(DataContext db, ILogger<DeleteCategoryCommandHandler> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
@@ -45,6 +47,8 @@ public class DeleteCategory : ControllerBase
             }
 
             category.IsDeleted = true;
+
+            _logger.LogInformation($"[Category: {category.Name}] Delete category");
 
             return Result.Ok();
         }
