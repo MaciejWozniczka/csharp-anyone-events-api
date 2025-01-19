@@ -31,7 +31,6 @@ public class ManageEventTypes : ControllerBase
         public Guid Id { get; set; }
         public Guid CategoryId { get; set; }
         public string Name { get; set; }
-        public string? Type { get; set; }
         public string? Picture { get; set; }
     }
 
@@ -56,7 +55,6 @@ public class ManageEventTypes : ControllerBase
                 {
                     CategoryId = request.CategoryId,
                     Name = request.Name,
-                    Type = request.Type,
                     Picture = request.Picture
                 };
 
@@ -75,7 +73,6 @@ public class ManageEventTypes : ControllerBase
 
                 if (request.CategoryId != null) eventType.CategoryId = request.CategoryId;
                 if (request.Name != null) eventType.Name = request.Name;
-                if (request.Type != null) eventType.Type = request.Type;
                 if (request.Picture != null) eventType.Picture = request.Picture;
 
                 _logger.LogInformation($"[EventType: {request.Id}] Updating event type");

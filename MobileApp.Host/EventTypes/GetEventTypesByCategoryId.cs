@@ -30,7 +30,8 @@ public class GetEventTypesByCategoryId : ControllerBase
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string? Type { get; set; }
+        public string EmojiCode { get; set; }
+        public string Picture { get; set; }
     }
 
     public class MapperProfile : Profile

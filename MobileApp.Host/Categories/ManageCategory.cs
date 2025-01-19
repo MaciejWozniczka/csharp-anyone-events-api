@@ -30,7 +30,6 @@ public class ManageCategory : ControllerBase
         [JsonIgnore]
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string? Description { get; set; }
         public string? Picture { get; set; }
     }
 
@@ -54,7 +53,6 @@ public class ManageCategory : ControllerBase
                 category = new Category
                 {
                     Name = request.Name,
-                    Description = request.Description,
                     Picture = request.Picture
                 };
 
@@ -72,7 +70,6 @@ public class ManageCategory : ControllerBase
                 }
 
                 if (request.Name != null) category.Name = request.Name;
-                if (request.Description != null) category.Description = request.Description;
                 if (request.Picture != null) category.Picture = request.Picture;
 
                 _logger.LogInformation($"[Category: {request.Name}] Updating category");
