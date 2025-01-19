@@ -60,6 +60,7 @@ public class Module : IModule
         services.AddMediatR(typeof(Program));
         services.AddValidatorsFromAssembly(typeof(Program).Assembly);
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
+        services.AddScoped<IFakerService, FakerService>();
 
         services.Configure<TokenOption>(configuration.GetSection("Authentication"));
         services.Configure<HereOptions>(configuration.GetSection("Here"));
