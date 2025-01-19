@@ -88,6 +88,8 @@ app.UseSpa(spa =>
     }
 });
 
+new Logger<Program>(new LoggerFactory()).LogInformation("Anyone App started!");
+
 await new MobileApp.Host.Module().Run(app.Services);
 
 app.Run();
