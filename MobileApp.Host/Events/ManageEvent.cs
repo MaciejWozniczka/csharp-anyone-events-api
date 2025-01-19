@@ -143,7 +143,32 @@ public class ManageEvent : ControllerBase
                 if (request.Address != null) userEvent.Address = request.Address;
                 if (request.ShortDescription != null) userEvent.ShortDescription = request.ShortDescription;
                 if (request.Description != null) userEvent.Description = request.Description;
-                if (request.Picture != null) userEvent.Picture = request.Picture;
+                if (request.Picture != null)
+                {
+                    userEvent.Picture = request.Picture;
+                }
+                else
+                {
+                    var eventType = await _db.EventTypes
+                        .Where(e => e.Id == request.EventTypeId && !e.IsDeleted)
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    if (eventType?.Picture != null)
+                    {
+                        userEvent.Picture = eventType.Picture;
+                    }
+                    else
+                    {
+                        var category = await _db.Categories
+                            .Where(e => e.Id == request.CategoryId && !e.IsDeleted)
+                            .FirstOrDefaultAsync(cancellationToken);
+
+                        if (category?.Picture != null)
+                        {
+                            userEvent.Picture = category.Picture;
+                        }
+                    }
+                }
                 if (request.PeopleLimit != null) userEvent.PeopleLimit = request.PeopleLimit;
                 if (request.AgeFrom != null) userEvent.AgeFrom = request.AgeFrom;
                 if (request.AgeTo != null) userEvent.AgeTo = request.AgeTo;
