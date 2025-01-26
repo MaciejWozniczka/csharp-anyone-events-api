@@ -128,7 +128,8 @@ public class UserService : IUserService
         {
             AccessToken = accessToken,
             AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
-            RefreshToken = refreshToken
+            RefreshToken = refreshToken,
+            Id = user.Id
         };
 
         return Result.Ok(authenticationResult);
@@ -169,7 +170,8 @@ public class UserService : IUserService
         {
             AccessToken = accessToken,
             AccessTokenExpiry = DateTime.UtcNow.AddHours(1),
-            RefreshToken = newRefreshToken
+            RefreshToken = newRefreshToken,
+            Id = user.Id
         };
 
         return Result.Ok(authenticationResult);
