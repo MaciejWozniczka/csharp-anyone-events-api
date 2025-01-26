@@ -38,6 +38,11 @@ public class User : IdentityUser
 
     public int CalculateAge()
     {
+        if (BirthdayYear == null)
+        {
+            return 99;
+        }
+
         return DateTime.Now.Year - BirthdayYear.Value;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Reflection.Metadata;
 
 namespace MobileApp.Host.Users;
 
@@ -57,7 +56,7 @@ public class GetCurrentUser : ControllerBase
                 return Result.NotFound<GetCurrentUserDto>("User not found");
             }
 
-            var result = new GetCurrentUserDto()
+            var result = new GetCurrentUserDto
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
