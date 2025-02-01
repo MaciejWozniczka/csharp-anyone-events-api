@@ -37,13 +37,11 @@ public class ManageEvent : ControllerBase
 
         public Guid Id { get; set; }
         public Guid EventTypeId { get; set; }
-        public Guid CategoryId { get; set; }
-        public string CreatorId { get; set; }
         public List<string> CooperatorsPending { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
         public int Duration { get; set; }
-        public Location Location { get; set; }
-        public Address Address { get; set; }
+        public ManageEventLocationCommand Location { get; set; }
+        public ManageEventAddressCommand Address { get; set; }
         public string ShortDescription { get; set; }
         public string? Description { get; set; }
         public string? Picture { get; set; }
@@ -51,6 +49,29 @@ public class ManageEvent : ControllerBase
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
         public List<SexType>? SexTypes { get; set; }
+    }
+
+    public class ManageEventLocationCommand
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
+
+    public class ManageEventAddressCommand
+    {
+        public string? Label { get; set; }
+        public string? CountryCode { get; set; }
+        public string? CountryName { get; set; }
+        public string? StateCode { get; set; }
+        public string? State { get; set; }
+        public string? CountyCode { get; set; }
+        public string? County { get; set; }
+        public string? City { get; set; }
+        public string? District { get; set; }
+        public string? Street { get; set; }
+        public string? PostalCode { get; set; }
+        public string? HouseNumber { get; set; }
+        public string? ApartmentNumber { get; set; }
     }
 
     public class ManageEventCommandHandler : IRequestHandler<ManageEventCommand, Result<Guid>>
@@ -67,12 +88,10 @@ public class ManageEvent : ControllerBase
 
         public async Task<Result<Guid>> Handle(ManageEventCommand request, CancellationToken cancellationToken)
         {
-            await _db.Locations.AddAsync(request.Location, cancellationToken);
-            await _db.Addresses.AddAsync(request.Address, cancellationToken);
-
             UserEvent userEvent;
             var isAdding = request.Id == Guid.Empty;
 
+            var creator = await _currentUserAccessor.GetCurrentUser();
             var currentUserEvents = await _currentUserAccessor.GetCurrentUserEvents();
 
             if (isAdding)
@@ -83,15 +102,40 @@ public class ManageEvent : ControllerBase
                     return Result.BadRequest<Guid>("Użytkownik jest już zapisany na wydarzenia w tym terminie");
                 }
 
+                var eventType = await _db.EventTypes
+                    .Where(e => e.Id == request.EventTypeId)
+                    .Include(e => e.Category)
+                    .FirstOrDefaultAsync(cancellationToken);
+
                 userEvent = new UserEvent
                 {
-                    EventTypeId = request.EventTypeId,
-                    CategoryId = request.CategoryId,
-                    CreatorId = request.CreatorId,
+                    EventTypeId = eventType.Id,
+                    CategoryId = eventType.CategoryId,
+                    CreatorId = creator.Id,
                     EventDateTime = request.EventDateTime,
                     Duration = request.Duration,
-                    Location = request.Location,
-                    Address = request.Address,
+                    Location = new Location()
+                    {
+                        Latitude = request.Location.Latitude,
+                        Longitude = request.Location.Longitude,
+                        UserId = creator.Id
+                    },
+                    Address = new Address
+                    {
+                        Label = request.Address.Label,
+                        CountryCode = request.Address.CountryCode,
+                        CountryName = request.Address.CountryName,
+                        StateCode = request.Address.StateCode,
+                        State = request.Address.State,
+                        CountyCode = request.Address.CountyCode,
+                        County = request.Address.County,
+                        City = request.Address.City,
+                        District = request.Address.District,
+                        Street = request.Address.Street,
+                        PostalCode = request.Address.PostalCode,
+                        HouseNumber = request.Address.HouseNumber,
+                        ApartmentNumber = request.Address.ApartmentNumber
+                    },
                     ShortDescription = request.ShortDescription,
                     Description = request.Description,
                     Picture = request.Picture,
@@ -119,6 +163,21 @@ public class ManageEvent : ControllerBase
                     userEvent.CooperatorsPending.Add(user);
                 }
 
+                if (userEvent.Picture == null)
+                {
+                    if (eventType?.Picture != null)
+                    {
+                        userEvent.Picture = eventType.Picture;
+                    }
+                    else
+                    {
+                        if (eventType.Category.Picture != null)
+                        {
+                            userEvent.Picture = eventType.Category.Picture;
+                        }
+                    }
+                }
+
                 _logger.LogInformation($"[Event: {userEvent.Id}] Adding event");
 
                 await _db.AddAsync(userEvent, cancellationToken);
@@ -134,40 +193,41 @@ public class ManageEvent : ControllerBase
                     return Result.NotFound<Guid>(request.Id);
                 }
 
-                if (request.EventTypeId != null) userEvent.EventTypeId = request.EventTypeId;
-                if (request.CategoryId != null) userEvent.CategoryId = request.CategoryId;
-                if (request.CreatorId != null) userEvent.CreatorId = request.CreatorId;
                 if (request.EventDateTime != null) userEvent.EventDateTime = request.EventDateTime;
                 if (request.Duration != null) userEvent.Duration = request.Duration;
-                if (request.Location != null) userEvent.Location = request.Location;
-                if (request.Address != null) userEvent.Address = request.Address;
+                if (request.Location != null)
+                {
+                    userEvent.Location = new Location
+                    {
+                        Latitude = request.Location.Latitude,
+                        Longitude = request.Location.Longitude,
+                        UserId = creator.Id
+                    };
+                }
+                if (request.Address != null)
+                {
+                    userEvent.Address = new Address
+                    {
+                        Label = request.Address.Label,
+                        CountryCode = request.Address.CountryCode,
+                        CountryName = request.Address.CountryName,
+                        StateCode = request.Address.StateCode,
+                        State = request.Address.State,
+                        CountyCode = request.Address.CountyCode,
+                        County = request.Address.County,
+                        City = request.Address.City,
+                        District = request.Address.District,
+                        Street = request.Address.Street,
+                        PostalCode = request.Address.PostalCode,
+                        HouseNumber = request.Address.HouseNumber,
+                        ApartmentNumber = request.Address.ApartmentNumber
+                    };
+                }
                 if (request.ShortDescription != null) userEvent.ShortDescription = request.ShortDescription;
                 if (request.Description != null) userEvent.Description = request.Description;
                 if (request.Picture != null)
                 {
                     userEvent.Picture = request.Picture;
-                }
-                else
-                {
-                    var eventType = await _db.EventTypes
-                        .Where(e => e.Id == request.EventTypeId && !e.IsDeleted)
-                        .FirstOrDefaultAsync(cancellationToken);
-
-                    if (eventType?.Picture != null)
-                    {
-                        userEvent.Picture = eventType.Picture;
-                    }
-                    else
-                    {
-                        var category = await _db.Categories
-                            .Where(e => e.Id == request.CategoryId && !e.IsDeleted)
-                            .FirstOrDefaultAsync(cancellationToken);
-
-                        if (category?.Picture != null)
-                        {
-                            userEvent.Picture = category.Picture;
-                        }
-                    }
                 }
                 if (request.PeopleLimit != null) userEvent.PeopleLimit = request.PeopleLimit;
                 if (request.AgeFrom != null) userEvent.AgeFrom = request.AgeFrom;
