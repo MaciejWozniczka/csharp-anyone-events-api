@@ -20,10 +20,9 @@ jobs:
           # Dodajemy klucz hosta do known_hosts
           ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
       
-
       - name: Czyszczenie starej wersji Dockera
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -v -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd MobileApp/Docker
             docker-compose down --rmi all -v
             docker system prune -a -f
