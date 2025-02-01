@@ -21,7 +21,7 @@ jobs:
           chmod 600 ~/.ssh/authorized_keys
           ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
           eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa 
+          echo "${{ secrets.SSH.PASSWORD }}" | ssh-add ~/.ssh/id_rsa
 
       - name: Czyszczenie starej wersji Dockera
         run: |
