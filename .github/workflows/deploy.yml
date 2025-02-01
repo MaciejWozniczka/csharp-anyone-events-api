@@ -15,15 +15,11 @@ jobs:
       - name: Ustawienie SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/mikrus  # Tutaj używamy nazwy mikrus
-          chmod 600 ~/.ssh/mikrus  # Zmieniamy nazwę na mikrus
-          # Dodajemy klucz hosta do known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/authorized_keys
+          chmod 600 ~/.ssh/authorized_keys
           ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-add ~/.ssh/authorized_keys
 
-      - name: Test SSH connection with echo
-        run: |
-          ssh -vvv -o StrictHostKeyChecking=no -p 10210 root@srv26.mikr.us "echo 'SSH connection successful'"
-         
       - name: Czyszczenie starej wersji Dockera
         run: |
           ssh -v -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
