@@ -44,7 +44,6 @@ public class ManageEvent : ControllerBase
         public ManageEventAddressCommand Address { get; set; }
         public string ShortDescription { get; set; }
         public string? Description { get; set; }
-        public string? Picture { get; set; }
         public int PeopleLimit { get; set; }
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
@@ -138,7 +137,6 @@ public class ManageEvent : ControllerBase
                     },
                     ShortDescription = request.ShortDescription,
                     Description = request.Description,
-                    Picture = request.Picture,
                     PeopleLimit = request.PeopleLimit,
                     AgeFrom = request.AgeFrom,
                     AgeTo = request.AgeTo,
@@ -163,18 +161,15 @@ public class ManageEvent : ControllerBase
                     userEvent.CooperatorsPending.Add(user);
                 }
 
-                if (userEvent.Picture == null)
+                if (eventType?.Picture != null)
                 {
-                    if (eventType?.Picture != null)
+                    userEvent.Picture = eventType.Picture;
+                }
+                else
+                {
+                    if (eventType.Category.Picture != null)
                     {
-                        userEvent.Picture = eventType.Picture;
-                    }
-                    else
-                    {
-                        if (eventType.Category.Picture != null)
-                        {
-                            userEvent.Picture = eventType.Category.Picture;
-                        }
+                        userEvent.Picture = eventType.Category.Picture;
                     }
                 }
 
@@ -225,10 +220,6 @@ public class ManageEvent : ControllerBase
                 }
                 if (request.ShortDescription != null) userEvent.ShortDescription = request.ShortDescription;
                 if (request.Description != null) userEvent.Description = request.Description;
-                if (request.Picture != null)
-                {
-                    userEvent.Picture = request.Picture;
-                }
                 if (request.PeopleLimit != null) userEvent.PeopleLimit = request.PeopleLimit;
                 if (request.AgeFrom != null) userEvent.AgeFrom = request.AgeFrom;
                 if (request.AgeTo != null) userEvent.AgeTo = request.AgeTo;
