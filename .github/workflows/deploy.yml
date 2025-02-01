@@ -39,7 +39,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "."
-          target: "MobileApp/Docker"
+          target: "MobileApp"
           overwrite: true
           extra_args: "-o StrictHostKeyChecking=no"
 
