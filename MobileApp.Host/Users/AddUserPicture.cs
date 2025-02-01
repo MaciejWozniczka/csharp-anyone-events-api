@@ -1,12 +1,9 @@
-﻿using static MobileApp.Host.Users.AddUser;
-
-namespace MobileApp.Host.Users;
+﻿namespace MobileApp.Host.Users;
 
 [ApiController]
 public class AddUserPicture : ControllerBase
 {
     private readonly IMediator _mediator;
-
     public AddUserPicture(IMediator mediator)
     {
         _mediator = mediator;

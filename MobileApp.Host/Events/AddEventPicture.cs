@@ -1,12 +1,9 @@
-﻿using MobileApp.Host.Categories;
-
-namespace MobileApp.Host.Events;
+﻿namespace MobileApp.Host.Events;
 
 [ApiController]
 public class AddEventPicture : ControllerBase
 {
     private readonly IMediator _mediator;
-
     public AddEventPicture(IMediator mediator)
     {
         _mediator = mediator;
@@ -14,10 +11,10 @@ public class AddEventPicture : ControllerBase
 
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Add event picture")]
-    [HttpPost("/api/event/picture/")]
-    public async Task<Result<Guid>> Import(IFormFile file, Guid eventId)
+    [HttpPost("/api/event/{id}/picture/")]
+    public async Task<Result<Guid>> Import(IFormFile file, Guid id)
     {
-        return await _mediator.Send(new AddEventPictureCommand() { DataFile = file, EventId = eventId });
+        return await _mediator.Send(new AddEventPictureCommand { DataFile = file, EventId = id });
     }
 
     public class AddEventPictureCommand : IRequest<Result<Guid>>
