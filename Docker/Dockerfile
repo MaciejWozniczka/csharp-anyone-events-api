@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 LABEL author="maciej.wozniczka@outlook.com"
 
 RUN rm -rf /var/lib/apt/lists/*
@@ -20,9 +20,9 @@ RUN dotnet publish MobileApp.Host -c Release
 # RUN npm run build
 
 WORKDIR /app
-RUN mkdir -p MobileApp.Host/bin/Release/net6.0/publish/ClientApp
-RUN mkdir -p MobileApp.Host/bin/Release/net6.0/publish/ClientApp/dist
+RUN mkdir -p MobileApp.Host/bin/Release/net8.0/publish/ClientApp
+RUN mkdir -p MobileApp.Host/bin/Release/net8.0/publish/ClientApp/dist
 # RUN cp -a frontend/dist/. MobileApp.Host/bin/Release/net6.0/publish/ClientApp/dist
 
-WORKDIR /app/MobileApp.Host/bin/Release/net6.0/publish
+WORKDIR /app/MobileApp.Host/bin/Release/net8.0/publish
 CMD ./MobileApp.Host
