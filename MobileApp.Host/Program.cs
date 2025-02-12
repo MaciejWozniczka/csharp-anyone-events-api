@@ -27,11 +27,6 @@ builder.Host.UseSerilog((host, log) =>
 
 new MobileApp.Host.Module().GetServices(services, configuration);
 
-services.AddSpaStaticFiles(c =>
-{
-    c.RootPath = "ClientApp/dist";
-});
-
 var app = builder.Build();
 
 app.Use(async (context, next) =>
@@ -75,18 +70,6 @@ app.UseEndpoints(endpoints =>
 
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MobileApp v1"));
-
-app.UseStaticFiles();
-app.UseSpaStaticFiles();
-app.UseSpa(spa =>
-{
-    spa.Options.SourcePath = "ClientApp";
-
-    if (app.Environment.IsDevelopment())
-    {
-        spa.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
-    }
-});
 
 new Logger<Program>(new LoggerFactory()).LogInformation("Anyone App started!");
 
