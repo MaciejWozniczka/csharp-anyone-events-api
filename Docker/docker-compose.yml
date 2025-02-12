@@ -38,3 +38,8 @@ services:
       - 5173:5173
     volumes: 
       - ./MobileApp/Logs:/app/MobileApp.Host/bin/Release/net6.0/publish/Logs
+    networks:
+      - shared-network
+networks:
+  shared-network:
+    external: true
