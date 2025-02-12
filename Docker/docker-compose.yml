@@ -10,6 +10,8 @@ services:
       - '5432:5432'
     volumes: 
       - ./PostgreSQL/data:/var/lib/postgresql/data
+    networks:
+      - shared-network
   db-adminer:
     image: adminer:latest
     restart: always
@@ -17,6 +19,8 @@ services:
       - db
     ports:
       - 8090:8080 
+    networks:
+      - shared-network
   mobileapp-backend:
     build:
       context: ..

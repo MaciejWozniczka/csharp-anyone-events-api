@@ -43,6 +43,12 @@ jobs:
           overwrite: true
           extra_args: "-o StrictHostKeyChecking=no"
 
+      - name: Tworzenie sieci shared-network (jeśli nie istnieje)
+        run: |
+          ssh -v -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+            docker network inspect shared-network >/dev/null 2>&1 || docker network create shared-network
+          EOF
+
       - name: Budowanie i uruchamianie Dockera
         run: |
           ssh -v -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
