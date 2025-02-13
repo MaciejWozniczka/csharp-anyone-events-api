@@ -42,4 +42,4 @@ services:
       - shared-network
 networks:
   shared-network:
-    external: true
+    driver: bridge
