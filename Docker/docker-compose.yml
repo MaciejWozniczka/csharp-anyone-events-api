@@ -31,7 +31,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Host=db;Database=MobileApp;Username=postgres;Password=jG1cv1L81%8Y
       - ASPNETCORE_URLS=http://+:5173
-      - Authentication__SecretKey={hv1gXEvEo'9d!8udim{V/w)5'}I#}
+      - Authentication__SecretKey=d2s3kjhds1lkg4khlfh2sdfk4sf7df3jsd2klfhsd3kfh==
       - Authentication__Audience=AnyOneAppAudience
       - Authentication__Issuer=AnyOneAppIssuer
     ports:
