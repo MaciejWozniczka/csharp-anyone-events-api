@@ -19,9 +19,9 @@ RUN dotnet publish MobileApp.Host -c Release
 # RUN npm install
 # RUN npm run build
 
-WORKDIR /app
-RUN mkdir -p MobileApp.Host/bin/Release/net8.0/publish/ClientApp
-RUN mkdir -p MobileApp.Host/bin/Release/net8.0/publish/ClientApp/dist
+# WORKDIR /app
+# RUN mkdir -p MobileApp.Host/bin/Release/net8.0/publish/ClientApp
+# RUN mkdir -p MobileApp.Host/bin/Release/net8.0/publish/ClientApp/dist
 # RUN cp -a frontend/dist/. MobileApp.Host/bin/Release/net6.0/publish/ClientApp/dist
 
 WORKDIR /app/MobileApp.Host/bin/Release/net8.0/publish
