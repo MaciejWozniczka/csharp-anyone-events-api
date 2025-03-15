@@ -62,17 +62,17 @@ public class FakerService : IFakerService
         {
             var category = _categories[_random.Next(_categories.Count)];
             var eventType = category.EventTypes[_random.Next(category.EventTypes.Count)];
-            var age = _random.Next(20 + 18);
+            var age = 18 + _random.Next(20);
 
             var userEvent = new UserEvent
             {
                 CategoryId = category.Id,
                 EventTypeId = eventType.Id,
                 CreatorId = _usersIds[_random.Next(_usersIds.Count)],
-                EventDateTime = new DateTimeOffset(DateTime.UtcNow.Date.AddHours(i*i)),
+                EventDateTime = new DateTimeOffset(DateTime.UtcNow.Date.AddHours(i*i), TimeSpan.Zero),
                 Duration = _random.Next(3) * 60,
-                Location = _locations[_random.Next(_locations.Count)],
-                Address = _addresses[_random.Next(_addresses.Count)],
+                LocationId = _locations[_random.Next(_locations.Count)].Id,
+                AddressId = _addresses[_random.Next(_addresses.Count)].Id,
                 ShortDescription = $"{eventType.Name} już dzisiaj!",
                 Description = $"Wbijaj pobawić się z nami na cotygodniowym wyjściu na {eventType.Name}. Zbiórka o wskazanej godzinie.",
                 Picture = eventType.Picture ?? category.Picture,
@@ -81,7 +81,7 @@ public class FakerService : IFakerService
                 AgeTo = _random.Next(20 + age),
                 SexTypes = new List<SexType> { (SexType)_random.Next(2) },
                 IsActive = true,
-                CreateDate = DateTimeOffset.Now,
+                CreateDate = DateTimeOffset.UtcNow,
                 IsDeleted = false
             };
 
