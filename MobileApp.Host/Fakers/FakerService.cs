@@ -20,27 +20,25 @@ public class FakerService : IFakerService
         _random = new Random();
         _usersIds = new List<string>
         {
-            "a0e79c3d-7949-4f50-b099-f23505ddd826",
-            "4f2235e2-2f52-4618-bf17-014dd26529a8",
-            "0029ae26-f73f-49d9-b7bf-2b410ff4493b"
+            "e6c2c10b-4667-4c1b-a5d6-596c0e7e1617",
+            "3dea593b-d731-45eb-a62d-62d6673247ac",
+            "a4b78472-32dc-4393-9bd9-953c8fc4cca9"
         };
         _categories = new List<Category>();
         _locationsIds = new List<Guid>
         {
-            new("536c96c6-8fed-4bca-aa13-a3c8a49a8f99"),
-            new("666cf786-cee2-496b-ae19-cc75db809783"),
-            new("0e29b772-33b1-4de0-8d29-e6ed0e820512"),
-            new("949572e1-02b4-4aec-9530-ab7a1afb4c0e"),
-            new("3aa5e8ca-f84b-49a3-b03b-cac6c70857a8")
+            new("1f35a742-4bf7-4271-a5ca-2fb781fb4c68"),
+            new("0f6bd3b6-62e4-47b7-9b16-32076dd23a37"),
+            new("6e0d1c50-dbb5-46b2-a385-c5dadf6434af"),
+            new("6d71308a-0aa7-4033-a748-a808b210cfd3")
         };
         _locations = new List<Location>();
         _addressesIds = new List<Guid>
         {
-            new("78ddbf57-bfdd-48d0-8b7d-9e7f10e376c8"),
-            new("efcbcd7f-99fc-40d5-8906-967ce8b165ed"),
-            new("0eea46a7-93b2-40ba-bf77-c69a419c8834"),
-            new("e11743dc-5ff5-44c8-9725-a6c85f11f994"),
-            new("03127443-b32b-4e83-8cdb-a70d0f1e7c18")
+            new("e8f41bd0-85a1-4304-bbd0-f8001e193ed2"),
+            new("27d4ec58-9291-4ea4-9b52-5ee85a2d3aab"),
+            new("e1a2b4fc-6507-4add-bd7c-bd6a68091d7f"),
+            new("cbc4bf65-2d81-4c2d-beac-b3637deaa935")
         };
         _addresses = new List<Address>();
     }
