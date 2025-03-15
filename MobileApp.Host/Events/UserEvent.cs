@@ -28,7 +28,9 @@ public class UserEvent : BaseModel
     public List<User>? UsersSkipped { get; set; }
     public DateTimeOffset EventDateTime { get; set; }
     public int Duration { get; set; }
+    public Guid LocationId { get; set; }
     public Location Location { get; set; }
+    public Guid AddressId { get; set; }
     public Address Address { get; set; }
     public string ShortDescription { get; set; }
     public string? Description { get; set; }
