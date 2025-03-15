@@ -1,4 +1,8 @@
+using Hangfire;
+using Hangfire.PostgreSql;
+using Hangfire.Storage;
 using Microsoft.AspNetCore.Diagnostics;
+using MobileApp.Host;
 using Serilog.Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,10 +10,35 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+GlobalConfiguration.Configuration
+    .UsePostgreSqlStorage(cn => cn.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+    .UseSerilogLogProvider();
+
 services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.ClearProviders();
     loggingBuilder.AddSerilog(dispose: true);
+});
+
+var options = new PostgreSqlStorageOptions
+{
+    CountersAggregateInterval = TimeSpan.FromHours(24),
+    JobExpirationCheckInterval = TimeSpan.FromHours(1)
+};
+
+services.AddHangfire(c => c
+    .UseSerilogLogProvider()
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UsePostgreSqlStorage(cn =>
+        cn.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection")), options)
+    .UseFilter(new AutomaticRetryAttribute { Attempts = 1 }));
+
+services.AddHangfireServer(serverOptions =>
+{
+    serverOptions.Queues = [ "default", "events" ];
+    serverOptions.WorkerCount = 4;
 });
 
 builder.Host.UseSerilog((host, log) =>
@@ -25,7 +54,7 @@ builder.Host.UseSerilog((host, log) =>
     log.WriteTo.Console();
 });
 
-new MobileApp.Host.Module().GetServices(services, configuration);
+new Module().GetServices(services, configuration);
 
 var app = builder.Build();
 
@@ -66,13 +95,23 @@ app.UseExceptionHandler(errorApp =>
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
+    endpoints.MapHangfireDashboard();
 });
 
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MobileApp v1"));
 
+app.UseHangfireDashboard();
+
+foreach (var job in JobStorage.Current.GetConnection().GetRecurringJobs())
+{
+    RecurringJob.RemoveIfExists(job.Id);
+}
+
 new Logger<Program>(new LoggerFactory()).LogInformation("Anyone App started!");
 
-await new MobileApp.Host.Module().Run(app.Services);
+RecurringJob.AddOrUpdate<IFakerService>("events", "events", s => s.CreateFakeEvents(CancellationToken.None), Cron.Daily(6));
+
+await new Module().Run(app.Services);
 
 app.Run();
