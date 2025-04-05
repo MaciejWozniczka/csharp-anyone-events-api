@@ -1,7 +1,4 @@
-﻿using MobileApp.Host.UserFilters;
-using static MobileApp.Host.UserFilters.ManageUserFilters;
-
-namespace MobileApp.Host.Users;
+﻿namespace MobileApp.Host.Users;
 
 [ApiController]
 public class AddUser : ControllerBase
