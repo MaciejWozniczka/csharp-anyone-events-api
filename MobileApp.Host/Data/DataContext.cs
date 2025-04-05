@@ -1,4 +1,5 @@
-﻿using MobileApp.Host.Messages;
+﻿using MobileApp.Host.Chats;
+using MobileApp.Host.Messages;
 
 namespace MobileApp.Host.Data;
 
@@ -10,6 +11,8 @@ public class DataContext : IdentityDbContext<User>
 
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Chat> Chats { get; set; }
+    public DbSet<ChatParticipant> Participants { get; set; }
     public DbSet<Communication> Communications { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<UserEvent> Events { get; set; }
@@ -59,6 +62,18 @@ public class DataContext : IdentityDbContext<User>
             .HasMany(e => e.UsersPending)
             .WithMany(u => u.EventsPending)
             .UsingEntity(j => j.ToTable("EventUserPending"));
+
+        modelBuilder.Entity<Chat>()
+            .HasMany(c => c.Messages)
+            .WithOne(m => m.Chat)
+            .HasForeignKey(m => m.ChatId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Chat>()
+            .HasMany(c => c.Participants)
+            .WithOne(p => p.Chat)
+            .HasForeignKey(p => p.ChatId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }

@@ -31,6 +31,7 @@ public class GetMessages(IMediator mediator)
     {
         public Guid Id { get; set; }
         public string RoomId { get; set; }
+        public string ChatName { get; set; }
         public string SenderUserId { get; set; }
         public string SenderUsername { get; set; }
         public string Text { get; set; }
@@ -50,6 +51,7 @@ public class GetMessages(IMediator mediator)
                 {
                     Id = m.Id,
                     RoomId = m.RoomId,
+                    ChatName = m.ChatName,
                     SenderUserId = m.SenderUserId,
                     SenderUsername = m.SenderUsername,
                     Text = m.Text,
