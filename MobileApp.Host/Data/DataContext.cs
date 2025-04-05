@@ -1,4 +1,4 @@
-﻿using MobileApp.Host.UserFilters;
+﻿using MobileApp.Host.Messages;
 
 namespace MobileApp.Host.Data;
 
@@ -14,6 +14,7 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Location> Locations { get; set; }
     public DbSet<UserEvent> Events { get; set; }
     public DbSet<EventType> EventTypes { get; set; }
+    public DbSet<Message> Messages { get; set; }
     public DbSet<UserFilter> UserFilters { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
