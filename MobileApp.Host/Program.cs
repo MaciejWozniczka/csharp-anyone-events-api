@@ -3,6 +3,7 @@ using Hangfire.PostgreSql;
 using Hangfire.Storage;
 using Microsoft.AspNetCore.Diagnostics;
 using MobileApp.Host;
+using MobileApp.Host.Chats;
 using Serilog.Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,8 @@ services.AddHangfireServer(serverOptions =>
     serverOptions.Queues = [ "default", "events" ];
     serverOptions.WorkerCount = 4;
 });
+
+services.AddSignalR();
 
 builder.Host.UseSerilog((host, log) =>
 {
@@ -102,6 +105,8 @@ app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MobileApp v1"));
 
 app.UseHangfireDashboard();
+
+app.MapHub<ChatHub>("/chathub");
 
 foreach (var job in JobStorage.Current.GetConnection().GetRecurringJobs())
 {
