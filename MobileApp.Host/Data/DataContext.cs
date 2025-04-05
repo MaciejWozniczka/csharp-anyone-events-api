@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.UserFilters;
-
-namespace MobileApp.Host.Data;
+﻿namespace MobileApp.Host.Data;
 
 public class DataContext : IdentityDbContext<User>
 {
@@ -10,10 +8,13 @@ public class DataContext : IdentityDbContext<User>
 
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Chat> Chats { get; set; }
+    public DbSet<ChatParticipant> Participants { get; set; }
     public DbSet<Communication> Communications { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<UserEvent> Events { get; set; }
     public DbSet<EventType> EventTypes { get; set; }
+    public DbSet<Message> Messages { get; set; }
     public DbSet<UserFilter> UserFilters { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,6 +59,18 @@ public class DataContext : IdentityDbContext<User>
             .HasMany(e => e.UsersPending)
             .WithMany(u => u.EventsPending)
             .UsingEntity(j => j.ToTable("EventUserPending"));
+
+        modelBuilder.Entity<Chat>()
+            .HasMany(c => c.Messages)
+            .WithOne(m => m.Chat)
+            .HasForeignKey(m => m.ChatId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Chat>()
+            .HasMany(c => c.Participants)
+            .WithOne(p => p.Chat)
+            .HasForeignKey(p => p.ChatId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }

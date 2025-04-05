@@ -1,11 +1,3 @@
-using Hangfire;
-using Hangfire.PostgreSql;
-using Hangfire.Storage;
-using Microsoft.AspNetCore.Diagnostics;
-using MobileApp.Host;
-using MobileApp.Host.Chats;
-using Serilog.Context;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
