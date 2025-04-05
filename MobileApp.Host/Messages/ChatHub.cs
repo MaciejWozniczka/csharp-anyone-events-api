@@ -2,19 +2,15 @@
 
 namespace MobileApp.Host.Messages;
 
-public class ChatHub : Hub
+public interface IChatHub
 {
-    private readonly DataContext _db;
-    private readonly ICurrentUserAccessor _currentUserAccessor;
-    public ChatHub(DataContext db, ICurrentUserAccessor currentUserAccessor)
-    {
-        _db = db;
-        _currentUserAccessor = currentUserAccessor;
-    }
-
+    Task SendMessage(string roomName, string messageText);
+}
+public class ChatHub(DataContext db, ICurrentUserAccessor currentUserAccessor) : Hub, IChatHub
+{
     public async Task SendMessage(string roomName, string messageText)
     {
-        var currentUser = await _currentUserAccessor.GetCurrentUser();
+        var currentUser = await currentUserAccessor.GetCurrentUser();
 
         var message = new Message
         {
@@ -24,8 +20,8 @@ public class ChatHub : Hub
             Text = messageText
         };
 
-        _db.Messages.Add(message);
-        await _db.SaveChangesAsync();
+        db.Messages.Add(message);
+        await db.SaveChangesAsync();
 
         await Clients.Group(roomName).SendAsync("ReceiveMessage", message.SenderUsername, messageText);
     }

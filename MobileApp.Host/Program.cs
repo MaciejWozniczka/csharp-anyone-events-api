@@ -3,7 +3,7 @@ using Hangfire.PostgreSql;
 using Hangfire.Storage;
 using Microsoft.AspNetCore.Diagnostics;
 using MobileApp.Host;
-using MobileApp.Host.Chats;
+using MobileApp.Host.Messages;
 using Serilog.Context;
 
 var builder = WebApplication.CreateBuilder(args);

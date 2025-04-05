@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using MobileApp.Host.Messages;
 
 namespace MobileApp.Host;
 
@@ -59,6 +60,7 @@ public class Module : IModule
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddMediatR(typeof(Program));
         services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+        services.AddScoped<IChatHub, ChatHub>();
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         services.AddScoped<IFakerService, FakerService>();
 
