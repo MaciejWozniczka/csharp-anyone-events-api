@@ -37,3 +37,4 @@ global using System.IdentityModel.Tokens.Jwt;
 global using System.Security.Claims;
 global using System.Text.Json.Serialization;
 global using MobileApp.Host.Fakers;
+global using MobileApp.Host.UserFilters;
