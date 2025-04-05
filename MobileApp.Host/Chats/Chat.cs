@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Messages;
-
-namespace MobileApp.Host.Chats;
+﻿namespace MobileApp.Host.Chats;
 
 public class Chat : BaseModel
 {

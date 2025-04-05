@@ -1,7 +1,4 @@
-﻿using MobileApp.Host.Chats;
-using MobileApp.Host.Messages;
-
-namespace MobileApp.Host.Data;
+﻿namespace MobileApp.Host.Data;
 
 public class DataContext : IdentityDbContext<User>
 {

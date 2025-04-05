@@ -1,7 +1,4 @@
-﻿using System.Text;
-using MobileApp.Host.Messages;
-
-namespace MobileApp.Host;
+﻿namespace MobileApp.Host;
 
 public interface IModule
 {
