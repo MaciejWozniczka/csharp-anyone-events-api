@@ -43,7 +43,7 @@ public class GetMessages(IMediator mediator)
         public async Task<Result<List<GetMessagesDto>>> Handle(GetMessagesQuery request, CancellationToken cancellationToken)
         {
             var messages = await db.Messages
-                .Where(m => m.Id == request.Id)
+                .Where(m => m.ChatId == request.Id)
                 .OrderByDescending(m => m.CreateDate)
                 .Skip(request.PaginationArgs.PageSize * request.PaginationArgs.Page)
                 .Take(request.PaginationArgs.PageSize)
@@ -51,7 +51,7 @@ public class GetMessages(IMediator mediator)
                 {
                     Id = m.Id,
                     RoomId = m.RoomId,
-                    ChatName = m.ChatName,
+                    ChatName = m.Chat.Name,
                     SenderUserId = m.SenderUserId,
                     SenderUsername = m.SenderUsername,
                     Text = m.Text,
