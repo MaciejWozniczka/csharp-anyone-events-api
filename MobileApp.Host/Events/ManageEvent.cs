@@ -137,7 +137,7 @@ public class ManageEvent : ControllerBase
                     },
                     ShortDescription = request.ShortDescription,
                     Description = request.Description,
-                    PeopleLimit = request.PeopleLimit,
+                    PeopleLimit = request.PeopleLimit++,
                     AgeFrom = request.AgeFrom,
                     AgeTo = request.AgeTo,
                     SexTypes = request.SexTypes ?? new List<SexType> { SexType.All },
@@ -148,6 +148,8 @@ public class ManageEvent : ControllerBase
                     UsersInterested = new List<User>(),
                     UsersSkipped = new List<User>()
                 };
+
+                userEvent.UsersAssigned.Add(creator);
 
                 foreach (var userId in request.CooperatorsPending)
                 {
