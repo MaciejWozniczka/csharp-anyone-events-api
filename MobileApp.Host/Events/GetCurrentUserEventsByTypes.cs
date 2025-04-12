@@ -1,29 +1,19 @@
 ﻿namespace MobileApp.Host.Events;
 
 [ApiController]
-public class GetCurrentUserEventsByTypes : ControllerBase
+public class GetCurrentUserEventsByTypes(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetCurrentUserEventsByTypes(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get current user events by type")]
     [HttpGet("/api/user/events/types/{type}")]
     public async Task<Result<GetCurrentUserEventsByTypesDto>> GetCurrentUserEventsByTypesAsync(EventTypes type)
     {
-        return await _mediator.Send(new GetCurrentUserEventsByTypesQuery(type));
+        return await mediator.Send(new GetCurrentUserEventsByTypesQuery(type));
     }
 
-    public class GetCurrentUserEventsByTypesQuery : IRequest<Result<GetCurrentUserEventsByTypesDto>>
+    public class GetCurrentUserEventsByTypesQuery(EventTypes type) : IRequest<Result<GetCurrentUserEventsByTypesDto>>
     {
-        public EventTypes Type { get; set; }
-        public GetCurrentUserEventsByTypesQuery(EventTypes type)
-        {
-            Type = type;
-        }
+        public EventTypes Type { get; set; } = type;
     }
 
     public class GetCurrentUserEventsByTypesDto
@@ -35,23 +25,21 @@ public class GetCurrentUserEventsByTypes : ControllerBase
     {
         public Guid Id { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
-        public Location Location { get; set; }
+        public int Duration { get; set; }
         public string ShortDescription { get; set; }
-        public string? Description { get; set; }
-        public string? Picture { get; set; }
+        public string CategoryName { get; set; }
+        public string EmojiCode { get; set; }
+        public string CreatorName { get; set; }
+        public string CreatorPicture { get; set; }
+        public int PeopleAdded { get; set; }
+        public int PeopleLimit { get; set; }
     }
 
-    public class GetCurrentUserEventsByTypesDtoQueryHandler : IRequestHandler<GetCurrentUserEventsByTypesQuery, Result<GetCurrentUserEventsByTypesDto>>
+    public class GetCurrentUserEventsByTypesDtoQueryHandler(ICurrentUserAccessor currentUserAccessor) : IRequestHandler<GetCurrentUserEventsByTypesQuery, Result<GetCurrentUserEventsByTypesDto>>
     {
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        public GetCurrentUserEventsByTypesDtoQueryHandler(ICurrentUserAccessor currentUserAccessor)
-        {
-            _currentUserAccessor = currentUserAccessor;
-        }
-
         public async Task<Result<GetCurrentUserEventsByTypesDto>> Handle(GetCurrentUserEventsByTypesQuery request, CancellationToken cancellationToken)
         {
-            var currentUserEventsByType = await _currentUserAccessor.GetCurrentUserWithEventsByType(request.Type);
+            var currentUserEventsByType = await currentUserAccessor.GetCurrentUserWithEventsByType(request.Type);
 
             if (currentUserEventsByType == null)
             {
@@ -65,10 +53,14 @@ public class GetCurrentUserEventsByTypes : ControllerBase
                     {
                         Id = e.Id,
                         EventDateTime = e.EventDateTime,
-                        Location = e.Location,
+                        Duration = e.Duration,
                         ShortDescription = e.ShortDescription,
-                        Description = e.Description,
-                        Picture = e.Picture
+                        CategoryName = e.EventType.Name,
+                        EmojiCode = e.EventType.EmojiCode,
+                        CreatorName = e.Creator?.FirstName ?? "",
+                        CreatorPicture = e.Creator?.Picture ?? "",
+                        PeopleAdded = e.UsersAssigned?.Count(u => !u.IsDeleted) ?? 1,
+                        PeopleLimit = e.PeopleLimit
                     })
                     .ToList()
             };
