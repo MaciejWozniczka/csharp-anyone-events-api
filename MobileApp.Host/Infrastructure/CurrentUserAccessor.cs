@@ -66,37 +66,44 @@ public class CurrentUserAccessor : ICurrentUserAccessor
         {
             case Events.EventTypes.EventsCreated:
                 userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
-                    .Include(u => u.EventsCreated)
+                    .Include(u => u.EventsCreated)!
+                    .ThenInclude(u => u.EventType)
                     .FirstOrDefaultAsync();
                 return userEvents?.EventsCreated ?? [];
             case Events.EventTypes.EventsCooperationPending:
                 userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
-                    .Include(u => u.EventsCooperationPending)
+                    .Include(u => u.EventsCooperationPending)!
+                    .ThenInclude(u => u.EventType)
                     .FirstOrDefaultAsync();
                 return userEvents?.EventsCooperationPending ?? new List<UserEvent>() ?? [];
             case Events.EventTypes.EventsCooperated:
                 userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
-                    .Include(u => u.EventsCooperated)
+                    .Include(u => u.EventsCooperated)!
+                    .ThenInclude(u => u.EventType)
                     .FirstOrDefaultAsync();
                 return userEvents?.EventsCooperated ?? [];
             case Events.EventTypes.EventsPending:
                 userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
-                    .Include(u => u.EventsPending)
+                    .Include(u => u.EventsPending)!
+                    .ThenInclude(u => u.EventType)
                     .FirstOrDefaultAsync();
                 return userEvents?.EventsPending ?? [];
             case Events.EventTypes.EventsAssigned:
                 userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
-                    .Include(u => u.EventsAssigned)
+                    .Include(u => u.EventsAssigned)!
+                    .ThenInclude(u => u.EventType)
                     .FirstOrDefaultAsync();
                 return userEvents?.EventsAssigned ?? [];
             case Events.EventTypes.EventsInterested:
                 userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
-                    .Include(u => u.EventsInterested)
+                    .Include(u => u.EventsInterested)!
+                    .ThenInclude(u => u.EventType)
                     .FirstOrDefaultAsync();
                 return userEvents?.EventsInterested ?? [];
             case Events.EventTypes.EventsSkipped:
                 userEvents = await _db.Users.Where(u => u.NormalizedEmail == emailClaim.Value.ToUpper())
-                    .Include(u => u.EventsSkipped)
+                    .Include(u => u.EventsSkipped)!
+                    .ThenInclude(u => u.EventType)
                     .FirstOrDefaultAsync();
                 return userEvents?.EventsSkipped ?? [];
             default:
