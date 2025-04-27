@@ -1,6 +1,4 @@
-﻿using static MobileApp.Host.Events.GetEvent;
-
-namespace MobileApp.Host.Events;
+﻿namespace MobileApp.Host.Events;
 
 [ApiController]
 public class GetEvents : ControllerBase
@@ -14,9 +12,9 @@ public class GetEvents : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get active events according to parameters")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Get active events according to parameters")]
     [HttpGet("/api/events/")]
-    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, int distance, Guid? categoryId, Guid? eventTypeId, int? ageFrom, int? ageTo, SexType? sexTypes)
+    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, double latitude, double longitude, int distance, Guid? categoryId, Guid? eventTypeId, int? ageFrom, int? ageTo, SexType? sexTypes)
     {
         var user = await _currentUserAccessor.GetCurrentUser();
         var pagination = new PaginationArgs
@@ -24,7 +22,7 @@ public class GetEvents : ControllerBase
             Page = offset ?? 0,
             PageSize = limit ?? 10
         };
-        return await _mediator.Send(new GetEventsQuery(pagination, user, new Location { Latitude = user.CurrentLocation.Latitude, Longitude = user.CurrentLocation.Longitude, Distance = distance }, categoryId, eventTypeId, ageFrom, ageTo, sexTypes)).Process();
+        return await _mediator.Send(new GetEventsQuery(pagination, user, new Location { Latitude = latitude, Longitude = longitude, Distance = distance, UserId = user.Id}, categoryId, eventTypeId, ageFrom, ageTo, sexTypes)).Process();
     }
 
     public class GetEventsQuery : IRequest<Result<GetEventsDto>>
@@ -36,7 +34,7 @@ public class GetEvents : ControllerBase
             CategoryId = categoryId;
             EventTypeId = eventTypeId;
             UserAge = user.CalculateAge();
-            UserSexType = user.Sex.Value;
+            UserSexType = user.Sex ?? SexType.All;
             ageFrom ??= 18;
             AgeFrom = ageFrom;
             ageTo ??= 99;
@@ -59,7 +57,7 @@ public class GetEvents : ControllerBase
     {
         public GetEventsDto()
         {
-            Data = new List<EventsDto>();
+            Data = [];
         }
         public int Limit { get; set; }
         public int Offset { get; set; }
@@ -71,8 +69,8 @@ public class GetEvents : ControllerBase
     {
         public EventsDto()
         {
-            Cooperators = new List<GetEventsUserDto>();
-            SexTypes = new List<SexType>();
+            Cooperators = [];
+            SexTypes = [];
         }
         public Guid Id { get; set; }
         public GetEventsUserDto Creator { get; set; }
@@ -103,22 +101,16 @@ public class GetEvents : ControllerBase
         public string? Picture { get; set; }
     }
 
-    public class GetEventsQueryHandler : IRequestHandler<GetEventsQuery, Result<GetEventsDto>>
+    public class GetEventsQueryHandler(DataContext db) : IRequestHandler<GetEventsQuery, Result<GetEventsDto>>
     {
-        private readonly DataContext _db;
-        public GetEventsQueryHandler(DataContext db)
-        {
-            _db = db;
-        }
-
         public async Task<Result<GetEventsDto>> Handle(GetEventsQuery request, CancellationToken cancellationToken)
         {
-            var userLocation = new GeoCoordinate(request.Location.Latitude, request.Location.Longitude);
+            await db.Locations.AddAsync(request.Location, cancellationToken);
 
-            var events = await _db.Events
+            var events = await db.Events
                 .Where(e => e.AgeFrom <= request.UserAge
                             && e.AgeTo >= request.UserAge
-                            && (e.SexTypes.Contains(request.UserSexType) || e.SexTypes == null || e.SexTypes == new List<SexType>() || e.SexTypes == new List<SexType>{ SexType.All })
+                            && e.SexTypes == null || e.SexTypes == new List<SexType>() || e.SexTypes == new List<SexType>{ SexType.All } || (e.SexTypes.Contains(request.UserSexType))
                             && (e.UsersAssigned.Count < e.PeopleLimit || e.PeopleLimit == 0)
                             && e.Creator.CalculateAge() >= request.AgeFrom
                             && e.Creator.CalculateAge() <= request.AgeTo
