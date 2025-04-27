@@ -10,7 +10,7 @@ public class AddUserPicture : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Add user picture")]
+    [SwaggerOperation(Tags = ["Users"], Summary = "Add user picture")]
     [HttpPost("/api/user/picture")]
     public async Task<Result<string>> Import(IFormFile file)
     {

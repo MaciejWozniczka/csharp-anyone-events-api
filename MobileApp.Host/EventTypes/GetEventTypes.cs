@@ -10,7 +10,7 @@ public class GetEventTypes : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "EventTypes" }, Summary = "Get event types list")]
+    [SwaggerOperation(Tags = ["EventTypes"], Summary = "Get event types list")]
     [HttpGet("/api/eventTypes")]
     public async Task<Result<List<GetEventTypesDto>>> GetEventTypesAsync([FromQuery] GetEventTypesQuery query)
     {

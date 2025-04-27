@@ -10,7 +10,7 @@ public class RemoveEventInterestedUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove interested user from event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove interested user from event")]
     [HttpDelete("/api/event/interested/")]
     public async Task<Result> RemoveEventInterestedUserAsync(string userId, Guid eventId)
     {
@@ -58,7 +58,7 @@ public class RemoveEventInterestedUser : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.UsersInterested ??= new List<User>();
+            userEvent.UsersInterested ??= [];
 
             if (userEvent.UsersInterested.Select(u => u.Id).Contains(user.Id))
             {

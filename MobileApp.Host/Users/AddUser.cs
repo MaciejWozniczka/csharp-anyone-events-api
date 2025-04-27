@@ -9,7 +9,7 @@ public class AddUser : ControllerBase
         _mediator = mediator;
     }
 
-    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Add user")]
+    [SwaggerOperation(Tags = ["Users"], Summary = "Add user")]
     [HttpPost("/api/user")]
     public async Task<Result<Guid>> AddUserAsync([FromBody] AddUserQuery addUserRequestBody)
     {

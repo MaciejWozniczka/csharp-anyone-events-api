@@ -10,7 +10,7 @@ public class CheckLocation : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Check location")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Check location")]
     [HttpGet("/api/location/{address}")]
     public async Task<Result<HereGeocode>> CheckLocationAsync(string address)
     {

@@ -10,7 +10,7 @@ public class ApproveEventPendingUserToGroup : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add user to pending group in event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add user to pending group in event")]
     [HttpPost("/api/event/pending/approve")]
     public async Task<Result> ApproveEventPendingUserToGroupAsync(Guid groupId, Guid eventId)
     {

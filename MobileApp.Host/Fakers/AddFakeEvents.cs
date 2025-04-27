@@ -9,7 +9,7 @@ public class AddFakeEvents : ControllerBase
         _mediator = mediator;
     }
 
-    [SwaggerOperation(Tags = new[] { "Faker" }, Summary = "Add fake services")]
+    [SwaggerOperation(Tags = ["Faker"], Summary = "Add fake services")]
     [HttpPost("/api/events/fake")]
     public async Task<Result> AddFakeEventsAsync([FromBody] AddFakeEventsQuery addFakeEventsRequestBody)
     {

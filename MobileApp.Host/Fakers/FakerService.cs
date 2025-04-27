@@ -18,29 +18,29 @@ public class FakerService : IFakerService
     {
         _db = db;
         _random = new Random();
-        _usersIds = new List<string>
-        {
+        _usersIds =
+        [
             "e6c2c10b-4667-4c1b-a5d6-596c0e7e1617",
             "3dea593b-d731-45eb-a62d-62d6673247ac",
             "a4b78472-32dc-4393-9bd9-953c8fc4cca9"
-        };
-        _categories = new List<Category>();
-        _locationsIds = new List<Guid>
-        {
+        ];
+        _categories = [];
+        _locationsIds =
+        [
             new("1f35a742-4bf7-4271-a5ca-2fb781fb4c68"),
             new("0f6bd3b6-62e4-47b7-9b16-32076dd23a37"),
             new("6e0d1c50-dbb5-46b2-a385-c5dadf6434af"),
             new("6d71308a-0aa7-4033-a748-a808b210cfd3")
-        };
-        _locations = new List<Location>();
-        _addressesIds = new List<Guid>
-        {
+        ];
+        _locations = [];
+        _addressesIds =
+        [
             new("e8f41bd0-85a1-4304-bbd0-f8001e193ed2"),
             new("27d4ec58-9291-4ea4-9b52-5ee85a2d3aab"),
             new("e1a2b4fc-6507-4add-bd7c-bd6a68091d7f"),
             new("cbc4bf65-2d81-4c2d-beac-b3637deaa935")
-        };
-        _addresses = new List<Address>();
+        ];
+        _addresses = [];
     }
 
     public async Task CreateFakeEvents(CancellationToken cancellationToken)
@@ -79,7 +79,7 @@ public class FakerService : IFakerService
                 PeopleLimit = _random.Next(5 + 2),
                 AgeFrom = age,
                 AgeTo = _random.Next(20 + age),
-                SexTypes = new List<SexType> { (SexType)_random.Next(2) },
+                SexTypes = [(SexType)_random.Next(2)],
                 IsActive = true,
                 CreateDate = DateTimeOffset.UtcNow,
                 IsDeleted = false

@@ -4,7 +4,7 @@
 public class GetChats(IMediator mediator, ICurrentUserAccessor currentUserAccessor)
 {
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Messages" }, Summary = "Get chats list")]
+    [SwaggerOperation(Tags = ["Messages"], Summary = "Get chats list")]
     [HttpGet("/api/chat/")]
     public async Task<Result<List<GetChatsDto>>> GetChatsAsync()
     {

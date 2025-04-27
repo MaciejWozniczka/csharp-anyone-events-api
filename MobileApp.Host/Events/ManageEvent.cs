@@ -10,7 +10,7 @@ public class ManageEvent : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Add event")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Add event")]
     [HttpPost("/api/event")]
     public async Task<Result<Guid>> PostEventAsync([FromBody] ManageEventCommand command)
     {
@@ -18,7 +18,7 @@ public class ManageEvent : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Change event")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Change event")]
     [HttpPut("/api/event/{id}")]
     public async Task<Result<Guid>> PutEventAsync(Guid id, [FromBody] ManageEventCommand command)
     {
@@ -31,7 +31,7 @@ public class ManageEvent : ControllerBase
         {
             AgeFrom = 18;
             AgeTo = 99;
-            SexTypes = new List<SexType>();
+            SexTypes = [];
             PeopleLimit = 0;
         }
 
@@ -140,13 +140,13 @@ public class ManageEvent : ControllerBase
                     PeopleLimit = request.PeopleLimit++,
                     AgeFrom = request.AgeFrom,
                     AgeTo = request.AgeTo,
-                    SexTypes = request.SexTypes ?? new List<SexType> { SexType.All },
-                    CooperatorsPending = new List<User>(),
-                    Cooperators = new List<User>(),
-                    UsersPending = new List<User>(),
-                    UsersAssigned = new List<User>(),
-                    UsersInterested = new List<User>(),
-                    UsersSkipped = new List<User>()
+                    SexTypes = request.SexTypes ?? [SexType.All],
+                    CooperatorsPending = [],
+                    Cooperators = [],
+                    UsersPending = [],
+                    UsersAssigned = [],
+                    UsersInterested = [],
+                    UsersSkipped = []
                 };
 
                 userEvent.UsersAssigned.Add(creator);

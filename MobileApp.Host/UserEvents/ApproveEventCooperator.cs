@@ -10,7 +10,7 @@ public class ApproveEventCooperator : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Approve cooperator to event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Approve cooperator to event")]
     [HttpPost("/api/event/cooperator/")]
     public async Task<Result> ApproveEventCooperatorAsync(string userId, Guid eventId)
     {
@@ -59,8 +59,8 @@ public class ApproveEventCooperator : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.CooperatorsPending ??= new List<User>();
-            userEvent.Cooperators ??= new List<User>();
+            userEvent.CooperatorsPending ??= [];
+            userEvent.Cooperators ??= [];
 
             if (userEvent.CooperatorsPending.Select(u => u.Id).Contains(user.Id))
             {

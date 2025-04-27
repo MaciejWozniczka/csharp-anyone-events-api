@@ -11,7 +11,7 @@ public class PostCommunication : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Communication" }, Summary = "Add message")]
+    [SwaggerOperation(Tags = ["Communication"], Summary = "Add message")]
     [HttpPost("/api/communication")]
     public async Task<Result<Guid>> PostCommunicationAsync([FromBody] PostCommunicationCommand command)
     {

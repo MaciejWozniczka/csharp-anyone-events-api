@@ -12,7 +12,7 @@ public class DeleteEventType : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "EventTypes" }, Summary = "Change event type status to deleted")]
+    [SwaggerOperation(Tags = ["EventTypes"], Summary = "Change event type status to deleted")]
     [HttpDelete("/api/eventType/{id}")]
     public async Task<Result> DeleteEventTypeAsync(Guid id)
     {

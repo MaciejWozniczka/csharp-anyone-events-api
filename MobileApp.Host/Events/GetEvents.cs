@@ -118,13 +118,15 @@ public class GetEvents : ControllerBase
                             && (e.CategoryId == request.CategoryId || request.CategoryId == null)
                             && (e.EventTypeId == request.EventTypeId || request.EventTypeId == null)
                             && !e.IsDeleted
-                            && e.IsActive)
-                .Select(e => new EventsDto()
+                            && e.EventDateTime > DateTimeOffset.UtcNow)
+                .Include(e => e.Cooperators)
+                .Include(e => e.UsersAssigned)
+                .Select(e => new EventsDto
                 {
                     Id = e.Id,
                     EventType = e.EventType.Name,
                     Category = e.EventType.Category.Name,
-                    Creator = new GetEventsUserDto()
+                    Creator = new GetEventsUserDto
                     {
                         Id = e.CreatorId,
                         FirstName = e.Creator.FirstName,
@@ -135,7 +137,7 @@ public class GetEvents : ControllerBase
                         Picture = e.Creator.Picture
                     },
                     Cooperators = e.Cooperators
-                        .Select(u => new GetEventsUserDto()
+                        .Select(u => new GetEventsUserDto
                         {
                             Id = u.Id,
                             FirstName = u.FirstName,

@@ -9,7 +9,7 @@ public class GetPing : ControllerBase
         _logger = logger;
     }
 
-    [SwaggerOperation(Tags = new[] { "Ping" }, Summary = "Check service status")]
+    [SwaggerOperation(Tags = ["Ping"], Summary = "Check service status")]
     [HttpGet("/api/ping")]
     public IActionResult Ping()
     {

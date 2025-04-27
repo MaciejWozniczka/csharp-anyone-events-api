@@ -10,7 +10,7 @@ public class RemoveEventPendingCooperator : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove pending cooperator from event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove pending cooperator from event")]
     [HttpDelete("/api/event/cooperatorpending/")]
     public async Task<Result> RemoveEventPendingCooperatorAsync(string userId, Guid eventId)
     {
@@ -58,7 +58,7 @@ public class RemoveEventPendingCooperator : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.CooperatorsPending ??= new List<User>();
+            userEvent.CooperatorsPending ??= [];
 
             if (userEvent.CooperatorsPending.Select(u => u.Id).Contains(user.Id))
             {

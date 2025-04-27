@@ -10,7 +10,7 @@ public class GetCategories : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Get categories list")]
+    [SwaggerOperation(Tags = ["Category"], Summary = "Get categories list")]
     [HttpGet("/api/categories")]
     public async Task<Result<List<GetCategoriesDto>>> GetCategoriesAsync([FromQuery] GetCategoriesQuery query)
     {

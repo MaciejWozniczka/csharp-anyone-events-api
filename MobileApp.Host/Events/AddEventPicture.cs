@@ -10,7 +10,7 @@ public class AddEventPicture : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Add event picture")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Add event picture")]
     [HttpPost("/api/event/{id}/picture/")]
     public async Task<Result<Guid>> Import(IFormFile file, Guid id)
     {

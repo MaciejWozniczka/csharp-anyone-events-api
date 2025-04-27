@@ -10,7 +10,7 @@ public class GetFullCategories : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Get all categories with event types")]
+    [SwaggerOperation(Tags = ["Category"], Summary = "Get all categories with event types")]
     [HttpGet("/api/categories/all")]
     public async Task<Result<List<GetFullCategoriesDto>>> GetFullCategoriesAsync([FromQuery] GetFullCategoriesQuery query)
     {

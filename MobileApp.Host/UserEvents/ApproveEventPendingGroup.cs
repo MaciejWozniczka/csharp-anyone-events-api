@@ -10,7 +10,7 @@ public class ApproveEventPendingGroup : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add pending group to event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add pending group to event")]
     [HttpPost("/api/event/assigned/")]
     public async Task<Result> ApproveEventPendingGroupAsync(Guid groupId, Guid eventId)
     {
@@ -52,9 +52,9 @@ public class ApproveEventPendingGroup : ControllerBase
                 return Result.NotFound("Event not found");
             }
 
-            userEvent.UsersAssigned ??= new List<User>();
-            userEvent.UsersPending ??= new List<User>();
-            userEvent.GroupsPending ??= new List<UserGroup>();
+            userEvent.UsersAssigned ??= [];
+            userEvent.UsersPending ??= [];
+            userEvent.GroupsPending ??= [];
 
             foreach (var pendingUserId in userEvent.GroupsPending.FirstOrDefault(g => g.Id == request.GroupId).Users.Select(pu => pu.UserId))
             {

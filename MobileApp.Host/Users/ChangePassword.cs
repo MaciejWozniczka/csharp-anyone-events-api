@@ -10,7 +10,7 @@ public class ChangePassword : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Auth" }, Summary = "Change password")]
+    [SwaggerOperation(Tags = ["Auth"], Summary = "Change password")]
     [HttpPut("/api/changepassword")]
     public async Task<Result> ChangePasswordAsync([FromBody] ChangePasswordQuery changePasswordRequestBody)
     {

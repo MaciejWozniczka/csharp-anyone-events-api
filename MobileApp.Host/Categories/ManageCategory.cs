@@ -10,7 +10,7 @@ public class ManageCategory : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Add category")]
+    [SwaggerOperation(Tags = ["Category"], Summary = "Add category")]
     [HttpPost("/api/category")]
     public async Task<Result<Guid>> PostCategoryAsync([FromBody] ManageCategoryCommand command)
     {
@@ -18,7 +18,7 @@ public class ManageCategory : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Change category")]
+    [SwaggerOperation(Tags = ["Category"], Summary = "Change category")]
     [HttpPut("/api/category/{id}")]
     public async Task<Result<Guid>> PutCategoryAsync(Guid id, [FromBody] ManageCategoryCommand command)
     {

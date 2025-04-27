@@ -10,7 +10,7 @@ public class DeleteUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Change user status to deleted")]
+    [SwaggerOperation(Tags = ["Users"], Summary = "Change user status to deleted")]
     [HttpDelete("/api/user/{id}")]
     public async Task<Result<string>> DeleteUserAsync(string id)
     {

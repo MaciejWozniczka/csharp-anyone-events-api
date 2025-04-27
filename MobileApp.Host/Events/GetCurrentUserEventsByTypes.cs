@@ -4,7 +4,7 @@
 public class GetCurrentUserEventsByTypes(IMediator mediator) : ControllerBase
 {
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get current user events by type")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Get current user events by type")]
     [HttpGet("/api/user/events/types/{type}")]
     public async Task<Result<GetCurrentUserEventsByTypesDto>> GetCurrentUserEventsByTypesAsync(EventTypes type)
     {
@@ -18,7 +18,7 @@ public class GetCurrentUserEventsByTypes(IMediator mediator) : ControllerBase
 
     public class GetCurrentUserEventsByTypesDto
     {
-        public List<GetCurrentUserEventsByTypesRecordDto> Events { get; set; } = new();
+        public List<GetCurrentUserEventsByTypesRecordDto> Events { get; set; } = [];
     }
 
     public class GetCurrentUserEventsByTypesRecordDto

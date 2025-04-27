@@ -10,7 +10,7 @@ public class DeleteEvent : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Change event status to deleted")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Change event status to deleted")]
     [HttpDelete("/api/event/{id}")]
     public async Task<Result> DeleteEventAsync(Guid id)
     {

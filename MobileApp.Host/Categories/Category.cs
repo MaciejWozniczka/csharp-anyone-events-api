@@ -4,7 +4,7 @@ public class Category : BaseModel
 {
     public Category()
     {
-        EventTypes = new List<EventType>();
+        EventTypes = [];
     }
     public string Name { get; set; }
     public string EmojiCode { get; set; }

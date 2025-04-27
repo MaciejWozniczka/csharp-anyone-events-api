@@ -10,7 +10,7 @@ public class AddEventInterestedUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add interested user to event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add interested user to event")]
     [HttpPost("/api/event/interested/")]
     public async Task<Result> AddEventInterestedUserAsync(string userId, Guid eventId)
     {
@@ -58,7 +58,7 @@ public class AddEventInterestedUser : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.UsersInterested ??= new List<User>();
+            userEvent.UsersInterested ??= [];
 
             if (userEvent.UsersInterested.Select(u => u.Id).Contains(user.Id))
             {

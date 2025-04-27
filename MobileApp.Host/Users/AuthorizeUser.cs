@@ -9,7 +9,7 @@ public class AuthorizeUser : ControllerBase
         _mediator = mediator;
     }
 
-    [SwaggerOperation(Tags = new[] { "Auth" }, Summary = "Get token")]
+    [SwaggerOperation(Tags = ["Auth"], Summary = "Get token")]
     [HttpPost("/api/auth")]
     public async Task<Result<TokenDto>> AuthorizeUsernAsync([FromBody] AuthorizeUsernCommand command)
     {

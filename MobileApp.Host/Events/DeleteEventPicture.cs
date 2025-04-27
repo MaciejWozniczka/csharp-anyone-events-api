@@ -11,7 +11,7 @@ public class DeleteEventPicture : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Add event picture")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Add event picture")]
     [HttpDelete("/api/event/picture/")]
     public async Task<Result<Guid>> Import(Guid eventId)
     {

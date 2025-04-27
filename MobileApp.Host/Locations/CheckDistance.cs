@@ -10,7 +10,7 @@ public class CheckDistance : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Check distance")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Check distance")]
     [HttpGet("/api/location/{address}/distance/{destination}")]
     public async Task<Result<CheckDistanceDto>> CheckDistanceAsync(string address, string destination)
     {

@@ -13,7 +13,7 @@ public class GetEvent : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get event")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Get event")]
     [HttpGet("/api/events/{id}")]
     public async Task<Result<GetEventDto>> GetEventAsync(Guid id)
     {
@@ -33,13 +33,13 @@ public class GetEvent : ControllerBase
     {
         public GetEventDto()
         {
-            Cooperators = new List<GetEventUserDto>();
-            CooperatorsPending = new List<GetEventUserDto>();
-            UsersPending = new List<GetEventUserDto>();
-            GroupsPending = new List<GetEventUserGroupDto>();
-            UsersAssigned = new List<GetEventUserDto>();
-            UsersSkipped = new List<GetEventUserDto>();
-            UsersInterested = new List<GetEventUserDto>();
+            Cooperators = [];
+            CooperatorsPending = [];
+            UsersPending = [];
+            GroupsPending = [];
+            UsersAssigned = [];
+            UsersSkipped = [];
+            UsersInterested = [];
         }
         public GetEventUserDto Creator { get; set; }
         public List<GetEventUserDto> Cooperators { get; set; }

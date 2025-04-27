@@ -12,7 +12,7 @@ public class GetUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Get user")]
+    [SwaggerOperation(Tags = ["Users"], Summary = "Get user")]
     [HttpGet("/api/users/{id}")]
     public async Task<Result<GetUserDto>> GetUserAsync(string id)
     {
@@ -70,7 +70,9 @@ public class GetUser : ControllerBase
                 LastName = user.LastName,
                 Age = user.CalculateAge(),
                 Nationality = new CultureInfo(user.Nationality ?? "").NativeName,
-                Languages = user.Languages != null ? user.Languages.Select(language => new CultureInfo(language ?? "").NativeName).ToList() : new List<string>(),
+                Languages = user.Languages != null ? user.Languages.Select(language => new CultureInfo(language ?? "").NativeName).ToList() :
+                [
+                ],
                 Sex = user.Sex,
                 Picture = user.Picture,
                 Description = user.Description,

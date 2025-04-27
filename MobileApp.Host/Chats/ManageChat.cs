@@ -4,7 +4,7 @@
 public class ManageChat(IMediator mediator) : ControllerBase
 {
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Messages" }, Summary = "Add chat")]
+    [SwaggerOperation(Tags = ["Messages"], Summary = "Add chat")]
     [HttpPost("/api/chat")]
     public async Task<Result<Guid>> PostEventAsync([FromBody] ManageChatCommand command)
     {
@@ -43,14 +43,16 @@ public class ManageChat(IMediator mediator) : ControllerBase
             var chat = new Chat
             {
                 Name = request.Name,
-                Participants = new List<ChatParticipant>(),
-                Messages = new List<Message>()
-            };
+                Participants =
+                [
+                    new ChatParticipant
+                    {
+                        UserId = currentUser.Id
+                    }
 
-            chat.Participants.Add(new ChatParticipant
-            {
-                UserId = currentUser.Id
-            });
+                ],
+                Messages = []
+            };
 
             foreach (var userId in request.ParticipantsIds.Distinct())
             {

@@ -10,7 +10,7 @@ public class SearchCategories : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Search categories by text")]
+    [SwaggerOperation(Tags = ["Category"], Summary = "Search categories by text")]
     [HttpGet("/api/categories/{text}")]
     public async Task<Result<List<SearchCategoriesDto>>> SearchCategoriesAsync(string text)
     {

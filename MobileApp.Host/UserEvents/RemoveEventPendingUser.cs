@@ -10,7 +10,7 @@ public class RemoveEventPendingUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove pending user from event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove pending user from event")]
     [HttpDelete("/api/event/pending/")]
     public async Task<Result> RemoveEventPendingUserAsync(List<string> userIds, Guid eventId)
     {
@@ -59,8 +59,8 @@ public class RemoveEventPendingUser : ControllerBase
                 return Result.NotFound("Users not found");
             }
 
-            userEvent.GroupsPending ??= new List<UserGroup>();
-            userEvent.UsersPending ??= new List<User>();
+            userEvent.GroupsPending ??= [];
+            userEvent.UsersPending ??= [];
 
             if (userEvent.GroupsPending.SelectMany(g => g.Users).Select(u => u.UserId).Contains(user.Id))
             {

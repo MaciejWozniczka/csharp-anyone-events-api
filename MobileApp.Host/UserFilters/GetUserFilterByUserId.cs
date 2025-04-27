@@ -10,7 +10,7 @@ public class GetUserFilterByUserId : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserFilter" }, Summary = "Get user filters list by userId")]
+    [SwaggerOperation(Tags = ["UserFilter"], Summary = "Get user filters list by userId")]
     [HttpGet("/api/user/filters")]
     public async Task<Result<List<GetUserFilterByUserIdDto>>> GetUserFilterByUserIdAsync()
     {

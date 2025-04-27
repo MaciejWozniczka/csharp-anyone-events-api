@@ -10,7 +10,7 @@ public class GetEventType : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "EventTypes" }, Summary = "Get event type by Id")]
+    [SwaggerOperation(Tags = ["EventTypes"], Summary = "Get event type by Id")]
     [HttpGet("/api/eventTypes/{id}")]
     public async Task<Result<List<GetEventTypeDto>>> GetEventTypeAsync(Guid id)
     {

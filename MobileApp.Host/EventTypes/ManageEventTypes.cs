@@ -10,7 +10,7 @@ public class ManageEventTypes : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "EventTypes" }, Summary = "Add event type")]
+    [SwaggerOperation(Tags = ["EventTypes"], Summary = "Add event type")]
     [HttpPost("/api/eventType")]
     public async Task<Result<Guid>> PostEventTypeAsync([FromBody] ManageEventTypeCommand command)
     {
@@ -18,7 +18,7 @@ public class ManageEventTypes : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "EventTypes" }, Summary = "Change event type")]
+    [SwaggerOperation(Tags = ["EventTypes"], Summary = "Change event type")]
     [HttpPut("/api/eventType/{id}")]
     public async Task<Result<Guid>> PutEventTypeAsync(Guid id, [FromBody] ManageEventTypeCommand command)
     {

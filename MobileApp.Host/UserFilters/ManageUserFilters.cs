@@ -10,7 +10,7 @@ public class ManageUserFilters : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserFilter" }, Summary = "Add user filter")]
+    [SwaggerOperation(Tags = ["UserFilter"], Summary = "Add user filter")]
     [HttpPost("/api/filter")]
     public async Task<Result<Guid>> PostUserFilterAsync([FromBody] ManageUserFiltersCommand command)
     {

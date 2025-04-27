@@ -10,7 +10,7 @@ public class AddEventPendingUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add pending user group to event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add pending user group to event")]
     [HttpPost("/api/event/pending/")]
     public async Task<Result> AddEventPendingUserAsync(List<string> userIds, Guid eventId, string shortText)
     {
@@ -53,8 +53,8 @@ public class AddEventPendingUser : ControllerBase
                 return Result.NotFound("Event not found");
             }
 
-            userEvent.GroupsPending ??= new List<UserGroup>();
-            userEvent.UsersPending ??= new List<User>();
+            userEvent.GroupsPending ??= [];
+            userEvent.UsersPending ??= [];
 
             var userGroup = new UserGroup
             {

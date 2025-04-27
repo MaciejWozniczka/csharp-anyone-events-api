@@ -10,7 +10,7 @@ public class GetCommunicationByEventId : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Communication" }, Summary = "Get communication by event Id")]
+    [SwaggerOperation(Tags = ["Communication"], Summary = "Get communication by event Id")]
     [HttpGet("/api/messages/{eventId}")]
     public async Task<Result<List<GetCommunicationByEventIdDto>>> GetEventAsync(Guid eventId)
     {

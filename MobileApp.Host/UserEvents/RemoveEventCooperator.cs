@@ -10,7 +10,7 @@ public class RemoveEventCooperator : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove cooperator from event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove cooperator from event")]
     [HttpDelete("/api/event/cooperator/")]
     public async Task<Result> RemoveEventCooperatorAsync(string userId, Guid eventId)
     {
@@ -58,7 +58,7 @@ public class RemoveEventCooperator : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.Cooperators ??= new List<User>();
+            userEvent.Cooperators ??= [];
 
             if (userEvent.Cooperators.Select(u => u.Id).Contains(user.Id))
             {

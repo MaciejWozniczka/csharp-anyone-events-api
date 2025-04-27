@@ -10,7 +10,7 @@ public class RemoveEventAssignedUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove assigned user from event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove assigned user from event")]
     [HttpDelete("/api/event/assigned/")]
     public async Task<Result> RemoveEventAssignedUserAsync(string userId, Guid eventId)
     {
@@ -58,7 +58,7 @@ public class RemoveEventAssignedUser : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.UsersAssigned ??= new List<User>();
+            userEvent.UsersAssigned ??= [];
 
             if (userEvent.UsersAssigned.Select(u => u.Id).Contains(user.Id))
             {

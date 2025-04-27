@@ -12,7 +12,7 @@ public class DeleteUserFilter : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserFilter" }, Summary = "Change user filter status to deleted")]
+    [SwaggerOperation(Tags = ["UserFilter"], Summary = "Change user filter status to deleted")]
     [HttpDelete("/api/filter/{id}")]
     public async Task<Result> DeleteUserFilterAsync(Guid id)
     {

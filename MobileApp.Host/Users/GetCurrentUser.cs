@@ -12,7 +12,7 @@ public class GetCurrentUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Get current user")]
+    [SwaggerOperation(Tags = ["Users"], Summary = "Get current user")]
     [HttpGet("/api/user/")]
     public async Task<Result<GetCurrentUserDto>> GetCurrentUserAsync()
     {
@@ -63,7 +63,9 @@ public class GetCurrentUser : ControllerBase
                 LastName = user.LastName,
                 Age = user.CalculateAge(),
                 Nationality = new CultureInfo(user.Nationality ?? "").NativeName,
-                Languages = user.Languages != null ? user.Languages.Select(language => new CultureInfo(language ?? "").NativeName).ToList() : new List<string>(),
+                Languages = user.Languages != null ? user.Languages.Select(language => new CultureInfo(language ?? "").NativeName).ToList() :
+                [
+                ],
                 Sex = user.Sex,
                 Picture = user.Picture,
                 Description = user.Description,

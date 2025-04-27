@@ -5,14 +5,14 @@ public class UserEvent : BaseModel
     public UserEvent()
     {
         IsActive = true;
-        Cooperators = new List<User>();
-        CooperatorsPending = new List<User>();
-        UsersPending = new List<User>();
-        GroupsPending = new List<UserGroup>();
-        UsersAssigned = new List<User>();
-        UsersInterested = new List<User>();
-        UsersSkipped = new List<User>();
-        SexTypes = new List<SexType>();
+        Cooperators = [];
+        CooperatorsPending = [];
+        UsersPending = [];
+        GroupsPending = [];
+        UsersAssigned = [];
+        UsersInterested = [];
+        UsersSkipped = [];
+        SexTypes = [];
     }
     public Guid EventTypeId { get; set; }
     public EventType EventType { get; set; }

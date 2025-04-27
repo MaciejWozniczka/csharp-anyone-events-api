@@ -10,7 +10,7 @@ public class GetCurrentUserEvents : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Events" }, Summary = "Get current user events")]
+    [SwaggerOperation(Tags = ["Events"], Summary = "Get current user events")]
     [HttpGet("/api/user/events")]
     public async Task<Result<GetCurrentUserEventsDto>> GetCurrentUserEventsAsync()
     {
@@ -25,12 +25,12 @@ public class GetCurrentUserEvents : ControllerBase
     {
         public GetCurrentUserEventsDto()
         {
-            EventsCreated = new List<GetCurrentUserEventsRecordDto>();
-            EventsCooperationPending = new List<GetCurrentUserEventsRecordDto>();
-            EventsCooperated = new List<GetCurrentUserEventsRecordDto>();
-            EventsPending = new List<GetCurrentUserEventsRecordDto>();
-            EventsAssigned = new List<GetCurrentUserEventsRecordDto>();
-            EventsInterested = new List<GetCurrentUserEventsRecordDto>();
+            EventsCreated = [];
+            EventsCooperationPending = [];
+            EventsCooperated = [];
+            EventsPending = [];
+            EventsAssigned = [];
+            EventsInterested = [];
         }
         public string Id { get; set; }
         public List<GetCurrentUserEventsRecordDto>? EventsCreated { get; set; }

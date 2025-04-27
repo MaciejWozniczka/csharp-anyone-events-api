@@ -10,7 +10,7 @@ public class SetCurrentLocation : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Users" }, Summary = "Set current location")]
+    [SwaggerOperation(Tags = ["Users"], Summary = "Set current location")]
     [HttpPut("/api/user/{id}/location")]
     public async Task<Result<Guid>> SetCurrentLocationAsync(Guid id, SetCurrentLocationCommand command)
     {

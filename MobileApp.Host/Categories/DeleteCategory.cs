@@ -10,7 +10,7 @@ public class DeleteCategory : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Category" }, Summary = "Change category status to deleted")]
+    [SwaggerOperation(Tags = ["Category"], Summary = "Change category status to deleted")]
     [HttpDelete("/api/category/{id}")]
     public async Task<Result> DeleteCategoryAsync(Guid id)
     {

@@ -10,7 +10,7 @@ public class RemoveEventPendingUserFromGroup : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Remove user from pending group in event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove user from pending group in event")]
     [HttpDelete("/api/event/pending/reject")]
     public async Task<Result> RemoveEventPendingUserFromGroupAsync(Guid groupId, Guid eventId)
     {

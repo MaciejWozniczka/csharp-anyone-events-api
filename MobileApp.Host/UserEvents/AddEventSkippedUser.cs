@@ -10,7 +10,7 @@ public class AddEventSkippedUser : ControllerBase
     }
 
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "UserEvents" }, Summary = "Add skipped user to event")]
+    [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add skipped user to event")]
     [HttpPost("/api/event/skipped/")]
     public async Task<Result> AddEventSkippedUserAsync(string userId, Guid eventId)
     {
@@ -58,7 +58,7 @@ public class AddEventSkippedUser : ControllerBase
                 return Result.NotFound("User not found");
             }
 
-            userEvent.UsersSkipped ??= new List<User>();
+            userEvent.UsersSkipped ??= [];
 
             if (userEvent.UsersSkipped.Select(u => u.Id).Contains(user.Id))
             {

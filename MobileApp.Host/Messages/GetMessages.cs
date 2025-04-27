@@ -4,7 +4,7 @@
 public class GetMessages(IMediator mediator)
 {
     [Authorize]
-    [SwaggerOperation(Tags = new[] { "Messages" }, Summary = "Get messages")]
+    [SwaggerOperation(Tags = ["Messages"], Summary = "Get messages")]
     [HttpGet("/api/message/{id}")]
     public async Task<Result<List<GetMessagesDto>>> GetMessagesAsync(int? offset, int? limit, Guid id)
     {
