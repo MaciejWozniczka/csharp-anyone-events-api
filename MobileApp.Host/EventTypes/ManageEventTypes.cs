@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.EventTypes;
 
 [ApiController]
-public class ManageEventTypes : ControllerBase
+public class ManageEventTypes(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ManageEventTypes(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["EventTypes"], Summary = "Add event type")]
     [HttpPost("/api/eventType")]
     public async Task<Result<Guid>> PostEventTypeAsync([FromBody] ManageEventTypeCommand command)
     {
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     [Authorize]
@@ -22,7 +16,7 @@ public class ManageEventTypes : ControllerBase
     [HttpPut("/api/eventType/{id}")]
     public async Task<Result<Guid>> PutEventTypeAsync(Guid id, [FromBody] ManageEventTypeCommand command)
     {
-        return await _mediator.Send(command.Set(p => p.Id = id));
+        return await mediator.Send(command.Set(p => p.Id = id));
     }
 
     public class ManageEventTypeCommand : IRequest<Result<Guid>>
@@ -34,16 +28,9 @@ public class ManageEventTypes : ControllerBase
         public string? Picture { get; set; }
     }
 
-    public class ManageEventTypeCommandHandler : IRequestHandler<ManageEventTypeCommand, Result<Guid>>
+    public class ManageEventTypeCommandHandler(DataContext db, ILogger<ManageEventTypeCommandHandler> logger)
+        : IRequestHandler<ManageEventTypeCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<ManageEventTypeCommandHandler> _logger;
-        public ManageEventTypeCommandHandler(DataContext db, ILogger<ManageEventTypeCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result<Guid>> Handle(ManageEventTypeCommand request, CancellationToken cancellationToken)
         {
             EventType eventType;
@@ -58,13 +45,13 @@ public class ManageEventTypes : ControllerBase
                     Picture = request.Picture
                 };
 
-                _logger.LogInformation($"[EventType: {request.Name}] Adding event type");
+                logger.LogInformation($"[EventType: {request.Name}] Adding event type");
 
-                await _db.AddAsync(eventType, cancellationToken);
+                await db.AddAsync(eventType, cancellationToken);
             }
             else
             {
-                eventType = await _db.EventTypes.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+                eventType = await db.EventTypes.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
                 if (eventType == null)
                 {
@@ -75,12 +62,12 @@ public class ManageEventTypes : ControllerBase
                 if (request.Name != null) eventType.Name = request.Name;
                 if (request.Picture != null) eventType.Picture = request.Picture;
 
-                _logger.LogInformation($"[EventType: {request.Id}] Updating event type");
+                logger.LogInformation($"[EventType: {request.Id}] Updating event type");
 
-                _db.Update(eventType);
+                db.Update(eventType);
             }
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(eventType.Id);
         }

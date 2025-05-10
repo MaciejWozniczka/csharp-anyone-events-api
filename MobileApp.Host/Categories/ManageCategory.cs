@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.Categories;
 
 [ApiController]
-public class ManageCategory : ControllerBase
+public class ManageCategory(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ManageCategory(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Add category")]
     [HttpPost("/api/category")]
     public async Task<Result<Guid>> PostCategoryAsync([FromBody] ManageCategoryCommand command)
     {
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     [Authorize]
@@ -22,7 +16,7 @@ public class ManageCategory : ControllerBase
     [HttpPut("/api/category/{id}")]
     public async Task<Result<Guid>> PutCategoryAsync(Guid id, [FromBody] ManageCategoryCommand command)
     {
-        return await _mediator.Send(command.Set(p => p.Id = id));
+        return await mediator.Send(command.Set(p => p.Id = id));
     }
 
     public class ManageCategoryCommand : IRequest<Result<Guid>>
@@ -33,16 +27,9 @@ public class ManageCategory : ControllerBase
         public string? Picture { get; set; }
     }
 
-    public class ManageCategoryCommandHandler : IRequestHandler<ManageCategoryCommand, Result<Guid>>
+    public class ManageCategoryCommandHandler(DataContext db, ILogger<ManageCategoryCommandHandler> logger)
+        : IRequestHandler<ManageCategoryCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<ManageCategoryCommandHandler> _logger;
-        public ManageCategoryCommandHandler(DataContext db, ILogger<ManageCategoryCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result<Guid>> Handle(ManageCategoryCommand request, CancellationToken cancellationToken)
         {
             Category category;
@@ -56,13 +43,13 @@ public class ManageCategory : ControllerBase
                     Picture = request.Picture
                 };
 
-                _logger.LogInformation($"[Category: {request.Name}] Adding category");
+                logger.LogInformation($"[Category: {request.Name}] Adding category");
 
-                await _db.AddAsync(category, cancellationToken);
+                await db.AddAsync(category, cancellationToken);
             }
             else
             {
-                category = await _db.Categories.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+                category = await db.Categories.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
                 if (category == null)
                 {
@@ -72,12 +59,12 @@ public class ManageCategory : ControllerBase
                 if (request.Name != null) category.Name = request.Name;
                 if (request.Picture != null) category.Picture = request.Picture;
 
-                _logger.LogInformation($"[Category: {request.Name}] Updating category");
+                logger.LogInformation($"[Category: {request.Name}] Updating category");
 
-                _db.Update(category);
+                db.Update(category);
             }
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(category.Id);
         }

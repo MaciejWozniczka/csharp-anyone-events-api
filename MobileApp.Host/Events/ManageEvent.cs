@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.Events;
 
 [ApiController]
-public class ManageEvent : ControllerBase
+public class ManageEvent(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ManageEvent(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Add event")]
     [HttpPost("/api/event")]
     public async Task<Result<Guid>> PostEventAsync([FromBody] ManageEventCommand command)
     {
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     [Authorize]
@@ -22,19 +16,11 @@ public class ManageEvent : ControllerBase
     [HttpPut("/api/event/{id}")]
     public async Task<Result<Guid>> PutEventAsync(Guid id, [FromBody] ManageEventCommand command)
     {
-        return await _mediator.Send(command.Set(p => p.Id = id));
+        return await mediator.Send(command.Set(p => p.Id = id));
     }
 
     public class ManageEventCommand : IRequest<Result<Guid>>
     {
-        public ManageEventCommand()
-        {
-            AgeFrom = 18;
-            AgeTo = 99;
-            SexTypes = [];
-            PeopleLimit = 0;
-        }
-
         public Guid Id { get; set; }
         public Guid EventTypeId { get; set; }
         public List<string> CooperatorsPending { get; set; }
@@ -44,10 +30,10 @@ public class ManageEvent : ControllerBase
         public ManageEventAddressCommand Address { get; set; }
         public string ShortDescription { get; set; }
         public string? Description { get; set; }
-        public int PeopleLimit { get; set; }
-        public int? AgeFrom { get; set; }
-        public int? AgeTo { get; set; }
-        public List<SexType>? SexTypes { get; set; }
+        public int PeopleLimit { get; set; } = 0;
+        public int? AgeFrom { get; set; } = 18;
+        public int? AgeTo { get; set; } = 99;
+        public List<SexType>? SexTypes { get; set; } = [];
     }
 
     public class ManageEventLocationCommand
@@ -73,25 +59,19 @@ public class ManageEvent : ControllerBase
         public string? ApartmentNumber { get; set; }
     }
 
-    public class ManageEventCommandHandler : IRequestHandler<ManageEventCommand, Result<Guid>>
+    public class ManageEventCommandHandler(
+        DataContext db,
+        ICurrentUserAccessor currentUserAccessor,
+        ILogger<ManageEventCommandHandler> logger)
+        : IRequestHandler<ManageEventCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        private readonly ILogger<ManageEventCommandHandler> _logger;
-        public ManageEventCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<ManageEventCommandHandler> logger)
-        {
-            _db = db;
-            _currentUserAccessor = currentUserAccessor;
-            _logger = logger;
-        }
-
         public async Task<Result<Guid>> Handle(ManageEventCommand request, CancellationToken cancellationToken)
         {
             UserEvent userEvent;
             var isAdding = request.Id == Guid.Empty;
 
-            var creator = await _currentUserAccessor.GetCurrentUser();
-            var currentUserEvents = await _currentUserAccessor.GetCurrentUserEvents();
+            var creator = await currentUserAccessor.GetCurrentUser();
+            var currentUserEvents = await currentUserAccessor.GetCurrentUserEvents();
 
             if (isAdding)
             {
@@ -101,7 +81,7 @@ public class ManageEvent : ControllerBase
                     return Result.BadRequest<Guid>("Użytkownik jest już zapisany na wydarzenia w tym terminie");
                 }
 
-                var eventType = await _db.EventTypes
+                var eventType = await db.EventTypes
                     .Where(e => e.Id == request.EventTypeId)
                     .Include(e => e.Category)
                     .FirstOrDefaultAsync(cancellationToken);
@@ -153,7 +133,7 @@ public class ManageEvent : ControllerBase
 
                 foreach (var userId in request.CooperatorsPending)
                 {
-                    var user = await _db.Users
+                    var user = await db.Users
                         .Where(u => u.Id == userId)
                         .FirstOrDefaultAsync(cancellationToken);
 
@@ -175,13 +155,13 @@ public class ManageEvent : ControllerBase
                     }
                 }
 
-                _logger.LogInformation($"[Event: {userEvent.Id}] Adding event");
+                logger.LogInformation($"[Event: {userEvent.Id}] Adding event");
 
-                await _db.AddAsync(userEvent, cancellationToken);
+                await db.AddAsync(userEvent, cancellationToken);
             }
             else
             {
-                userEvent = await _db.Events
+                userEvent = await db.Events
                     .Where(c => c.Id == request.Id && c.IsDeleted == false)
                     .FirstOrDefaultAsync(cancellationToken);
 
@@ -227,12 +207,12 @@ public class ManageEvent : ControllerBase
                 if (request.AgeTo != null) userEvent.AgeTo = request.AgeTo;
                 if (request.SexTypes != null) userEvent.SexTypes = request.SexTypes;
 
-                _logger.LogInformation($"[Event: {userEvent.Id}] Updating event");
+                logger.LogInformation($"[Event: {userEvent.Id}] Updating event");
 
-                _db.Update(userEvent);
+                db.Update(userEvent);
             }
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(userEvent.Id);
         }

@@ -1,46 +1,30 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class RemoveEventAssignedUser : ControllerBase
+public class RemoveEventAssignedUser(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public RemoveEventAssignedUser(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove assigned user from event")]
     [HttpDelete("/api/event/assigned/")]
     public async Task<Result> RemoveEventAssignedUserAsync(string userId, Guid eventId)
     {
-        return await _mediator.Send(new RemoveEventAssignedUserCommand(userId, eventId));
+        return await mediator.Send(new RemoveEventAssignedUserCommand(userId, eventId));
     }
 
-    public class RemoveEventAssignedUserCommand : IRequest<Result>
+    public class RemoveEventAssignedUserCommand(string userId, Guid eventId) : IRequest<Result>
     {
-        public RemoveEventAssignedUserCommand(string userId, Guid eventId)
-        {
-            UserId = userId;
-            EventId = eventId;
-        }
-        public string UserId { get; set; }
-        public Guid EventId { get; set; }
+        public string UserId { get; set; } = userId;
+        public Guid EventId { get; set; } = eventId;
     }
 
-    public class RemoveEventAssignedUserCommandHandler : IRequestHandler<RemoveEventAssignedUserCommand, Result>
+    public class RemoveEventAssignedUserCommandHandler(
+        DataContext db,
+        ILogger<RemoveEventAssignedUserCommandHandler> logger)
+        : IRequestHandler<RemoveEventAssignedUserCommand, Result>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<RemoveEventAssignedUserCommandHandler> _logger;
-        public RemoveEventAssignedUserCommandHandler(DataContext db, ILogger<RemoveEventAssignedUserCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result> Handle(RemoveEventAssignedUserCommand request, CancellationToken cancellationToken)
         {
-            var userEvent = await _db.Events
+            var userEvent = await db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
                 .Include(userEvent => userEvent.UsersAssigned)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -50,7 +34,7 @@ public class RemoveEventAssignedUser : ControllerBase
                 return Result.NotFound("Event not found");
             }
 
-            var user = await _db.Users
+            var user = await db.Users
                 .FirstOrDefaultAsync(u => u.Id == request.UserId && u.IsDeleted == false, cancellationToken);
 
             if (user == null)
@@ -65,9 +49,9 @@ public class RemoveEventAssignedUser : ControllerBase
                 userEvent.UsersAssigned.Remove(user);
             }
 
-            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Removing assigned user from event");
+            logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Removing assigned user from event");
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();
         }

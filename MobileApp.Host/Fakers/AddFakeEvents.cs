@@ -1,36 +1,24 @@
 ﻿namespace MobileApp.Host.Fakers;
 
 [ApiController]
-public class AddFakeEvents : ControllerBase
+public class AddFakeEvents(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public AddFakeEvents(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [SwaggerOperation(Tags = ["Faker"], Summary = "Add fake services")]
     [HttpPost("/api/events/fake")]
     public async Task<Result> AddFakeEventsAsync([FromBody] AddFakeEventsQuery addFakeEventsRequestBody)
     {
-        return await _mediator.Send(new AddFakeEventsQuery());
+        return await mediator.Send(new AddFakeEventsQuery());
     }
 
     public class AddFakeEventsQuery : IRequest<Result>
     {
     }
 
-    public class AddFakeEventsQueryHandler : IRequestHandler<AddFakeEventsQuery, Result>
+    public class AddFakeEventsQueryHandler(IFakerService fakerService) : IRequestHandler<AddFakeEventsQuery, Result>
     {
-        private readonly IFakerService _fakerService;
-        public AddFakeEventsQueryHandler(IFakerService fakerService)
-        {
-            _fakerService = fakerService;
-        }
-
         public async Task<Result> Handle(AddFakeEventsQuery request, CancellationToken cancellationToken)
         {
-            await _fakerService.CreateFakeEvents(cancellationToken);
+            await fakerService.CreateFakeEvents(cancellationToken);
 
             return Result.Ok();
         }

@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.UserFilters;
 
 [ApiController]
-public class GetUserFilterByUserId : ControllerBase
+public class GetUserFilterByUserId(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetUserFilterByUserId(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserFilter"], Summary = "Get user filters list by userId")]
     [HttpGet("/api/user/filters")]
     public async Task<Result<List<GetUserFilterByUserIdDto>>> GetUserFilterByUserIdAsync()
     {
-        return await _mediator.Send(new GetUserFilterByUserIdQuery());
+        return await mediator.Send(new GetUserFilterByUserIdQuery());
     }
 
     public class GetUserFilterByUserIdQuery : IRequest<Result<List<GetUserFilterByUserIdDto>>>
@@ -47,30 +41,24 @@ public class GetUserFilterByUserId : ControllerBase
         }
     }
 
-    public class GetUserFilterByUserIdQueryHandler : IRequestHandler<GetUserFilterByUserIdQuery, Result<List<GetUserFilterByUserIdDto>>>
+    public class GetUserFilterByUserIdQueryHandler(
+        DataContext db,
+        IMapper mapper,
+        ICurrentUserAccessor currentUserAccessor)
+        : IRequestHandler<GetUserFilterByUserIdQuery, Result<List<GetUserFilterByUserIdDto>>>
     {
-        private readonly DataContext _db;
-        private readonly IMapper _mapper;
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        public GetUserFilterByUserIdQueryHandler(DataContext db, IMapper mapper, ICurrentUserAccessor currentUserAccessor)
-        {
-            _db = db;
-            _mapper = mapper;
-            _currentUserAccessor = currentUserAccessor;
-        }
-
         public async Task<Result<List<GetUserFilterByUserIdDto>>> Handle(GetUserFilterByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var user = await _currentUserAccessor.GetCurrentUser();
+            var user = await currentUserAccessor.GetCurrentUser();
 
             if (user == null)
             {
                 return Result.NotFound<List<GetUserFilterByUserIdDto>>("User not found");
             }
 
-            var result = await _db.UserFilters
+            var result = await db.UserFilters
                 .Where(c => c.UserId == user.Id && c.IsDeleted == false)
-                .ProjectTo<GetUserFilterByUserIdDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<GetUserFilterByUserIdDto>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
             return Result.Ok(result);

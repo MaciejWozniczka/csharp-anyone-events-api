@@ -1,29 +1,19 @@
 ﻿namespace MobileApp.Host.EventTypes;
 
 [ApiController]
-public class GetEventType : ControllerBase
+public class GetEventType(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetEventType(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["EventTypes"], Summary = "Get event type by Id")]
     [HttpGet("/api/eventTypes/{id}")]
     public async Task<Result<List<GetEventTypeDto>>> GetEventTypeAsync(Guid id)
     {
-        return await _mediator.Send(new GetEventTypeQuery(id));
+        return await mediator.Send(new GetEventTypeQuery(id));
     }
 
-    public class GetEventTypeQuery : IRequest<Result<List<GetEventTypeDto>>>
+    public class GetEventTypeQuery(Guid id) : IRequest<Result<List<GetEventTypeDto>>>
     {
-        public GetEventTypeQuery(Guid id)
-        {
-            Id = id;
-        }
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = id;
     }
 
     public class GetEventTypeDto
@@ -42,21 +32,14 @@ public class GetEventType : ControllerBase
         }
     }
 
-    public class GetEventTypeQueryHandler : IRequestHandler<GetEventTypeQuery, Result<List<GetEventTypeDto>>>
+    public class GetEventTypeQueryHandler(DataContext db, IMapper mapper)
+        : IRequestHandler<GetEventTypeQuery, Result<List<GetEventTypeDto>>>
     {
-        private readonly DataContext _db;
-        private readonly IMapper _mapper;
-        public GetEventTypeQueryHandler(DataContext db, IMapper mapper)
-        {
-            _db = db;
-            _mapper = mapper;
-        }
-
         public async Task<Result<List<GetEventTypeDto>>> Handle(GetEventTypeQuery request, CancellationToken cancellationToken)
         {
-            var result = await _db.EventTypes
+            var result = await db.EventTypes
                 .Where(c => c.Id == request.Id && c.IsDeleted == false)
-                .ProjectTo<GetEventTypeDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<GetEventTypeDto>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
             return Result.Ok(result);

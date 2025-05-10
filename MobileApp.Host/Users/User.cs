@@ -4,11 +4,6 @@ namespace MobileApp.Host.Users;
 
 public class User : IdentityUser
 {
-    public User()
-    {
-        CreateDate = DateTimeOffset.UtcNow;
-        IsDeleted = false;
-    }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public int? BirthdayYear { get; set; }
@@ -23,8 +18,8 @@ public class User : IdentityUser
     public int? PhoneNumber { get; set; }
     public string? PhoneCountryCode { get; set; }
     public UserType? UserType { get; set; }
-    public DateTimeOffset CreateDate { get; set; }
-    public bool IsDeleted { get; set; }
+    public DateTimeOffset CreateDate { get; set; } = DateTimeOffset.UtcNow;
+    public bool IsDeleted { get; set; } = false;
     public DateTimeOffset? DeletingDate { get; set; }
     [InverseProperty("Creator")]
     public List<UserEvent>? EventsCreated { get; set; }

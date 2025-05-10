@@ -1,46 +1,30 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class RemoveEventPendingUser : ControllerBase
+public class RemoveEventPendingUser(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public RemoveEventPendingUser(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove pending user from event")]
     [HttpDelete("/api/event/pending/")]
     public async Task<Result> RemoveEventPendingUserAsync(List<string> userIds, Guid eventId)
     {
-        return await _mediator.Send(new RemoveEventPendingUserCommand(userIds, eventId));
+        return await mediator.Send(new RemoveEventPendingUserCommand(userIds, eventId));
     }
 
-    public class RemoveEventPendingUserCommand : IRequest<Result>
+    public class RemoveEventPendingUserCommand(List<string> userIds, Guid eventId) : IRequest<Result>
     {
-        public RemoveEventPendingUserCommand(List<string> userIds, Guid eventId)
-        {
-            UserIds = userIds;
-            EventId = eventId;
-        }
-        public List<string> UserIds { get; set; }
-        public Guid EventId { get; set; }
+        public List<string> UserIds { get; set; } = userIds;
+        public Guid EventId { get; set; } = eventId;
     }
 
-    public class RemoveEventPendingUserCommandHandler : IRequestHandler<RemoveEventPendingUserCommand, Result>
+    public class RemoveEventPendingUserCommandHandler(
+        DataContext db,
+        ILogger<RemoveEventPendingUserCommandHandler> logger)
+        : IRequestHandler<RemoveEventPendingUserCommand, Result>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<RemoveEventPendingUserCommandHandler> _logger;
-        public RemoveEventPendingUserCommandHandler(DataContext db, ILogger<RemoveEventPendingUserCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result> Handle(RemoveEventPendingUserCommand request, CancellationToken cancellationToken)
         {
-            var userEvent = await _db.Events
+            var userEvent = await db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
                 .Include(userEvent => userEvent.UsersPending)
                 .Include(userEvent => userEvent.GroupsPending)
@@ -51,7 +35,7 @@ public class RemoveEventPendingUser : ControllerBase
                 return Result.NotFound("Event not found");
             }
 
-            var user = await _db.Users
+            var user = await db.Users
                 .FirstOrDefaultAsync(u => request.UserIds.Contains(u.Id) && u.IsDeleted == false, cancellationToken);
 
             if (user == null)
@@ -72,9 +56,9 @@ public class RemoveEventPendingUser : ControllerBase
                 userEvent.UsersPending.Remove(user);
             }
 
-            _logger.LogInformation($"[Users: {string.Join(", ", request.UserIds)}][Event: {request.EventId}] Removing pending user group from event");
+            logger.LogInformation($"[Users: {string.Join(", ", request.UserIds)}][Event: {request.EventId}] Removing pending user group from event");
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();
         }

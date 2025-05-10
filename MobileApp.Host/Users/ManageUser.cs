@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.Users;
 
 [ApiController]
-public class ManageUser : ControllerBase
+public class ManageUser(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ManageUser(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Change user")]
     [HttpPut("/api/user/{id}")]
     public async Task<Result<Guid>> ManageUserAsync(Guid id, ManageUserCommand command)
     {
-        return await _mediator.Send(command.Set(p => p.Id = id));
+        return await mediator.Send(command.Set(p => p.Id = id));
     }
 
     public class ManageUserCommand : IRequest<Result<Guid>>
@@ -34,21 +28,14 @@ public class ManageUser : ControllerBase
         public UserType? UserType { get; set; }
     }
 
-    public class ManageUserCommandHandler : IRequestHandler<ManageUserCommand, Result<Guid>>
+    public class ManageUserCommandHandler(DataContext db, ILogger<ManageUserCommandHandler> logger)
+        : IRequestHandler<ManageUserCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<ManageUserCommandHandler> _logger;
-        public ManageUserCommandHandler(DataContext db, ILogger<ManageUserCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result<Guid>> Handle(ManageUserCommand request, CancellationToken cancellationToken)
         {
             var userId = request.Id.ToString();
 
-            var user = await _db.Users
+            var user = await db.Users
                 .Where(u => u.Id == userId && !u.IsDeleted)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -69,10 +56,10 @@ public class ManageUser : ControllerBase
             if (request.PhoneNumber != null) user.PhoneNumber = request.PhoneNumber;
             if (request.UserType != null) user.UserType = request.UserType;
 
-            _logger.LogInformation($"[User: {user.Id}] Updating user");
+            logger.LogInformation($"[User: {user.Id}] Updating user");
 
-            _db.Update(user);
-            await _db.SaveChangesAsync(cancellationToken);
+            db.Update(user);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(Guid.Parse(user.Id));
         }

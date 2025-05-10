@@ -3,29 +3,19 @@
 namespace MobileApp.Host.Users;
 
 [ApiController]
-public class GetUser : ControllerBase
+public class GetUser(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetUser(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Get user")]
     [HttpGet("/api/users/{id}")]
     public async Task<Result<GetUserDto>> GetUserAsync(string id)
     {
-        return await _mediator.Send(new GetUserQuery(id));
+        return await mediator.Send(new GetUserQuery(id));
     }
 
-    public class GetUserQuery : IRequest<Result<GetUserDto>>
+    public class GetUserQuery(string id) : IRequest<Result<GetUserDto>>
     {
-        public string Id { get; set; }
-        public GetUserQuery(string id)
-        {
-            Id = id;
-        }
+        public string Id { get; set; } = id;
     }
 
     public class GetUserDto
@@ -44,17 +34,11 @@ public class GetUser : ControllerBase
         public UserType? UserType { get; set; }
     }
 
-    public class GetUserDtoQueryHandler : IRequestHandler<GetUserQuery, Result<GetUserDto>>
+    public class GetUserDtoQueryHandler(DataContext db) : IRequestHandler<GetUserQuery, Result<GetUserDto>>
     {
-        private readonly DataContext _db;
-        public GetUserDtoQueryHandler(DataContext db)
-        {
-            _db = db;
-        }
-
         public async Task<Result<GetUserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
-            var user = await _db.Users
+            var user = await db.Users
                 .Where(u => u.Id == request.Id && u.IsDeleted == false)
                 .FirstOrDefaultAsync(cancellationToken);
 

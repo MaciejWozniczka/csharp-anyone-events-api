@@ -1,21 +1,14 @@
 ﻿namespace MobileApp.Host.Communications;
 
 [ApiController]
-public class PostCommunication : ControllerBase
+public class PostCommunication(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public PostCommunication(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Communication"], Summary = "Add message")]
     [HttpPost("/api/communication")]
     public async Task<Result<Guid>> PostCommunicationAsync([FromBody] PostCommunicationCommand command)
     {
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     public class PostCommunicationCommand : IRequest<Result<Guid>>
@@ -41,30 +34,24 @@ public class PostCommunication : ControllerBase
         }
     }
 
-    public class PostCommunicationCommandHandler : IRequestHandler<PostCommunicationCommand, Result<Guid>>
+    public class PostCommunicationCommandHandler(
+        DataContext db,
+        IMapper mapper,
+        ICurrentUserAccessor currentUserAccessor)
+        : IRequestHandler<PostCommunicationCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly IMapper _mapper;
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        public PostCommunicationCommandHandler(DataContext db, IMapper mapper, ICurrentUserAccessor currentUserAccessor)
-        {
-            _db = db;
-            _mapper = mapper;
-            _currentUserAccessor = currentUserAccessor;
-        }
-
         public async Task<Result<Guid>> Handle(PostCommunicationCommand request, CancellationToken cancellationToken)
         {
             var communication = new Communication();
 
             request.Id = Guid.NewGuid();
-            request.UserId = (await _currentUserAccessor.GetCurrentUser()).Id;
+            request.UserId = (await currentUserAccessor.GetCurrentUser()).Id;
             request.CreateDate = DateTime.Now;
             request.IsDeleted = false;
 
-            await _db.AddAsync(communication, cancellationToken);
+            await db.AddAsync(communication, cancellationToken);
 
-            communication = _mapper.Map(request, communication);
+            communication = mapper.Map(request, communication);
 
             return Result.Ok(communication.Id);
         }

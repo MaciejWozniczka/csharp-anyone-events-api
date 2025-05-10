@@ -1,46 +1,30 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class ApproveEventPendingGroup : ControllerBase
+public class ApproveEventPendingGroup(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ApproveEventPendingGroup(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add pending group to event")]
     [HttpPost("/api/event/assigned/")]
     public async Task<Result> ApproveEventPendingGroupAsync(Guid groupId, Guid eventId)
     {
-        return await _mediator.Send(new ApproveEventPendingGroupCommand(groupId, eventId));
+        return await mediator.Send(new ApproveEventPendingGroupCommand(groupId, eventId));
     }
 
-    public class ApproveEventPendingGroupCommand : IRequest<Result>
+    public class ApproveEventPendingGroupCommand(Guid groupId, Guid eventId) : IRequest<Result>
     {
-        public ApproveEventPendingGroupCommand(Guid groupId, Guid eventId)
-        {
-            GroupId = groupId;
-            EventId = eventId;
-        }
-        public Guid GroupId { get; set; }
-        public Guid EventId { get; set; }
+        public Guid GroupId { get; set; } = groupId;
+        public Guid EventId { get; set; } = eventId;
     }
 
-    public class ApproveEventPendingGroupCommandHandler : IRequestHandler<ApproveEventPendingGroupCommand, Result>
+    public class ApproveEventPendingGroupCommandHandler(
+        DataContext db,
+        ILogger<ApproveEventPendingGroupCommandHandler> logger)
+        : IRequestHandler<ApproveEventPendingGroupCommand, Result>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<ApproveEventPendingGroupCommandHandler> _logger;
-        public ApproveEventPendingGroupCommandHandler(DataContext db, ILogger<ApproveEventPendingGroupCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result> Handle(ApproveEventPendingGroupCommand request, CancellationToken cancellationToken)
         {
-            var userEvent = await _db.Events
+            var userEvent = await db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
                 .Include(userEvent => userEvent.UsersPending)
                 .Include(userEvent => userEvent.GroupsPending)
@@ -58,7 +42,7 @@ public class ApproveEventPendingGroup : ControllerBase
 
             foreach (var pendingUserId in userEvent.GroupsPending.FirstOrDefault(g => g.Id == request.GroupId).Users.Select(pu => pu.UserId))
             {
-                var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == pendingUserId && u.IsDeleted == false, cancellationToken);
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Id == pendingUserId && u.IsDeleted == false, cancellationToken);
 
                 if (!userEvent.UsersAssigned.Select(u => u.Id).Contains(pendingUserId))
                 {
@@ -67,12 +51,12 @@ public class ApproveEventPendingGroup : ControllerBase
                 userEvent.UsersPending.Remove(user);
             }
 
-            _logger.LogInformation($"[Group: {request.GroupId}][Event: {request.EventId}] Approving event pending group");
+            logger.LogInformation($"[Group: {request.GroupId}][Event: {request.EventId}] Approving event pending group");
 
             var pendingGroup = userEvent.GroupsPending.FirstOrDefault(g => g.Id == request.GroupId);
             userEvent.GroupsPending.Remove(pendingGroup);
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();
         }

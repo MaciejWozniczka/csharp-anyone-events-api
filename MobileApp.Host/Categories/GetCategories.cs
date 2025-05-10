@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.Categories;
 
 [ApiController]
-public class GetCategories : ControllerBase
+public class GetCategories(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetCategories(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Get categories list")]
     [HttpGet("/api/categories")]
     public async Task<Result<List<GetCategoriesDto>>> GetCategoriesAsync([FromQuery] GetCategoriesQuery query)
     {
-        return await _mediator.Send(query);
+        return await mediator.Send(query);
     }
 
     public class GetCategoriesQuery : IRequest<Result<List<GetCategoriesDto>>>
@@ -37,21 +31,14 @@ public class GetCategories : ControllerBase
         }
     }
 
-    public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Result<List<GetCategoriesDto>>>
+    public class GetCategoriesQueryHandler(DataContext db, IMapper mapper)
+        : IRequestHandler<GetCategoriesQuery, Result<List<GetCategoriesDto>>>
     {
-        private readonly DataContext _db;
-        private readonly IMapper _mapper;
-        public GetCategoriesQueryHandler(DataContext db, IMapper mapper)
-        {
-            _db = db;
-            _mapper = mapper;
-        }
-
         public async Task<Result<List<GetCategoriesDto>>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var result = await _db.Categories
+            var result = await db.Categories
                 .Where(c => c.IsDeleted == false)
-                .ProjectTo<GetCategoriesDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<GetCategoriesDto>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
             return Result.Ok(result);

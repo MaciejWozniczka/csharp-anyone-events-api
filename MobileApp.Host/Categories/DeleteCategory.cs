@@ -1,44 +1,27 @@
 ﻿namespace MobileApp.Host.Categories;
 
 [ApiController]
-public class DeleteCategory : ControllerBase
+public class DeleteCategory(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public DeleteCategory(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Change category status to deleted")]
     [HttpDelete("/api/category/{id}")]
     public async Task<Result> DeleteCategoryAsync(Guid id)
     {
-        return await _mediator.Send(new DeleteCategoryCommand(id));
+        return await mediator.Send(new DeleteCategoryCommand(id));
     }
 
-    public class DeleteCategoryCommand : IRequest<Result>
+    public class DeleteCategoryCommand(Guid id) : IRequest<Result>
     {
-        public Guid Id { get; set; }
-        public DeleteCategoryCommand(Guid id)
-        {
-            Id = id;
-        }
+        public Guid Id { get; set; } = id;
     }
 
-    public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Result>
+    public class DeleteCategoryCommandHandler(DataContext db, ILogger<DeleteCategoryCommandHandler> logger)
+        : IRequestHandler<DeleteCategoryCommand, Result>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<DeleteCategoryCommandHandler> _logger;
-        public DeleteCategoryCommandHandler(DataContext db, ILogger<DeleteCategoryCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await _db.Categories
+            var category = await db.Categories
                 .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
             if (category == null)
@@ -48,7 +31,7 @@ public class DeleteCategory : ControllerBase
 
             category.IsDeleted = true;
 
-            _logger.LogInformation($"[Category: {category.Name}] Delete category");
+            logger.LogInformation($"[Category: {category.Name}] Delete category");
 
             return Result.Ok();
         }

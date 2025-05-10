@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.UserFilters;
 
 [ApiController]
-public class ManageUserFilters : ControllerBase
+public class ManageUserFilters(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ManageUserFilters(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserFilter"], Summary = "Add user filter")]
     [HttpPost("/api/filter")]
     public async Task<Result<Guid>> PostUserFilterAsync([FromBody] ManageUserFiltersCommand command)
     {
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     public class ManageUserFiltersCommand : IRequest<Result<Guid>>
@@ -33,23 +27,17 @@ public class ManageUserFilters : ControllerBase
         public DateTime? DateTimeTo { get; set; }
     }
 
-    public class ManageUserFiltersCommandHandler : IRequestHandler<ManageUserFiltersCommand, Result<Guid>>
+    public class ManageUserFiltersCommandHandler(
+        DataContext db,
+        ICurrentUserAccessor currentUserAccessor,
+        ILogger<ManageUserFiltersCommandHandler> logger)
+        : IRequestHandler<ManageUserFiltersCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        private readonly ILogger<ManageUserFiltersCommandHandler> _logger;
-        public ManageUserFiltersCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<ManageUserFiltersCommandHandler> logger)
-        {
-            _db = db;
-            _currentUserAccessor = currentUserAccessor;
-            _logger = logger;
-        }
-
         public async Task<Result<Guid>> Handle(ManageUserFiltersCommand request, CancellationToken cancellationToken)
         {
             var userFilter = new UserFilter
             {
-                UserId = (await _currentUserAccessor.GetCurrentUser()).Id,
+                UserId = (await currentUserAccessor.GetCurrentUser()).Id,
                 CategoryId = request.CategoryId,
             };
 
@@ -70,10 +58,10 @@ public class ManageUserFilters : ControllerBase
             if (request.DateTimeFrom != null) userFilter.DateTimeFrom = request.DateTimeFrom;
             if (request.DateTimeTo != null) userFilter.DateTimeTo = request.DateTimeTo;
 
-            _logger.LogInformation($"[User: {userFilter.UserId}] Adding user filters");
+            logger.LogInformation($"[User: {userFilter.UserId}] Adding user filters");
 
-            await _db.UserFilters.AddAsync(userFilter, cancellationToken);
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.UserFilters.AddAsync(userFilter, cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(userFilter.Id);
         }

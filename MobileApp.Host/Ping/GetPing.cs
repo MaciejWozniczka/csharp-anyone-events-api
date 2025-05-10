@@ -1,19 +1,13 @@
 ﻿namespace MobileApp.Host.Ping;
 
 [ApiController]
-public class GetPing : ControllerBase
+public class GetPing(ILogger<GetPing> logger) : ControllerBase
 {
-    private readonly ILogger<GetPing> _logger;
-    public GetPing(ILogger<GetPing> logger)
-    {
-        _logger = logger;
-    }
-
     [SwaggerOperation(Tags = ["Ping"], Summary = "Check service status")]
     [HttpGet("/api/ping")]
     public IActionResult Ping()
     {
-        _logger.LogInformation("Service status check");
+        logger.LogInformation("Service status check");
         return Ok("Pong");
     }
 }

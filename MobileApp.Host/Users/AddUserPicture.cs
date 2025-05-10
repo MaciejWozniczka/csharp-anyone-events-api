@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.Users;
 
 [ApiController]
-public class AddUserPicture : ControllerBase
+public class AddUserPicture(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public AddUserPicture(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Add user picture")]
     [HttpPost("/api/user/picture")]
     public async Task<Result<string>> Import(IFormFile file)
     {
-        return await _mediator.Send(new AddUserPictureCommand() { DataFile = file });
+        return await mediator.Send(new AddUserPictureCommand() { DataFile = file });
     }
 
     public class AddUserPictureCommand : IRequest<Result<string>>
@@ -23,21 +17,15 @@ public class AddUserPicture : ControllerBase
         public IFormFile? DataFile { get; set; }
     }
 
-    public class AddUserPictureHandler : IRequestHandler<AddUserPictureCommand, Result<string>>
+    public class AddUserPictureHandler(
+        DataContext db,
+        ICurrentUserAccessor currentUserAccessor,
+        ILogger<AddUserPictureHandler> logger)
+        : IRequestHandler<AddUserPictureCommand, Result<string>>
     {
-        private readonly DataContext _db;
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        private readonly ILogger<AddUserPictureHandler> _logger;
-        public AddUserPictureHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<AddUserPictureHandler> logger)
-        {
-            _db = db;
-            _currentUserAccessor = currentUserAccessor;
-            _logger = logger;
-        }
-
         public async Task<Result<string>> Handle(AddUserPictureCommand request, CancellationToken cancellationToken)
         {
-            var currentUser = await _currentUserAccessor.GetCurrentUser();
+            var currentUser = await currentUserAccessor.GetCurrentUser();
 
             using (var memoryStream = new MemoryStream())
             {
@@ -47,10 +35,10 @@ public class AddUserPicture : ControllerBase
                 currentUser.Picture = content;
             }
 
-            _logger.LogInformation($"[User: {currentUser.Id}] Adding user picture");
+            logger.LogInformation($"[User: {currentUser.Id}] Adding user picture");
 
-            _db.Update(currentUser);
-            await _db.SaveChangesAsync(cancellationToken);
+            db.Update(currentUser);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(currentUser.Id);
         }

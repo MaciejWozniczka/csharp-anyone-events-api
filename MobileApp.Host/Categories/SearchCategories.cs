@@ -1,29 +1,19 @@
 ﻿namespace MobileApp.Host.Categories;
 
 [ApiController]
-public class SearchCategories : ControllerBase
+public class SearchCategories(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public SearchCategories(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Search categories by text")]
     [HttpGet("/api/categories/{text}")]
     public async Task<Result<List<SearchCategoriesDto>>> SearchCategoriesAsync(string text)
     {
-        return await _mediator.Send(new SearchCategoriesQuery(text));
+        return await mediator.Send(new SearchCategoriesQuery(text));
     }
 
-    public class SearchCategoriesQuery : IRequest<Result<List<SearchCategoriesDto>>>
+    public class SearchCategoriesQuery(string text) : IRequest<Result<List<SearchCategoriesDto>>>
     {
-        public SearchCategoriesQuery(string text)
-        {
-            Text = text;
-        }
-        public string Text { get; set; }
+        public string Text { get; set; } = text;
     }
 
     public class SearchCategoriesDto
@@ -33,19 +23,14 @@ public class SearchCategories : ControllerBase
         public string Type { get; set; }
     }
 
-    public class SearchCategoriesQueryHandler : IRequestHandler<SearchCategoriesQuery, Result<List<SearchCategoriesDto>>>
+    public class SearchCategoriesQueryHandler(DataContext db)
+        : IRequestHandler<SearchCategoriesQuery, Result<List<SearchCategoriesDto>>>
     {
-        private readonly DataContext _db;
-        public SearchCategoriesQueryHandler(DataContext db)
-        {
-            _db = db;
-        }
-
         public async Task<Result<List<SearchCategoriesDto>>> Handle(SearchCategoriesQuery request, CancellationToken cancellationToken)
         {
             if (request.Text != null && request.Text.Length >= 2)
             {
-                var categories = await _db.Categories
+                var categories = await db.Categories
                     .Where(c => c.IsDeleted == false 
                                 && c.Name.ToLower().Contains(request.Text.ToLower()))
                     .Select(c => new SearchCategoriesDto
@@ -56,7 +41,7 @@ public class SearchCategories : ControllerBase
                     })
                     .ToListAsync(cancellationToken);
 
-                var eventTypes = await _db.EventTypes
+                var eventTypes = await db.EventTypes
                     .Where(c => c.IsDeleted == false 
                                 && c.Name.ToLower().Contains(request.Text.ToLower()))
                     .Select(c => new SearchCategoriesDto

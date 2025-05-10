@@ -2,14 +2,8 @@
 
 public class BaseModel
 {
-    public BaseModel()
-    {
-        Id = Guid.NewGuid();
-        CreateDate = DateTime.UtcNow;
-        IsDeleted = false;
-    }
-    public Guid Id { get; set; }
-    public DateTimeOffset CreateDate { get; set; }
-    public bool IsDeleted { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public DateTimeOffset CreateDate { get; set; } = DateTime.UtcNow;
+    public bool IsDeleted { get; set; } = false;
     public DateTimeOffset? DeletingDate { get; set; }
 }

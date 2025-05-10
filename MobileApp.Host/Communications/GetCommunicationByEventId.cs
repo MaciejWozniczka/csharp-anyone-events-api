@@ -1,29 +1,19 @@
 ﻿namespace MobileApp.Host.Communications;
 
 [ApiController]
-public class GetCommunicationByEventId : ControllerBase
+public class GetCommunicationByEventId(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetCommunicationByEventId(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Communication"], Summary = "Get communication by event Id")]
     [HttpGet("/api/messages/{eventId}")]
     public async Task<Result<List<GetCommunicationByEventIdDto>>> GetEventAsync(Guid eventId)
     {
-        return await _mediator.Send(new GetCommunicationByEventIdQuery(eventId));
+        return await mediator.Send(new GetCommunicationByEventIdQuery(eventId));
     }
 
-    public class GetCommunicationByEventIdQuery : IRequest<Result<List<GetCommunicationByEventIdDto>>>
+    public class GetCommunicationByEventIdQuery(Guid eventId) : IRequest<Result<List<GetCommunicationByEventIdDto>>>
     {
-        public Guid EventId { get; set; }
-        public GetCommunicationByEventIdQuery(Guid eventId)
-        {
-            EventId = eventId;
-        }
+        public Guid EventId { get; set; } = eventId;
     }
 
     public class GetCommunicationByEventIdDto
@@ -42,17 +32,12 @@ public class GetCommunicationByEventId : ControllerBase
         }
     }
 
-    public class GetCommunicationByEventIdDtoQueryHandler : IRequestHandler<GetCommunicationByEventIdQuery, Result<List<GetCommunicationByEventIdDto>>>
+    public class GetCommunicationByEventIdDtoQueryHandler(DataContext db)
+        : IRequestHandler<GetCommunicationByEventIdQuery, Result<List<GetCommunicationByEventIdDto>>>
     {
-        private readonly DataContext _db;
-        public GetCommunicationByEventIdDtoQueryHandler(DataContext db)
-        {
-            _db = db;
-        }
-
         public async Task<Result<List<GetCommunicationByEventIdDto>>> Handle(GetCommunicationByEventIdQuery request, CancellationToken cancellationToken)
         {
-            var result = await _db.Communications
+            var result = await db.Communications
                 .Where(c => c.EventId == request.EventId && c.IsDeleted == false)
                 .OrderBy(c => c.CreateDate)
                 .Select(c => new GetCommunicationByEventIdDto()

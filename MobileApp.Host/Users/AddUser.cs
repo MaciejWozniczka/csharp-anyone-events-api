@@ -1,19 +1,13 @@
 ﻿namespace MobileApp.Host.Users;
 
 [ApiController]
-public class AddUser : ControllerBase
+public class AddUser(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public AddUser(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [SwaggerOperation(Tags = ["Users"], Summary = "Add user")]
     [HttpPost("/api/user")]
     public async Task<Result<Guid>> AddUserAsync([FromBody] AddUserQuery addUserRequestBody)
     {
-        return await _mediator.Send(new AddUserQuery() { Email = addUserRequestBody.Email, Password = addUserRequestBody.Password });
+        return await mediator.Send(new AddUserQuery() { Email = addUserRequestBody.Email, Password = addUserRequestBody.Password });
     }
 
     public class AddUserQuery : IRequest<Result<Guid>>
@@ -33,17 +27,15 @@ public class AddUser : ControllerBase
         }
     }
 
-    public class AddUserQueryHandler : IRequestHandler<AddUserQuery, Result<Guid>>
+    public class AddUserQueryHandler(
+        IValidator<AddUserQuery> validator,
+        IUserService userService,
+        ILogger<AddUserQueryHandler> logger)
+        : IRequestHandler<AddUserQuery, Result<Guid>>
     {
-        public IValidator<AddUserQuery> _validator { get; set; }
-        public readonly IUserService _userService;
-        private readonly ILogger<AddUserQueryHandler> _logger;
-        public AddUserQueryHandler(IValidator<AddUserQuery> validator, IUserService userService, ILogger<AddUserQueryHandler> logger)
-        {
-            _validator = validator;
-            _userService = userService;
-            _logger = logger;
-        }
+        public IValidator<AddUserQuery> _validator { get; set; } = validator;
+        public readonly IUserService _userService = userService;
+
         public async Task<Result<Guid>> Handle(AddUserQuery request, CancellationToken cancellationToken)
         {
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
@@ -53,7 +45,7 @@ public class AddUser : ControllerBase
                 return validationResult.ToResult<Guid>();
             }
 
-            _logger.LogInformation($"[User: {request.Email}] Adding user");
+            logger.LogInformation($"[User: {request.Email}] Adding user");
 
             var result = await _userService.AddUser(request.Email, request.Password);
 

@@ -4,51 +4,31 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MobileApp.Host.Events;
 
 [ApiController]
-public class GetEvent : ControllerBase
+public class GetEvent(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetEvent(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Get event")]
     [HttpGet("/api/events/{id}")]
     public async Task<Result<GetEventDto>> GetEventAsync(Guid id)
     {
-        return await _mediator.Send(new GetEventQuery(id));
+        return await mediator.Send(new GetEventQuery(id));
     }
 
-    public class GetEventQuery : IRequest<Result<GetEventDto>>
+    public class GetEventQuery(Guid id) : IRequest<Result<GetEventDto>>
     {
-        public Guid Id { get; set; }
-        public GetEventQuery(Guid id)
-        {
-            Id = id;
-        }
+        public Guid Id { get; set; } = id;
     }
 
     public class GetEventDto
     {
-        public GetEventDto()
-        {
-            Cooperators = [];
-            CooperatorsPending = [];
-            UsersPending = [];
-            GroupsPending = [];
-            UsersAssigned = [];
-            UsersSkipped = [];
-            UsersInterested = [];
-        }
         public GetEventUserDto Creator { get; set; }
-        public List<GetEventUserDto> Cooperators { get; set; }
-        public List<GetEventUserDto> CooperatorsPending { get; set; }
-        public List<GetEventUserDto> UsersPending { get; set; }
-        public List<GetEventUserGroupDto> GroupsPending { get; set; }
-        public List<GetEventUserDto> UsersAssigned { get; set; }
-        public List<GetEventUserDto> UsersInterested { get; set; }
-        public List<GetEventUserDto> UsersSkipped { get; set; }
+        public List<GetEventUserDto> Cooperators { get; set; } = [];
+        public List<GetEventUserDto> CooperatorsPending { get; set; } = [];
+        public List<GetEventUserDto> UsersPending { get; set; } = [];
+        public List<GetEventUserGroupDto> GroupsPending { get; set; } = [];
+        public List<GetEventUserDto> UsersAssigned { get; set; } = [];
+        public List<GetEventUserDto> UsersInterested { get; set; } = [];
+        public List<GetEventUserDto> UsersSkipped { get; set; } = [];
         public string EventType { get; set; }
         public string Category { get; set; }
         public DateTimeOffset EventDateTime { get; set; }
@@ -100,17 +80,11 @@ public class GetEvent : ControllerBase
         public string? Picture { get; set; }
     }
 
-    public class GetEventDtoQueryHandler : IRequestHandler<GetEventQuery, Result<GetEventDto>>
+    public class GetEventDtoQueryHandler(DataContext db) : IRequestHandler<GetEventQuery, Result<GetEventDto>>
     {
-        private readonly DataContext _db;
-        public GetEventDtoQueryHandler(DataContext db)
-        {
-            _db = db;
-        }
-
         public async Task<Result<GetEventDto>> Handle(GetEventQuery request, CancellationToken cancellationToken)
         {
-            var result = await _db.Events
+            var result = await db.Events
                 .Where(e => e.Id == request.Id && !e.IsDeleted)
                 .Select(e => new GetEventDto
                 {
@@ -163,7 +137,7 @@ public class GetEvent : ControllerBase
                     GroupsPending = e.GroupsPending
                         .Select(ug => new GetEventUserGroupDto()
                         {
-                            Users = _db.Users
+                            Users = db.Users
                                 .Where(u => ug.Users.Select(ids => ids.UserId).ToList().Contains(u.Id))
                                 .ToList()
                                 .Select(u => new GetEventPendingUserDto()
@@ -175,7 +149,7 @@ public class GetEvent : ControllerBase
                                     Sex = u.Sex,
                                     Picture = u.Picture,
                                     Age = u.CalculateAge(),
-                                    Accepted = ug.Users.FirstOrDefault(pu => pu.UserId == u.Id).Accepted
+                                    Accepted = ug.Users.FirstOrDefault(pu => pu.UserId == u.Id)!.Accepted
                                 }).ToList(),
                             IsVisible = ug.IsVisible,
                             ShortText = ug.ShortText

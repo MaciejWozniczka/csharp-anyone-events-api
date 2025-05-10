@@ -1,11 +1,7 @@
 ﻿namespace MobileApp.Host.Data;
 
-public class DataContext : IdentityDbContext<User>
+public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<User>(options)
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
-    {
-    }
-
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Chat> Chats { get; set; }

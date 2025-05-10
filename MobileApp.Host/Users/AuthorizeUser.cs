@@ -1,19 +1,13 @@
 ﻿namespace MobileApp.Host.Users;
 
 [ApiController]
-public class AuthorizeUser : ControllerBase
+public class AuthorizeUser(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public AuthorizeUser(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [SwaggerOperation(Tags = ["Auth"], Summary = "Get token")]
     [HttpPost("/api/auth")]
     public async Task<Result<TokenDto>> AuthorizeUsernAsync([FromBody] AuthorizeUsernCommand command)
     {
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
     public class AuthorizeUsernCommand : IRequest<Result<TokenDto>>
     {
@@ -21,23 +15,18 @@ public class AuthorizeUser : ControllerBase
         public string? Password { get; set; }
         public string? RefreshToken { get; set; }
     }
-    public class GetTokenQueryHandler : IRequestHandler<AuthorizeUsernCommand, Result<TokenDto>>
+    public class GetTokenQueryHandler(IUserService tokenService)
+        : IRequestHandler<AuthorizeUsernCommand, Result<TokenDto>>
     {
-        private readonly IUserService _tokenService;
-        public GetTokenQueryHandler(IUserService tokenService)
-        {
-            _tokenService = tokenService;
-        }
-
         public async Task<Result<TokenDto>> Handle(AuthorizeUsernCommand request, CancellationToken cancellationToken)
         {
             if (request.Email != null && request.Password != null)
             {
-                return await _tokenService.CreateToken(request.Email, request.Password, cancellationToken);
+                return await tokenService.CreateToken(request.Email, request.Password, cancellationToken);
             }
             else if (request.RefreshToken != null)
             {
-                return await _tokenService.RefreshTokenAsync(request.RefreshToken, cancellationToken);
+                return await tokenService.RefreshTokenAsync(request.RefreshToken, cancellationToken);
             }
 
             return Result.BadRequest<TokenDto>("BadRequest");

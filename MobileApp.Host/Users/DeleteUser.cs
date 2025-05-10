@@ -1,44 +1,27 @@
 ﻿namespace MobileApp.Host.Users;
 
 [ApiController]
-public class DeleteUser : ControllerBase
+public class DeleteUser(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public DeleteUser(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Change user status to deleted")]
     [HttpDelete("/api/user/{id}")]
     public async Task<Result<string>> DeleteUserAsync(string id)
     {
-        return await _mediator.Send(new DeleteUserCommand(id));
+        return await mediator.Send(new DeleteUserCommand(id));
     }
 
-    public class DeleteUserCommand : IRequest<Result<string>>
+    public class DeleteUserCommand(string id) : IRequest<Result<string>>
     {
-        public string Id { get; set; }
-        public DeleteUserCommand(string id)
-        {
-            Id = id;
-        }
+        public string Id { get; set; } = id;
     }
 
-    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result<string>>
+    public class DeleteUserCommandHandler(DataContext db, ILogger<DeleteUserCommandHandler> logger)
+        : IRequestHandler<DeleteUserCommand, Result<string>>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<DeleteUserCommandHandler> _logger;
-        public DeleteUserCommandHandler(DataContext db, ILogger<DeleteUserCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result<string>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == request.Id && !u.IsDeleted, cancellationToken);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == request.Id && !u.IsDeleted, cancellationToken);
 
             if (user == null)
             {
@@ -48,10 +31,10 @@ public class DeleteUser : ControllerBase
             user.IsDeleted = true;
             user.DeletingDate = DateTimeOffset.UtcNow;
 
-            _logger.LogInformation($"[User: {request.Id}] Deleting user");
+            logger.LogInformation($"[User: {request.Id}] Deleting user");
 
-            _db.Update(user);
-            await _db.SaveChangesAsync(cancellationToken);
+            db.Update(user);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(user.Id);
         }

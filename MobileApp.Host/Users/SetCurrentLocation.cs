@@ -1,51 +1,33 @@
 ﻿namespace MobileApp.Host.Users;
 
 [ApiController]
-public class SetCurrentLocation : ControllerBase
+public class SetCurrentLocation(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public SetCurrentLocation(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Set current location")]
     [HttpPut("/api/user/{id}/location")]
     public async Task<Result<Guid>> SetCurrentLocationAsync(Guid id, SetCurrentLocationCommand command)
     {
-        return await _mediator.Send(command.Set(p => p.Id = id));
+        return await mediator.Send(command.Set(p => p.Id = id));
     }
 
-    public class SetCurrentLocationCommand : IRequest<Result<Guid>>
+    public class SetCurrentLocationCommand(Guid id, double latitude, double longitude) : IRequest<Result<Guid>>
     {
-        public SetCurrentLocationCommand(Guid id, double latitude, double longitude)
-        {
-            Id = id;
-            Latitude = latitude;
-            Longitude = longitude;
-        }
         [JsonIgnore]
-        public Guid Id { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        public Guid Id { get; set; } = id;
+
+        public double Latitude { get; set; } = latitude;
+        public double Longitude { get; set; } = longitude;
     }
 
-    public class SetCurrentLocationCommandHandler : IRequestHandler<SetCurrentLocationCommand, Result<Guid>>
+    public class SetCurrentLocationCommandHandler(DataContext db, ILogger<SetCurrentLocationCommandHandler> logger)
+        : IRequestHandler<SetCurrentLocationCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<SetCurrentLocationCommandHandler> _logger;
-        public SetCurrentLocationCommandHandler(DataContext db, ILogger<SetCurrentLocationCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result<Guid>> Handle(SetCurrentLocationCommand request, CancellationToken cancellationToken)
         {
             var userId = request.Id.ToString();
 
-            var user = await _db.Users
+            var user = await db.Users
                 .Include(u => u.CurrentLocation)
                 .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted, cancellationToken);
 
@@ -62,14 +44,14 @@ public class SetCurrentLocation : ControllerBase
                 UserId = user.Id
             };
 
-            _db.Locations.Add(newLocation);
+            db.Locations.Add(newLocation);
 
             user.CurrentLocation = newLocation;
 
-            _logger.LogInformation($"[User: {user.Id}] Setting user current location");
+            logger.LogInformation($"[User: {user.Id}] Setting user current location");
 
-            _db.Update(user);
-            await _db.SaveChangesAsync(cancellationToken);
+            db.Update(user);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(Guid.Parse(user.Id));
         }

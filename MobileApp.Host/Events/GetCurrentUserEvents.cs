@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.Events;
 
 [ApiController]
-public class GetCurrentUserEvents : ControllerBase
+public class GetCurrentUserEvents(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetCurrentUserEvents(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Get current user events")]
     [HttpGet("/api/user/events")]
     public async Task<Result<GetCurrentUserEventsDto>> GetCurrentUserEventsAsync()
     {
-        return await _mediator.Send(new GetCurrentUserEventsQuery());
+        return await mediator.Send(new GetCurrentUserEventsQuery());
     }
 
     public class GetCurrentUserEventsQuery : IRequest<Result<GetCurrentUserEventsDto>>
@@ -23,22 +17,13 @@ public class GetCurrentUserEvents : ControllerBase
 
     public class GetCurrentUserEventsDto
     {
-        public GetCurrentUserEventsDto()
-        {
-            EventsCreated = [];
-            EventsCooperationPending = [];
-            EventsCooperated = [];
-            EventsPending = [];
-            EventsAssigned = [];
-            EventsInterested = [];
-        }
         public string Id { get; set; }
-        public List<GetCurrentUserEventsRecordDto>? EventsCreated { get; set; }
-        public List<GetCurrentUserEventsRecordDto>? EventsCooperationPending { get; set; }
-        public List<GetCurrentUserEventsRecordDto>? EventsCooperated { get; set; }
-        public List<GetCurrentUserEventsRecordDto>? EventsPending { get; set; }
-        public List<GetCurrentUserEventsRecordDto>? EventsAssigned { get; set; }
-        public List<GetCurrentUserEventsRecordDto>? EventsInterested { get; set; }
+        public List<GetCurrentUserEventsRecordDto>? EventsCreated { get; set; } = [];
+        public List<GetCurrentUserEventsRecordDto>? EventsCooperationPending { get; set; } = [];
+        public List<GetCurrentUserEventsRecordDto>? EventsCooperated { get; set; } = [];
+        public List<GetCurrentUserEventsRecordDto>? EventsPending { get; set; } = [];
+        public List<GetCurrentUserEventsRecordDto>? EventsAssigned { get; set; } = [];
+        public List<GetCurrentUserEventsRecordDto>? EventsInterested { get; set; } = [];
     }
 
     public class GetCurrentUserEventsRecordDto
@@ -51,17 +36,12 @@ public class GetCurrentUserEvents : ControllerBase
         public string? Picture { get; set; }
     }
 
-    public class GetCurrentUserEventsDtoQueryHandler : IRequestHandler<GetCurrentUserEventsQuery, Result<GetCurrentUserEventsDto>>
+    public class GetCurrentUserEventsDtoQueryHandler(ICurrentUserAccessor currentUserAccessor)
+        : IRequestHandler<GetCurrentUserEventsQuery, Result<GetCurrentUserEventsDto>>
     {
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        public GetCurrentUserEventsDtoQueryHandler(ICurrentUserAccessor currentUserAccessor)
-        {
-            _currentUserAccessor = currentUserAccessor;
-        }
-
         public async Task<Result<GetCurrentUserEventsDto>> Handle(GetCurrentUserEventsQuery request, CancellationToken cancellationToken)
         {
-            var currentUser = await _currentUserAccessor.GetCurrentUserWithEvents();
+            var currentUser = await currentUserAccessor.GetCurrentUserWithEvents();
 
             if (currentUser == null)
             {

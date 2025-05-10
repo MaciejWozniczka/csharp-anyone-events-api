@@ -1,29 +1,19 @@
 ﻿namespace MobileApp.Host.Categories;
 
 [ApiController]
-public class GetCategory : ControllerBase
+public class GetCategory(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetCategory(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Get category by Id")]
     [HttpGet("/api/category/{id}")]
     public async Task<Result<List<GetCategoryDto>>> GetCategoryAsync(Guid id)
     {
-        return await _mediator.Send(new GetCategoryQuery(id));
+        return await mediator.Send(new GetCategoryQuery(id));
     }
 
-    public class GetCategoryQuery : IRequest<Result<List<GetCategoryDto>>>
+    public class GetCategoryQuery(Guid id) : IRequest<Result<List<GetCategoryDto>>>
     {
-        public GetCategoryQuery(Guid id)
-        {
-            Id = id;
-        }
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = id;
     }
 
     public class GetCategoryDto
@@ -42,21 +32,14 @@ public class GetCategory : ControllerBase
         }
     }
 
-    public class GetCategoryQueryHandler : IRequestHandler<GetCategoryQuery, Result<List<GetCategoryDto>>>
+    public class GetCategoryQueryHandler(DataContext db, IMapper mapper)
+        : IRequestHandler<GetCategoryQuery, Result<List<GetCategoryDto>>>
     {
-        private readonly DataContext _db;
-        private readonly IMapper _mapper;
-        public GetCategoryQueryHandler(DataContext db, IMapper mapper)
-        {
-            _db = db;
-            _mapper = mapper;
-        }
-
         public async Task<Result<List<GetCategoryDto>>> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
         {
-            var result = await _db.Categories
+            var result = await db.Categories
                 .Where(c => c.Id == request.Id && c.IsDeleted == false)
-                .ProjectTo<GetCategoryDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<GetCategoryDto>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
             return Result.Ok(result);

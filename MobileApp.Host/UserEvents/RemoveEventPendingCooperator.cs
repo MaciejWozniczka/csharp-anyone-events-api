@@ -1,46 +1,30 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class RemoveEventPendingCooperator : ControllerBase
+public class RemoveEventPendingCooperator(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public RemoveEventPendingCooperator(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserEvents"], Summary = "Remove pending cooperator from event")]
     [HttpDelete("/api/event/cooperatorpending/")]
     public async Task<Result> RemoveEventPendingCooperatorAsync(string userId, Guid eventId)
     {
-        return await _mediator.Send(new RemoveEventPendingCooperatorCommand(userId, eventId));
+        return await mediator.Send(new RemoveEventPendingCooperatorCommand(userId, eventId));
     }
 
-    public class RemoveEventPendingCooperatorCommand : IRequest<Result>
+    public class RemoveEventPendingCooperatorCommand(string userId, Guid eventId) : IRequest<Result>
     {
-        public RemoveEventPendingCooperatorCommand(string userId, Guid eventId)
-        {
-            UserId = userId;
-            EventId = eventId;
-        }
-        public string UserId { get; set; }
-        public Guid EventId { get; set; }
+        public string UserId { get; set; } = userId;
+        public Guid EventId { get; set; } = eventId;
     }
 
-    public class RemoveEventPendingCooperatorCommandHandler : IRequestHandler<RemoveEventPendingCooperatorCommand, Result>
+    public class RemoveEventPendingCooperatorCommandHandler(
+        DataContext db,
+        ILogger<RemoveEventPendingCooperatorCommandHandler> logger)
+        : IRequestHandler<RemoveEventPendingCooperatorCommand, Result>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<RemoveEventPendingCooperatorCommandHandler> _logger;
-        public RemoveEventPendingCooperatorCommandHandler(DataContext db, ILogger<RemoveEventPendingCooperatorCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result> Handle(RemoveEventPendingCooperatorCommand request, CancellationToken cancellationToken)
         {
-            var userEvent = await _db.Events
+            var userEvent = await db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
                 .Include(userEvent => userEvent.CooperatorsPending)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -50,7 +34,7 @@ public class RemoveEventPendingCooperator : ControllerBase
                 return Result.NotFound("Event not found");
             }
 
-            var user = await _db.Users
+            var user = await db.Users
                 .FirstOrDefaultAsync(u => u.Id == request.UserId && u.IsDeleted == false, cancellationToken);
 
             if (user == null)
@@ -65,9 +49,9 @@ public class RemoveEventPendingCooperator : ControllerBase
                 userEvent.CooperatorsPending.Remove(user);
             }
 
-            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Removing event pending cooperator");
+            logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Removing event pending cooperator");
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();
         }

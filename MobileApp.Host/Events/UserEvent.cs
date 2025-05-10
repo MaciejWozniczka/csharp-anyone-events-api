@@ -2,30 +2,18 @@ namespace MobileApp.Host.Events;
 
 public class UserEvent : BaseModel
 {
-    public UserEvent()
-    {
-        IsActive = true;
-        Cooperators = [];
-        CooperatorsPending = [];
-        UsersPending = [];
-        GroupsPending = [];
-        UsersAssigned = [];
-        UsersInterested = [];
-        UsersSkipped = [];
-        SexTypes = [];
-    }
     public Guid EventTypeId { get; set; }
     public EventType EventType { get; set; }
     public Guid CategoryId { get; set; }
     public string CreatorId { get; set; }
     public User Creator { get; set; }
-    public List<User>? Cooperators { get; set; }
-    public List<User>? CooperatorsPending { get; set; }
-    public List<User>? UsersPending { get; set; }
-    public List<UserGroup>? GroupsPending { get; set; }
-    public List<User>? UsersAssigned { get; set; }
-    public List<User>? UsersInterested { get; set; }
-    public List<User>? UsersSkipped { get; set; }
+    public List<User>? Cooperators { get; set; } = [];
+    public List<User>? CooperatorsPending { get; set; } = [];
+    public List<User>? UsersPending { get; set; } = [];
+    public List<UserGroup>? GroupsPending { get; set; } = [];
+    public List<User>? UsersAssigned { get; set; } = [];
+    public List<User>? UsersInterested { get; set; } = [];
+    public List<User>? UsersSkipped { get; set; } = [];
     public DateTimeOffset EventDateTime { get; set; }
     public int Duration { get; set; }
     public Guid LocationId { get; set; }
@@ -38,6 +26,6 @@ public class UserEvent : BaseModel
     public int PeopleLimit { get; set; }
     public int? AgeFrom { get; set; }
     public int? AgeTo { get; set; }
-    public List<SexType>? SexTypes { get; set; }
-    public bool IsActive { get; set; }
+    public List<SexType>? SexTypes { get; set; } = [];
+    public bool IsActive { get; set; } = true;
 }

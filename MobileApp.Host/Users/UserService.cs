@@ -10,25 +10,20 @@ public interface IUserService
     Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 }
 
-public class UserService : IUserService
+public class UserService(
+    SignInManager<User> signInManager,
+    DataContext db,
+    UserManager<User> userManager,
+    IOptions<TokenOption> tokenOptions,
+    IHttpContextAccessor httpContextAccessor,
+    RoleManager<IdentityRole> roleManager)
+    : IUserService
 {
-    private readonly SignInManager<User> _signInManager;
-    private readonly DataContext _db;
-    private UserManager<User> _userManager { get; set; }
-    private RoleManager<IdentityRole> _roleManager { get; set; }
-    private readonly TokenOption _tokenOptions;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private string roleName;
-    public UserService(SignInManager<User> signInManager, DataContext db, UserManager<User> userManager, IOptions<TokenOption> tokenOptions, IHttpContextAccessor httpContextAccessor, RoleManager<IdentityRole> roleManager)
-    {
-        _signInManager = signInManager;
-        _db = db;
-        _userManager = userManager;
-        _httpContextAccessor = httpContextAccessor;
-        _roleManager = roleManager;
-        _tokenOptions = tokenOptions.Value;
-        roleName = "user";
-    }
+    private UserManager<User> _userManager { get; set; } = userManager;
+    private RoleManager<IdentityRole> _roleManager { get; set; } = roleManager;
+    private readonly TokenOption _tokenOptions = tokenOptions.Value;
+    private string roleName = "user";
+
     public async Task<Result<Guid>> AddUser(string email, string password)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
@@ -45,9 +40,9 @@ public class UserService : IUserService
 
             if (result.Succeeded)
             {
-                if (_db.Entry(newUser).State == EntityState.Detached)
+                if (db.Entry(newUser).State == EntityState.Detached)
                 {
-                    _db.Attach(newUser);
+                    db.Attach(newUser);
                 }
 
                 var role = await _roleManager.FindByNameAsync(roleName);
@@ -67,7 +62,7 @@ public class UserService : IUserService
 
     public async Task<Result> ChangePassword(string currentPassword, string newPassword, CancellationToken cancellationToken)
     {
-        var httpContext = _httpContextAccessor.HttpContext;
+        var httpContext = httpContextAccessor.HttpContext;
 
         var userClaims = httpContext.User.Claims;
 
@@ -80,21 +75,21 @@ public class UserService : IUserService
             return Result.NotFound();
         }
         var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-        await _db.SaveChangesAsync(cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
 
         return result.Succeeded ? Result.Ok() : Result.BadRequest("The password has not been changed");
     }
 
     public async Task<Result<TokenDto>> CreateToken(string email, string password, CancellationToken cancellationToken)
     {
-        var user = await _db.Users
+        var user = await db.Users
             .Where(u => u.UserName.ToLower() == email.ToLower())
             .FirstOrDefaultAsync(cancellationToken);
 
         if (user == null)
             return Result.NotFound<TokenDto>();
 
-        var validationResult = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+        var validationResult = await signInManager.CheckPasswordSignInAsync(user, password, false);
         if (!validationResult.Succeeded)
             return Result.NotFound<TokenDto>();
 
@@ -120,8 +115,8 @@ public class UserService : IUserService
 
         user.RefreshToken = refreshToken;
 
-        _db.Update(user);
-        await _db.SaveChangesAsync(cancellationToken);
+        db.Update(user);
+        await db.SaveChangesAsync(cancellationToken);
 
         var authenticationResult = new TokenDto
         {
@@ -136,7 +131,7 @@ public class UserService : IUserService
 
     public async Task<Result<TokenDto>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
-        var user = await _db.Users
+        var user = await db.Users
             .Where(u => u.RefreshToken == refreshToken)
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -162,8 +157,8 @@ public class UserService : IUserService
         
         user.RefreshToken = newRefreshToken;
 
-        _db.Update(user);
-        await _db.SaveChangesAsync(cancellationToken);
+        db.Update(user);
+        await db.SaveChangesAsync(cancellationToken);
 
         var authenticationResult = new TokenDto
         {

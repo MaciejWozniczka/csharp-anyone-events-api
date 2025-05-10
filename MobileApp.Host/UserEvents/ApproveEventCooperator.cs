@@ -1,46 +1,30 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class ApproveEventCooperator : ControllerBase
+public class ApproveEventCooperator(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ApproveEventCooperator(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserEvents"], Summary = "Approve cooperator to event")]
     [HttpPost("/api/event/cooperator/")]
     public async Task<Result> ApproveEventCooperatorAsync(string userId, Guid eventId)
     {
-        return await _mediator.Send(new ApproveEventCooperatorCommand(userId, eventId));
+        return await mediator.Send(new ApproveEventCooperatorCommand(userId, eventId));
     }
 
-    public class ApproveEventCooperatorCommand : IRequest<Result>
+    public class ApproveEventCooperatorCommand(string userId, Guid eventId) : IRequest<Result>
     {
-        public ApproveEventCooperatorCommand(string userId, Guid eventId)
-        {
-            UserId = userId;
-            EventId = eventId;
-        }
-        public string UserId { get; set; }
-        public Guid EventId { get; set; }
+        public string UserId { get; set; } = userId;
+        public Guid EventId { get; set; } = eventId;
     }
 
-    public class ApproveEventCooperatorCommandHandler : IRequestHandler<ApproveEventCooperatorCommand, Result>
+    public class ApproveEventCooperatorCommandHandler(
+        DataContext db,
+        ILogger<ApproveEventCooperatorCommandHandler> logger)
+        : IRequestHandler<ApproveEventCooperatorCommand, Result>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<ApproveEventCooperatorCommandHandler> _logger;
-        public ApproveEventCooperatorCommandHandler(DataContext db, ILogger<ApproveEventCooperatorCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result> Handle(ApproveEventCooperatorCommand request, CancellationToken cancellationToken)
         {
-            var userEvent = await _db.Events
+            var userEvent = await db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
                 .Include(userEvent => userEvent.CooperatorsPending)
                 .Include(userEvent => userEvent.Cooperators)
@@ -51,7 +35,7 @@ public class ApproveEventCooperator : ControllerBase
                 return Result.NotFound("Event not found");
             }
 
-            var user = await _db.Users
+            var user = await db.Users
                 .FirstOrDefaultAsync(u => u.Id == request.UserId && u.IsDeleted == false, cancellationToken);
 
             if (user == null)
@@ -72,10 +56,10 @@ public class ApproveEventCooperator : ControllerBase
                 return Result.Ok("User already added");
             }
 
-            _logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Approving event cooperator");
+            logger.LogInformation($"[User: {request.UserId}][Event: {request.EventId}] Approving event cooperator");
 
             userEvent.Cooperators.Add(user);
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();
         }

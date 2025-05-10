@@ -1,15 +1,9 @@
 ﻿namespace MobileApp.Host.Infrastructure;
 
-public class ApplicationStart
+public class ApplicationStart(ILogger<ApplicationStart> logger)
 {
-    private readonly ILogger<ApplicationStart> _logger;
-    public ApplicationStart(ILogger<ApplicationStart> logger)
-    {
-        _logger = logger;
-    }
-
     public void Start()
     {
-        _logger.LogInformation("App started");
+        logger.LogInformation("App started");
     }
 }

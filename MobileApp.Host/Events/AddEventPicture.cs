@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.Events;
 
 [ApiController]
-public class AddEventPicture : ControllerBase
+public class AddEventPicture(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public AddEventPicture(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Add event picture")]
     [HttpPost("/api/event/{id}/picture/")]
     public async Task<Result<Guid>> Import(IFormFile file, Guid id)
     {
-        return await _mediator.Send(new AddEventPictureCommand { DataFile = file, EventId = id });
+        return await mediator.Send(new AddEventPictureCommand { DataFile = file, EventId = id });
     }
 
     public class AddEventPictureCommand : IRequest<Result<Guid>>
@@ -25,19 +19,12 @@ public class AddEventPicture : ControllerBase
         public Guid EventId { get; set; }
     }
 
-    public class AddEventPictureHandler : IRequestHandler<AddEventPictureCommand, Result<Guid>>
+    public class AddEventPictureHandler(DataContext db, ILogger<AddEventPictureHandler> logger)
+        : IRequestHandler<AddEventPictureCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<AddEventPictureHandler> _logger;
-        public AddEventPictureHandler(DataContext db, ILogger<AddEventPictureHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result<Guid>> Handle(AddEventPictureCommand request, CancellationToken cancellationToken)
         {
-            var userEvent = await _db.Events
+            var userEvent = await db.Events
                 .Where(e => e.Id == request.EventId && !e.IsDeleted)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -49,10 +36,10 @@ public class AddEventPicture : ControllerBase
                 userEvent.Picture = content;
             }
 
-            _logger.LogInformation($"[Event: {request.EventId}] Adding event picture");
+            logger.LogInformation($"[Event: {request.EventId}] Adding event picture");
 
-            _db.Update(userEvent);
-            await _db.SaveChangesAsync(cancellationToken);
+            db.Update(userEvent);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(userEvent.Id);
         }

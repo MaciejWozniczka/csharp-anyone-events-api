@@ -1,38 +1,26 @@
 ﻿namespace MobileApp.Host.Locations;
 
 [ApiController]
-public class CheckLocation : ControllerBase
+public class CheckLocation(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public CheckLocation(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Check location")]
     [HttpGet("/api/location/{address}")]
     public async Task<Result<HereGeocode>> CheckLocationAsync(string address)
     {
-        return await _mediator.Send(new CheckLocationQuery(address));
+        return await mediator.Send(new CheckLocationQuery(address));
     }
 
-    public class CheckLocationQuery : IRequest<Result<HereGeocode>>
+    public class CheckLocationQuery(string address) : IRequest<Result<HereGeocode>>
     {
-        public string Address { get; set; }
-        public CheckLocationQuery(string address)
-        {
-            Address = address; ;
-        }
+        public string Address { get; set; } = address;
     }
 
-    public class CheckLocationCommandHandler : IRequestHandler<CheckLocationQuery, Result<HereGeocode>>
+    public class CheckLocationCommandHandler(IOptions<HereOptions> hereOptions)
+        : IRequestHandler<CheckLocationQuery, Result<HereGeocode>>
     {
-        private readonly HereOptions _hereOptions;
-        public CheckLocationCommandHandler(IOptions<HereOptions> hereOptions)
-        {
-            _hereOptions = hereOptions.Value;
-        }
+        private readonly HereOptions _hereOptions = hereOptions.Value;
+
         public async Task<Result<HereGeocode>> Handle(CheckLocationQuery request, CancellationToken cancellationToken)
         {
             var result = await _hereOptions.Url

@@ -3,44 +3,27 @@
 namespace MobileApp.Host.UserFilters;
 
 [ApiController]
-public class DeleteUserFilter : ControllerBase
+public class DeleteUserFilter(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public DeleteUserFilter(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserFilter"], Summary = "Change user filter status to deleted")]
     [HttpDelete("/api/filter/{id}")]
     public async Task<Result> DeleteUserFilterAsync(Guid id)
     {
-        return await _mediator.Send(new DeleteUserFilterCommand(id));
+        return await mediator.Send(new DeleteUserFilterCommand(id));
     }
 
-    public class DeleteUserFilterCommand : IRequest<Result>
+    public class DeleteUserFilterCommand(Guid id) : IRequest<Result>
     {
-        public Guid Id { get; set; }
-        public DeleteUserFilterCommand(Guid id)
-        {
-            Id = id;
-        }
+        public Guid Id { get; set; } = id;
     }
 
-    public class DeleteUserFilterCommandHandler : IRequestHandler<DeleteUserFilterCommand, Result>
+    public class DeleteUserFilterCommandHandler(DataContext db, ILogger<DeleteUserFilterCommandHandler> logger)
+        : IRequestHandler<DeleteUserFilterCommand, Result>
     {
-        private readonly DataContext _db;
-        private readonly ILogger<DeleteUserFilterCommandHandler> _logger;
-        public DeleteUserFilterCommandHandler(DataContext db, ILogger<DeleteUserFilterCommandHandler> logger)
-        {
-            _db = db;
-            _logger = logger;
-        }
-
         public async Task<Result> Handle(DeleteUserFilterCommand request, CancellationToken cancellationToken)
         {
-            var userFilter = await _db.UserFilters
+            var userFilter = await db.UserFilters
                 .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
             if (userFilter == null)
@@ -50,7 +33,7 @@ public class DeleteUserFilter : ControllerBase
 
             userFilter.IsDeleted = true;
 
-            _logger.LogInformation($"[User: {userFilter.UserId}] Deleting user filters");
+            logger.LogInformation($"[User: {userFilter.UserId}] Deleting user filters");
 
             return Result.Ok();
         }

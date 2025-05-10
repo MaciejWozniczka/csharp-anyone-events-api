@@ -1,28 +1,21 @@
 ﻿namespace MobileApp.Host.Events;
 
 [ApiController]
-public class GetEvents : ControllerBase
+public class GetEvents(IMediator mediator, ICurrentUserAccessor currentUserAccessor)
+    : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly ICurrentUserAccessor _currentUserAccessor;
-    public GetEvents(IMediator mediator, ICurrentUserAccessor currentUserAccessor)
-    {
-        _mediator = mediator;
-        _currentUserAccessor = currentUserAccessor;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Get active events according to parameters")]
     [HttpGet("/api/events/")]
     public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, double latitude, double longitude, int distance, Guid? categoryId, Guid? eventTypeId, int? ageFrom, int? ageTo, SexType? sexTypes)
     {
-        var user = await _currentUserAccessor.GetCurrentUser();
+        var user = await currentUserAccessor.GetCurrentUser();
         var pagination = new PaginationArgs
         {
             Page = offset ?? 0,
             PageSize = limit ?? 10
         };
-        return await _mediator.Send(new GetEventsQuery(pagination, user, new Location { Latitude = latitude, Longitude = longitude, Distance = distance, UserId = user.Id}, categoryId, eventTypeId, ageFrom, ageTo, sexTypes)).Process();
+        return await mediator.Send(new GetEventsQuery(pagination, user, new Location { Latitude = latitude, Longitude = longitude, Distance = distance, UserId = user.Id}, categoryId, eventTypeId, ageFrom, ageTo, sexTypes)).Process();
     }
 
     public class GetEventsQuery : IRequest<Result<GetEventsDto>>
@@ -55,26 +48,17 @@ public class GetEvents : ControllerBase
 
     public class GetEventsDto
     {
-        public GetEventsDto()
-        {
-            Data = [];
-        }
         public int Limit { get; set; }
         public int Offset { get; set; }
         public int Total { get; set; }
-        public List<EventsDto> Data { get; set; }
+        public List<EventsDto> Data { get; set; } = [];
     }
 
     public class EventsDto
     {
-        public EventsDto()
-        {
-            Cooperators = [];
-            SexTypes = [];
-        }
         public Guid Id { get; set; }
         public GetEventsUserDto Creator { get; set; }
-        public List<GetEventsUserDto> Cooperators { get; set; }
+        public List<GetEventsUserDto> Cooperators { get; set; } = [];
         public int UsersAssignedCount { get; set; }
         public string EventType { get; set; }
         public string Category { get; set; }
@@ -87,7 +71,7 @@ public class GetEvents : ControllerBase
         public int PeopleLimit { get; set; }
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
-        public List<SexType>? SexTypes { get; set; }
+        public List<SexType>? SexTypes { get; set; } = [];
     }
 
     public class GetEventsUserDto

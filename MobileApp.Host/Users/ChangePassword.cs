@@ -1,20 +1,14 @@
 ﻿namespace MobileApp.Host.Users;
 
 [ApiController]
-public class ChangePassword : ControllerBase
+public class ChangePassword(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ChangePassword(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Auth"], Summary = "Change password")]
     [HttpPut("/api/changepassword")]
     public async Task<Result> ChangePasswordAsync([FromBody] ChangePasswordQuery changePasswordRequestBody)
     {
-        return await _mediator.Send(new ChangePasswordQuery() { CurrentPassword = changePasswordRequestBody.CurrentPassword, NewPassword = changePasswordRequestBody.NewPassword });
+        return await mediator.Send(new ChangePasswordQuery() { CurrentPassword = changePasswordRequestBody.CurrentPassword, NewPassword = changePasswordRequestBody.NewPassword });
     }
 
     public class ChangePasswordQuery : IRequest<Result>
@@ -35,15 +29,11 @@ public class ChangePassword : ControllerBase
         }
     }
 
-    public class ChangePasswordQueryHandler : IRequestHandler<ChangePasswordQuery, Result>
+    public class ChangePasswordQueryHandler(IValidator<ChangePasswordQuery> validator, IUserService userService)
+        : IRequestHandler<ChangePasswordQuery, Result>
     {
-        public IValidator<ChangePasswordQuery> _validator { get; set; }
-        public readonly IUserService _userService;
-        public ChangePasswordQueryHandler(IValidator<ChangePasswordQuery> validator, IUserService userService)
-        {
-            _validator = validator;
-            _userService = userService;
-        }
+        public IValidator<ChangePasswordQuery> _validator { get; set; } = validator;
+        public readonly IUserService _userService = userService;
 
         public async Task<Result> Handle(ChangePasswordQuery request, CancellationToken cancellationToken)
         {

@@ -1,55 +1,38 @@
 ﻿namespace MobileApp.Host.UserEvents;
 
 [ApiController]
-public class ApproveEventPendingUserToGroup : ControllerBase
+public class ApproveEventPendingUserToGroup(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public ApproveEventPendingUserToGroup(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add user to pending group in event")]
     [HttpPost("/api/event/pending/approve")]
     public async Task<Result> ApproveEventPendingUserToGroupAsync(Guid groupId, Guid eventId)
     {
-        return await _mediator.Send(new ApproveEventPendingUserToGroupCommand(groupId, eventId));
+        return await mediator.Send(new ApproveEventPendingUserToGroupCommand(groupId, eventId));
     }
 
-    public class ApproveEventPendingUserToGroupCommand : IRequest<Result>
+    public class ApproveEventPendingUserToGroupCommand(Guid groupId, Guid eventId) : IRequest<Result>
     {
-        public ApproveEventPendingUserToGroupCommand(Guid groupId, Guid eventId)
-        {
-            GroupId = groupId;
-            EventId = eventId;
-        }
-        public Guid GroupId { get; set; }
-        public Guid EventId { get; set; }
+        public Guid GroupId { get; set; } = groupId;
+        public Guid EventId { get; set; } = eventId;
     }
 
-    public class ApproveEventPendingUserToGroupCommandHandler : IRequestHandler<ApproveEventPendingUserToGroupCommand, Result>
+    public class ApproveEventPendingUserToGroupCommandHandler(
+        DataContext db,
+        ICurrentUserAccessor currentUserAccessor,
+        ILogger<ApproveEventPendingUserToGroupCommandHandler> logger)
+        : IRequestHandler<ApproveEventPendingUserToGroupCommand, Result>
     {
-        private readonly DataContext _db;
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        private readonly ILogger<ApproveEventPendingUserToGroupCommandHandler> _logger;
-        public ApproveEventPendingUserToGroupCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor, ILogger<ApproveEventPendingUserToGroupCommandHandler> logger)
-        {
-            _db = db;
-            _currentUserAccessor = currentUserAccessor;
-            _logger = logger;
-        }
-
         public async Task<Result> Handle(ApproveEventPendingUserToGroupCommand request, CancellationToken cancellationToken)
         {
-            var currentUser = await _currentUserAccessor.GetCurrentUser();
+            var currentUser = await currentUserAccessor.GetCurrentUser();
 
             if (currentUser == null)
             {
                 return Result.NotFound("User not found");
             }
 
-            var userEvent = await _db.Events
+            var userEvent = await db.Events
                 .Where(e => e.Id == request.EventId && e.IsDeleted)
                 .Include(userEvent => (userEvent.GroupsPending ?? new List<UserGroup>())
                     .Where(e => e.Users
@@ -69,9 +52,9 @@ public class ApproveEventPendingUserToGroup : ControllerBase
                 .ToList()
                 .ForEach(user => user.Accepted = true);
 
-            _logger.LogInformation($"[Group: {request.GroupId}][Event: {request.EventId}] Approving pending user to group");
+            logger.LogInformation($"[Group: {request.GroupId}][Event: {request.EventId}] Approving pending user to group");
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok();
         }

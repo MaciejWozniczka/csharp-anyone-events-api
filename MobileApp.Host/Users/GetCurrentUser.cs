@@ -3,20 +3,14 @@
 namespace MobileApp.Host.Users;
 
 [ApiController]
-public class GetCurrentUser : ControllerBase
+public class GetCurrentUser(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public GetCurrentUser(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Get current user")]
     [HttpGet("/api/user/")]
     public async Task<Result<GetCurrentUserDto>> GetCurrentUserAsync()
     {
-        return await _mediator.Send(new GetCurrentUserQuery());
+        return await mediator.Send(new GetCurrentUserQuery());
     }
 
     public class GetCurrentUserQuery : IRequest<Result<GetCurrentUserDto>>
@@ -39,17 +33,12 @@ public class GetCurrentUser : ControllerBase
         public UserType? UserType { get; set; }
     }
 
-    public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, Result<GetCurrentUserDto>>
+    public class GetCurrentUserQueryHandler(ICurrentUserAccessor currentUserAccessor)
+        : IRequestHandler<GetCurrentUserQuery, Result<GetCurrentUserDto>>
     {
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        public GetCurrentUserQueryHandler(ICurrentUserAccessor currentUserAccessor)
-        {
-            _currentUserAccessor = currentUserAccessor;
-        }
-
         public async Task<Result<GetCurrentUserDto>> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
         {
-            var user = await _currentUserAccessor.GetCurrentUser();
+            var user = await currentUserAccessor.GetCurrentUser();
 
             if (user == null)
             {
