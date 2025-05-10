@@ -16,15 +16,10 @@ public class GetMessages(IMediator mediator)
         return await mediator.Send(new GetMessagesQuery(id, pagination));
     }
 
-    public class GetMessagesQuery : IRequest<Result<List<GetMessagesDto>>>
+    public class GetMessagesQuery(Guid id, PaginationArgs paginationArgs) : IRequest<Result<List<GetMessagesDto>>>
     {
-        public Guid Id { get; set; }
-        public PaginationArgs PaginationArgs { get; set; }
-        public GetMessagesQuery(Guid id, PaginationArgs paginationArgs)
-        {
-            Id = id;
-            PaginationArgs = paginationArgs;
-        }
+        public Guid Id { get; set; } = id;
+        public PaginationArgs PaginationArgs { get; set; } = paginationArgs;
     }
 
     public class GetMessagesDto

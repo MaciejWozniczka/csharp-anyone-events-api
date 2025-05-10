@@ -18,23 +18,17 @@ public class ManageChat(IMediator mediator) : ControllerBase
         public List<string> ParticipantsIds { get; set; }
     }
 
-    public class ManageChatCommandHandler : IRequestHandler<ManageChatCommand, Result<Guid>>
+    public class ManageChatCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
+        : IRequestHandler<ManageChatCommand, Result<Guid>>
     {
-        private readonly DataContext _db;
-        private readonly ICurrentUserAccessor _currentUserAccessor;
-        public ManageChatCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
-        {
-            _db = db;
-            _currentUserAccessor = currentUserAccessor;
-        }
-
         public async Task<Result<Guid>> Handle(ManageChatCommand request, CancellationToken cancellationToken)
         {
-            var currentUser = await _currentUserAccessor.GetCurrentUser();
+            var currentUser = await currentUserAccessor.GetCurrentUser();
 
             if (request.Name == null)
             {
-                var userEvent = await _db.Events
+                var userEvent = await db.Events
+                    .Include(userEvent => userEvent.EventType)
                     .FirstOrDefaultAsync(e => e.Id == request.UserEventId, cancellationToken);
 
                 request.Name = userEvent.EventType.Name;
@@ -65,9 +59,9 @@ public class ManageChat(IMediator mediator) : ControllerBase
                 }
             }
 
-            await _db.AddAsync(chat, cancellationToken);
+            await db.AddAsync(chat, cancellationToken);
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(chat.Id);
         }

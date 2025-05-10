@@ -2,26 +2,38 @@
 
 public interface IChatHub
 {
-    Task SendMessage(Guid chatId, string messageText);
+    Task JoinRoom(string chatId);
+    Task LeaveRoom(string chatId);
+    Task SendMessage(string chatId, string message);
 }
 public class ChatHub(DataContext db, ICurrentUserAccessor currentUserAccessor) : Hub, IChatHub
 {
-    public async Task SendMessage(Guid chatId, string messageText)
+    public async Task JoinRoom(string chatId)
     {
-        var currentUser = await currentUserAccessor.GetCurrentUser();
+        await Groups.AddToGroupAsync(Context.ConnectionId, chatId);
 
-        var message = new Message
+        var username = Context.User?.Identity?.Name ?? "Nieznany";
+        await Clients.Group(chatId).SendAsync("SystemMessage", $"{username} dołączył do pokoju.");
+    }
+
+    public async Task LeaveRoom(string chatId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId);
+
+        var username = Context.User?.Identity?.Name ?? "Nieznany";
+        await Clients.Group(chatId).SendAsync("SystemMessage", $"{username} opuścił pokój.");
+    }
+
+    public async Task SendMessage(string chatId, string message)
+    {
+        var username = Context.User?.Identity?.Name ?? "Nieznany";
+
+        await Clients.Group(chatId).SendAsync("ReceiveMessage", new
         {
-            RoomId = chatId.ToString(),
-            ChatId = chatId,
-            SenderUserId = currentUser.Id,
-            SenderUsername = currentUser.FirstName,
-            Text = messageText
-        };
-
-        db.Messages.Add(message);
-        await db.SaveChangesAsync();
-
-        await Clients.Group(message.RoomId).SendAsync("ReceiveMessage", message.SenderUsername, messageText);
+            chatId,
+            sender = username,
+            text = message,
+            timestamp = DateTime.UtcNow
+        });
     }
 }
