@@ -129,6 +129,7 @@ public class ManageEvent(IMediator mediator) : ControllerBase
                     UsersSkipped = []
                 };
 
+                db.Attach(creator);
                 userEvent.UsersAssigned.Add(creator);
 
                 foreach (var userId in request.CooperatorsPending)
@@ -157,7 +158,7 @@ public class ManageEvent(IMediator mediator) : ControllerBase
 
                 logger.LogInformation($"[Event: {userEvent.Id}] Adding event");
 
-                await db.AddAsync(userEvent, cancellationToken);
+                await db.Events.AddAsync(userEvent, cancellationToken);
             }
             else
             {
