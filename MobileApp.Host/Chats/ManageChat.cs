@@ -18,8 +18,7 @@ public class ManageChat(IMediator mediator) : ControllerBase
         public List<string> ParticipantsIds { get; set; }
     }
 
-    public class ManageChatCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor)
-        : IRequestHandler<ManageChatCommand, Result<Guid>>
+    public class ManageChatCommandHandler(DataContext db, ICurrentUserAccessor currentUserAccessor) : IRequestHandler<ManageChatCommand, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(ManageChatCommand request, CancellationToken cancellationToken)
         {
