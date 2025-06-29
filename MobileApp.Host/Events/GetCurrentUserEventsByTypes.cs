@@ -27,6 +27,7 @@ public class GetCurrentUserEventsByTypes(IMediator mediator) : ControllerBase
         public DateTimeOffset EventDateTime { get; set; }
         public int Duration { get; set; }
         public string ShortDescription { get; set; }
+        public string CreatorId { get; set; }
         public string CategoryName { get; set; }
         public string EmojiCode { get; set; }
         public string CreatorName { get; set; }
@@ -57,6 +58,7 @@ public class GetCurrentUserEventsByTypes(IMediator mediator) : ControllerBase
                         ShortDescription = e.ShortDescription,
                         CategoryName = e.EventType.Name,
                         EmojiCode = e.EventType.EmojiCode,
+                        CreatorId = e.Creator.Id,
                         CreatorName = e.Creator?.FirstName ?? "",
                         CreatorPicture = e.Creator?.Picture ?? "",
                         PeopleAdded = e.UsersAssigned?.Count(u => !u.IsDeleted) ?? 1,
