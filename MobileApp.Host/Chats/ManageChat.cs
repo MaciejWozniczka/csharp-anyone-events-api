@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Chats;
+﻿using MobileApp.Host.Events;
+
+namespace MobileApp.Host.Chats;
 
 [ApiController]
 public class ManageChat(IMediator mediator) : ControllerBase
@@ -24,14 +26,11 @@ public class ManageChat(IMediator mediator) : ControllerBase
         {
             var currentUser = await currentUserAccessor.GetCurrentUser();
 
-            if (request.Name == null)
-            {
-                var userEvent = await db.Events
-                    .Include(userEvent => userEvent.EventType)
-                    .FirstOrDefaultAsync(e => e.Id == request.UserEventId, cancellationToken);
+            var userEvent = await db.Events
+                .Include(userEvent => userEvent.EventType)
+                .FirstOrDefaultAsync(e => e.Id == request.UserEventId, cancellationToken);
 
-                request.Name = userEvent.EventType.Name;
-            }
+            request.Name ??= userEvent.EventType.Name;
 
             var chat = new Chat
             {
@@ -44,7 +43,8 @@ public class ManageChat(IMediator mediator) : ControllerBase
                     }
 
                 ],
-                Messages = []
+                Messages = [],
+                EventId = userEvent.Id,
             };
 
             foreach (var userId in request.ParticipantsIds.Distinct())

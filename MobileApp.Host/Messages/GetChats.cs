@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Messages;
+﻿using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions;
+
+namespace MobileApp.Host.Messages;
 
 [ApiController]
 public class GetChats(IMediator mediator, ICurrentUserAccessor currentUserAccessor)
@@ -22,6 +24,7 @@ public class GetChats(IMediator mediator, ICurrentUserAccessor currentUserAccess
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string EventDate { get; set; }
         public List<string> Participants { get; set; }
         public DateTimeOffset LastMessageDate { get; set; }
     }
@@ -39,7 +42,8 @@ public class GetChats(IMediator mediator, ICurrentUserAccessor currentUserAccess
                     Id = ch.Id,
                     Name = ch.Name,
                     Participants = ch.Participants.Select(p => p.User.FirstName).ToList(),
-                    LastMessageDate = ch.Messages.OrderByDescending(m => m.CreateDate).FirstOrDefault().CreateDate
+                    LastMessageDate = ch.Messages.OrderByDescending(m => m.CreateDate).FirstOrDefault().CreateDate,
+                    EventDate = ch.Event.EventDateTime.DateTime.ToShortDateString()
                 })
                 .OrderByDescending(c => c.LastMessageDate)
                 .ToListAsync(cancellationToken);
