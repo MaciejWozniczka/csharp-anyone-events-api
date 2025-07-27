@@ -1,6 +1,4 @@
-﻿using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions;
-
-namespace MobileApp.Host.Messages;
+﻿namespace MobileApp.Host.Messages;
 
 [ApiController]
 public class GetChats(IMediator mediator, ICurrentUserAccessor currentUserAccessor)

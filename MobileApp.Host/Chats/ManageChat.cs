@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Events;
-
-namespace MobileApp.Host.Chats;
+﻿namespace MobileApp.Host.Chats;
 
 [ApiController]
 public class ManageChat(IMediator mediator) : ControllerBase

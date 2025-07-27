@@ -1,6 +1,4 @@
-﻿using static MobileApp.Host.Events.AddEventPicture;
-
-namespace MobileApp.Host.UserFilters;
+﻿namespace MobileApp.Host.UserFilters;
 
 [ApiController]
 public class DeleteUserFilter(IMediator mediator) : ControllerBase

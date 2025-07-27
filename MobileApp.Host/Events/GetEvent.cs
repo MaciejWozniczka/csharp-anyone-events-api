@@ -1,7 +1,4 @@
-﻿using MobileApp.Host.Extensions;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace MobileApp.Host.Events;
+﻿namespace MobileApp.Host.Events;
 
 [ApiController]
 public class GetEvent(IMediator mediator) : ControllerBase

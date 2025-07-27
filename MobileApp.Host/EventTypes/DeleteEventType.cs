@@ -1,6 +1,4 @@
-﻿using MobileApp.Host.Events;
-
-namespace MobileApp.Host.EventTypes;
+﻿namespace MobileApp.Host.EventTypes;
 
 [ApiController]
 public class DeleteEventType(IMediator mediator) : ControllerBase
