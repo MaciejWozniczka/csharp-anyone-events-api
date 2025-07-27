@@ -5,22 +5,23 @@ public class GetEventsController(IMediator mediator, ICurrentUserAccessor curren
 {
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Get active events according to parameters")]
-    [HttpPost("/api/events/")]
-    public async Task<IActionResult> GetEventsAsync([FromBody] GetEventsRequest request)
+    [HttpGet("/api/events/")]
+    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, double latitude, double longitude, int distance,
+        Guid? categoryId, Guid? eventTypeId, int? ageFrom, int? ageTo, SexType? sexTypes)
     {
         var user = await currentUserAccessor.GetCurrentUser();
 
         var pagination = new PaginationArgs
         {
-            Page = request.Offset ?? 0,
-            PageSize = request.Limit ?? 10
+            Page = offset ?? 0,
+            PageSize = limit ?? 10
         };
 
         var location = new Location
         {
-            Latitude = request.Latitude,
-            Longitude = request.Longitude,
-            Distance = request.Distance,
+            Latitude = latitude,
+            Longitude = longitude,
+            Distance = distance,
             UserId = user.Id
         };
 
@@ -28,27 +29,13 @@ public class GetEventsController(IMediator mediator, ICurrentUserAccessor curren
             pagination,
             user,
             location,
-            request.CategoryId,
-            request.EventTypeId,
-            request.AgeFrom,
-            request.AgeTo,
-            request.SexTypes
+            categoryId,
+            eventTypeId,
+            ageFrom,
+            ageTo,
+            sexTypes
         )).Process();
     }
-}
-
-public class GetEventsRequest
-{
-    public int? Offset { get; set; }
-    public int? Limit { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-    public int Distance { get; set; }
-    public Guid? CategoryId { get; set; }
-    public Guid? EventTypeId { get; set; }
-    public int? AgeFrom { get; set; }
-    public int? AgeTo { get; set; }
-    public SexType? SexTypes { get; set; }
 }
 
 public class GetEventsQuery(
@@ -118,22 +105,34 @@ public class GetEventsQueryHandler(DataContext db) : IRequestHandler<GetEventsQu
     {
         await db.Locations.AddAsync(request.Location, cancellationToken);
 
-        var events = await db.Events
+        var now = DateTimeOffset.UtcNow;
+
+        var query = await db.Events
             .Where(e =>
-                e.AgeFrom <= request.UserAge &&
-                e.AgeTo >= request.UserAge &&
+                !e.IsDeleted &&
+                e.EventDateTime > now &&
+                (request.CategoryId == null || e.CategoryId == request.CategoryId.Value) &&
+                (request.EventTypeId == null || e.EventTypeId == request.EventTypeId.Value)
+            )
+            .Include(e => e.Creator)
+            .Include(e => e.UsersAssigned)
+            .Include(e => e.Cooperators)
+            .Include(userEvent => userEvent.Location)
+            .Include(userEvent => userEvent.EventType)
+            .ThenInclude(eventType => eventType.Category)
+            .ToListAsync(cancellationToken);
+
+        var events = query
+            .AsEnumerable()
+            .Where(e =>
+                (e.AgeFrom == null || e.AgeFrom <= request.UserAge) &&
+                (e.AgeTo == null || e.AgeTo >= request.UserAge) &&
                 (e.SexTypes == null || !e.SexTypes.Any() || e.SexTypes.Contains(SexType.All) || e.SexTypes.Contains(request.UserSexType)) &&
-                (e.UsersAssigned.Count < e.PeopleLimit || e.PeopleLimit == 0) &&
+                (e.UsersAssigned == null || e.UsersAssigned.Count < e.PeopleLimit || e.PeopleLimit == 0) &&
                 e.Creator.CalculateAge() >= request.AgeFrom &&
                 e.Creator.CalculateAge() <= request.AgeTo &&
-                (e.Creator.Sex == request.SexTypes || request.SexTypes == SexType.All || request.SexTypes == null) &&
-                (e.CategoryId == request.CategoryId || request.CategoryId == null) &&
-                (e.EventTypeId == request.EventTypeId || request.EventTypeId == null) &&
-                !e.IsDeleted &&
-                e.EventDateTime > DateTimeOffset.UtcNow
+                (request.SexTypes == null || request.SexTypes == SexType.All || e.Creator.Sex == request.SexTypes)
             )
-            .Include(e => e.Cooperators)
-            .Include(e => e.UsersAssigned)
             .Select(e => new EventsDto
             {
                 Id = e.Id,
@@ -149,7 +148,7 @@ public class GetEventsQueryHandler(DataContext db) : IRequestHandler<GetEventsQu
                     Sex = e.Creator.Sex,
                     Picture = e.Creator.Picture
                 },
-                Cooperators = e.Cooperators.Select(u => new GetEventsUserDto
+                Cooperators = e.Cooperators?.Select(u => new GetEventsUserDto
                 {
                     Id = u.Id,
                     FirstName = u.FirstName,
@@ -158,8 +157,8 @@ public class GetEventsQueryHandler(DataContext db) : IRequestHandler<GetEventsQu
                     Nationality = u.Nationality,
                     Sex = u.Sex,
                     Picture = u.Picture
-                }).ToList(),
-                UsersAssignedCount = e.UsersAssigned.Count,
+                }).ToList() ?? new(),
+                UsersAssignedCount = e.UsersAssigned?.Count ?? 0,
                 EventDateTime = e.EventDateTime,
                 Duration = e.Duration,
                 Location = e.Location,
@@ -171,7 +170,7 @@ public class GetEventsQueryHandler(DataContext db) : IRequestHandler<GetEventsQu
                 AgeTo = e.AgeTo,
                 SexTypes = e.SexTypes
             })
-            .ToListAsync(cancellationToken);
+            .ToList();
 
         var filteredEvents = events
             .Where(e =>
@@ -187,6 +186,8 @@ public class GetEventsQueryHandler(DataContext db) : IRequestHandler<GetEventsQu
             Total = events.Count,
             Data = filteredEvents
         };
+
+        await db.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(result);
     }
