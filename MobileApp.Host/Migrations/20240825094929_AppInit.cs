@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MobileApp.Host.Migrations
+namespace AnyOneApi.Host.Migrations
 {
     public partial class AppInit : Migration
     {

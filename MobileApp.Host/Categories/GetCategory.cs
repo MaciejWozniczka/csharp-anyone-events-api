@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Categories;
+﻿using AnyOneApi.Host.EventTypes;
+using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Categories;
 
 [ApiController]
 public class GetCategory(IMediator mediator) : ControllerBase

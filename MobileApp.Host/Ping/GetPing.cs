@@ -1,4 +1,4 @@
-﻿namespace MobileApp.Host.Ping;
+﻿namespace AnyOneApi.Host.Ping;
 
 [ApiController]
 public class GetPing(ILogger<GetPing> logger) : ControllerBase

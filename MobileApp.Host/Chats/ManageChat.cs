@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Chats;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Chats;
 
 [ApiController]
 public class ManageChat(IMediator mediator) : ControllerBase

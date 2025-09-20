@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Communications;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Communications;
 
 [ApiController]
 public class PostCommunication(IMediator mediator) : ControllerBase

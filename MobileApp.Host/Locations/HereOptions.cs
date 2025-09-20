@@ -1,4 +1,4 @@
-﻿namespace MobileApp.Host.Locations;
+﻿namespace AnyOneApi.Host.Locations;
 
 public class HereOptions
 {

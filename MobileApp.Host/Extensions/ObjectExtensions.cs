@@ -1,4 +1,4 @@
-﻿namespace MobileApp.Host.Extensions;
+﻿namespace AnyOneApi.Host.Extensions;
 
 public static class ObjectExtensions
 {

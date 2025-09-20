@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Chats;
+﻿using AnyOneApi.Host.Models;
+using AnyOneApi.Host.Users;
+
+namespace AnyOneApi.Host.Chats;
 
 public class ChatParticipant : BaseModel
 {

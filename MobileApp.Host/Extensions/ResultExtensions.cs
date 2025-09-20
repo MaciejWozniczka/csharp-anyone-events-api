@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Extensions;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Extensions;
 
 public static class ResultExtensions
 {

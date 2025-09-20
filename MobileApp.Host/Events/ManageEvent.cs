@@ -1,4 +1,10 @@
-﻿namespace MobileApp.Host.Events;
+﻿using AnyOneApi.Host.Addresses;
+using AnyOneApi.Host.Extensions;
+using AnyOneApi.Host.Infrastructure;
+using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.Events;
 
 [ApiController]
 public class ManageEvent(IMediator mediator) : ControllerBase

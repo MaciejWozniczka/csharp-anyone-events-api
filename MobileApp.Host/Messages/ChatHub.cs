@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Messages;
+﻿using AnyOneApi.Host.Chats;
+using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Messages;
 
 public interface IChatHub
 {

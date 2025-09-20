@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Locations;
+﻿using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.Locations;
 
 public class Location : BaseModel
 {

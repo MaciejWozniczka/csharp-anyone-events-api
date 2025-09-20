@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Communications;
+﻿using AnyOneApi.Host.Models;
+using AnyOneApi.Host.Users;
+
+namespace AnyOneApi.Host.Communications;
 
 public class Communication : BaseModel
 {

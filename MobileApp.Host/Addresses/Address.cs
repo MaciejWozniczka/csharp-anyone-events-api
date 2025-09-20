@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Addresses;
+﻿using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.Addresses;
 
 public class Address : BaseModel
 {

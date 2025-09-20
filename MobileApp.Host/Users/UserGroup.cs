@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Users;
+﻿using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.Users;
 
 public class UserGroup : BaseModel
 {

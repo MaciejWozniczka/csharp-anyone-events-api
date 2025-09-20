@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Events;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Events;
 
 [ApiController]
 public class DeleteEvent(IMediator mediator) : ControllerBase

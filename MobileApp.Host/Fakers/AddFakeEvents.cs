@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Fakers;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Fakers;
 
 [ApiController]
 public class AddFakeEvents(IMediator mediator) : ControllerBase

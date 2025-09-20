@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.EventTypes;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.EventTypes;
 
 [ApiController]
 public class GetEventType(IMediator mediator) : ControllerBase

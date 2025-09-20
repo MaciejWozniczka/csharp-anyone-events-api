@@ -1,4 +1,4 @@
-﻿namespace MobileApp.Host.Models;
+﻿namespace AnyOneApi.Host.Models;
 
 public class BaseModel
 {

@@ -1,6 +1,7 @@
-﻿using FluentValidation.Results;
+﻿using AnyOneApi.Host.Infrastructure;
+using FluentValidation.Results;
 
-namespace MobileApp.Host.Extensions;
+namespace AnyOneApi.Host.Extensions;
 
 public static class ValidationResultExtensions
 {

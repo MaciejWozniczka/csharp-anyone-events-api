@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Users;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Users;
 
 [ApiController]
 public class DeleteUserPicture(IMediator mediator) : ControllerBase

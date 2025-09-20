@@ -1,4 +1,10 @@
-﻿namespace MobileApp.Host;
+﻿using AnyOneApi.Host.Fakers;
+using AnyOneApi.Host.Infrastructure;
+using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Messages;
+using AnyOneApi.Host.Users;
+
+namespace AnyOneApi.Host;
 
 public interface IModule
 {
@@ -70,7 +76,7 @@ public class Module : IModule
 
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "MobileApp", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "AnyOneApi", Version = "v1" });
             c.EnableAnnotations();
 
             var jwtSecurityScheme = new OpenApiSecurityScheme

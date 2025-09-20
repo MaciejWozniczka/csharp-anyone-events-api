@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MobileApp.Host.Migrations
+namespace AnyOneApi.Host.Migrations
 {
     public partial class UserLanguages : Migration
     {

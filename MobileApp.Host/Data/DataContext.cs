@@ -1,4 +1,15 @@
-﻿namespace MobileApp.Host.Data;
+﻿using AnyOneApi.Host.Addresses;
+using AnyOneApi.Host.Categories;
+using AnyOneApi.Host.Chats;
+using AnyOneApi.Host.Communications;
+using AnyOneApi.Host.Events;
+using AnyOneApi.Host.EventTypes;
+using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Messages;
+using AnyOneApi.Host.UserFilters;
+using AnyOneApi.Host.Users;
+
+namespace AnyOneApi.Host.Data;
 
 public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<User>(options)
 {

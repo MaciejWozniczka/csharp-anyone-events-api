@@ -1,4 +1,8 @@
-﻿namespace MobileApp.Host.Users;
+﻿using AnyOneApi.Host.Extensions;
+using AnyOneApi.Host.Infrastructure;
+using AnyOneApi.Host.Locations;
+
+namespace AnyOneApi.Host.Users;
 
 [ApiController]
 public class SetCurrentLocation(IMediator mediator) : ControllerBase

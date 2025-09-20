@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Locations;
+﻿using AnyOneApi.Host.Addresses;
+
+namespace AnyOneApi.Host.Locations;
 
 public class HereGeocode
 {

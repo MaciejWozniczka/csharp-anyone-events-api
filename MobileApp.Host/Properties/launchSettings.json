@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "MobileApp.Host": {
+    "AnyOneApi.Host": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

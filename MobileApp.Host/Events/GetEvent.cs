@@ -1,4 +1,8 @@
-﻿namespace MobileApp.Host.Events;
+﻿using AnyOneApi.Host.Infrastructure;
+using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.Events;
 
 [ApiController]
 public class GetEvent(IMediator mediator) : ControllerBase

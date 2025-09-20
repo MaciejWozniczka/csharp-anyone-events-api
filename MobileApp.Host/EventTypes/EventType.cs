@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.EventTypes;
+﻿using AnyOneApi.Host.Categories;
+using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.EventTypes;
 
 public class EventType : BaseModel
 {

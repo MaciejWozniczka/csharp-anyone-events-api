@@ -1,6 +1,7 @@
-using TokenOption = MobileApp.Host.Infrastructure.TokenOption;
+using AnyOneApi.Host.Infrastructure;
+using TokenOption = AnyOneApi.Host.Infrastructure.TokenOption;
 
-namespace MobileApp.Host.Users;
+namespace AnyOneApi.Host.Users;
 
 public interface IUserService
 {

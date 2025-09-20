@@ -1,4 +1,8 @@
-﻿namespace MobileApp.Host.UserFilters;
+﻿using AnyOneApi.Host.Infrastructure;
+using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.UserFilters;
 
 [ApiController]
 public class ManageUserFilters(IMediator mediator) : ControllerBase

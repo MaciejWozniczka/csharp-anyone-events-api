@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Users;
+﻿using AnyOneApi.Host.Extensions;
+using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Users;
 
 [ApiController]
 public class AddUser(IMediator mediator) : ControllerBase

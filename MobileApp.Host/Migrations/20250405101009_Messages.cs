@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MobileApp.Host.Migrations
+namespace AnyOneApi.Host.Migrations
 {
     /// <inheritdoc />
     public partial class Messages : Migration

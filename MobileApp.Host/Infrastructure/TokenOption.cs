@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MobileApp.Host.Infrastructure;
+namespace AnyOneApi.Host.Infrastructure;
 
 public class TokenOption
 {

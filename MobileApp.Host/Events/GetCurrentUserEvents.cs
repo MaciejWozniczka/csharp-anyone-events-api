@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Events;
+﻿using AnyOneApi.Host.Infrastructure;
+using AnyOneApi.Host.Locations;
+
+namespace AnyOneApi.Host.Events;
 
 [ApiController]
 public class GetCurrentUserEvents(IMediator mediator) : ControllerBase

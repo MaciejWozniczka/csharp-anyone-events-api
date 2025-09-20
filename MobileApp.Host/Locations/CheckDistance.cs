@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Locations;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Locations;
 
 [ApiController]
 public class CheckDistance(IMediator mediator) : ControllerBase

@@ -5,12 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MobileApp.Host.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MobileApp.Host.Migrations
+namespace AnyOneApi.Host.Migrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20250119120340_EnojiTypeCategory")]
@@ -157,7 +156,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Addresses.Address", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Addresses.Address", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -216,7 +215,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Categories.Category", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Categories.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -247,7 +246,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Communications.Communication", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Communications.Communication", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -278,7 +277,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("Communications");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Events.UserEvent", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Events.UserEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -353,7 +352,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.EventTypes.EventType", b =>
+            modelBuilder.Entity("AnyOneApi.Host.EventTypes.EventType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -389,7 +388,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("EventTypes");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Locations.Location", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Locations.Location", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -422,7 +421,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.UserFilters.UserFilter", b =>
+            modelBuilder.Entity("AnyOneApi.Host.UserFilters.UserFilter", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -475,7 +474,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("UserFilters");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Users.PendingUser", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Users.PendingUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -507,7 +506,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("PendingUser");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Users.User", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Users.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -618,7 +617,7 @@ namespace MobileApp.Host.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Users.UserGroup", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Users.UserGroup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -751,7 +750,7 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -760,7 +759,7 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -775,7 +774,7 @@ namespace MobileApp.Host.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -784,43 +783,43 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Communications.Communication", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Communications.Communication", b =>
                 {
-                    b.HasOne("MobileApp.Host.Users.User", "User")
+                    b.HasOne("AnyOneApi.Host.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Events.UserEvent", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Events.UserEvent", b =>
                 {
-                    b.HasOne("MobileApp.Host.Addresses.Address", "Address")
+                    b.HasOne("AnyOneApi.Host.Addresses.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Users.User", "Creator")
+                    b.HasOne("AnyOneApi.Host.Users.User", "Creator")
                         .WithMany("EventsCreated")
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.EventTypes.EventType", "EventType")
+                    b.HasOne("AnyOneApi.Host.EventTypes.EventType", "EventType")
                         .WithMany()
                         .HasForeignKey("EventTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Locations.Location", "Location")
+                    b.HasOne("AnyOneApi.Host.Locations.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -835,9 +834,9 @@ namespace MobileApp.Host.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.EventTypes.EventType", b =>
+            modelBuilder.Entity("AnyOneApi.Host.EventTypes.EventType", b =>
                 {
-                    b.HasOne("MobileApp.Host.Categories.Category", "Category")
+                    b.HasOne("AnyOneApi.Host.Categories.Category", "Category")
                         .WithMany("EventTypes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -846,47 +845,47 @@ namespace MobileApp.Host.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.UserFilters.UserFilter", b =>
+            modelBuilder.Entity("AnyOneApi.Host.UserFilters.UserFilter", b =>
                 {
-                    b.HasOne("MobileApp.Host.Locations.Location", "Location")
+                    b.HasOne("AnyOneApi.Host.Locations.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId");
 
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Users.PendingUser", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Users.PendingUser", b =>
                 {
-                    b.HasOne("MobileApp.Host.Users.UserGroup", null)
+                    b.HasOne("AnyOneApi.Host.Users.UserGroup", null)
                         .WithMany("Users")
                         .HasForeignKey("UserGroupId");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Users.User", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Users.User", b =>
                 {
-                    b.HasOne("MobileApp.Host.Locations.Location", "CurrentLocation")
+                    b.HasOne("AnyOneApi.Host.Locations.Location", "CurrentLocation")
                         .WithMany()
                         .HasForeignKey("CurrentLocationId");
 
                     b.Navigation("CurrentLocation");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Users.UserGroup", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Users.UserGroup", b =>
                 {
-                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                    b.HasOne("AnyOneApi.Host.Events.UserEvent", null)
                         .WithMany("GroupsPending")
                         .HasForeignKey("UserEventId");
                 });
 
             modelBuilder.Entity("UserUserEvent", b =>
                 {
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("CooperatorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                    b.HasOne("AnyOneApi.Host.Events.UserEvent", null)
                         .WithMany()
                         .HasForeignKey("EventsCooperatedId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -895,13 +894,13 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("UserUserEvent1", b =>
                 {
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("CooperatorsPendingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                    b.HasOne("AnyOneApi.Host.Events.UserEvent", null)
                         .WithMany()
                         .HasForeignKey("EventsCooperationPendingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -910,13 +909,13 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("UserUserEvent2", b =>
                 {
-                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                    b.HasOne("AnyOneApi.Host.Events.UserEvent", null)
                         .WithMany()
                         .HasForeignKey("EventsAssignedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UsersAssignedId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -925,13 +924,13 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("UserUserEvent3", b =>
                 {
-                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                    b.HasOne("AnyOneApi.Host.Events.UserEvent", null)
                         .WithMany()
                         .HasForeignKey("EventsInterestedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UsersInterestedId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -940,13 +939,13 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("UserUserEvent4", b =>
                 {
-                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                    b.HasOne("AnyOneApi.Host.Events.UserEvent", null)
                         .WithMany()
                         .HasForeignKey("EventsSkippedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UsersSkippedId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -955,35 +954,35 @@ namespace MobileApp.Host.Migrations
 
             modelBuilder.Entity("UserUserEvent5", b =>
                 {
-                    b.HasOne("MobileApp.Host.Events.UserEvent", null)
+                    b.HasOne("AnyOneApi.Host.Events.UserEvent", null)
                         .WithMany()
                         .HasForeignKey("EventsPendingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MobileApp.Host.Users.User", null)
+                    b.HasOne("AnyOneApi.Host.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UsersPendingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Categories.Category", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Categories.Category", b =>
                 {
                     b.Navigation("EventTypes");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Events.UserEvent", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Events.UserEvent", b =>
                 {
                     b.Navigation("GroupsPending");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Users.User", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Users.User", b =>
                 {
                     b.Navigation("EventsCreated");
                 });
 
-            modelBuilder.Entity("MobileApp.Host.Users.UserGroup", b =>
+            modelBuilder.Entity("AnyOneApi.Host.Users.UserGroup", b =>
                 {
                     b.Navigation("Users");
                 });

@@ -1,4 +1,10 @@
-namespace MobileApp.Host.Events;
+using AnyOneApi.Host.Addresses;
+using AnyOneApi.Host.EventTypes;
+using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Models;
+using AnyOneApi.Host.Users;
+
+namespace AnyOneApi.Host.Events;
 
 public class UserEvent : BaseModel
 {

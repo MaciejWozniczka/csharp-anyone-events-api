@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Infrastructure;
+﻿using AnyOneApi.Host.Events;
+using AnyOneApi.Host.Users;
+
+namespace AnyOneApi.Host.Infrastructure;
 
 public interface ICurrentUserAccessor
 {

@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Messages;
+﻿using AnyOneApi.Host.Chats;
+using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.Messages;
 
 public class Message : BaseModel
 {

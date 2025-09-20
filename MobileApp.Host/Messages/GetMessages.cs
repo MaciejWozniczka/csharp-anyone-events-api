@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Messages;
+﻿using AnyOneApi.Host.Extensions;
+using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Messages;
 
 [ApiController]
 public class GetMessages(IMediator mediator)

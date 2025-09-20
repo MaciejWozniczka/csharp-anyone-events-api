@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using AnyOneApi.Host.Events;
+using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Models;
 
-namespace MobileApp.Host.Users;
+namespace AnyOneApi.Host.Users;
 
 public class User : IdentityUser
 {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NullValueHandling = Newtonsoft.Json.NullValueHandling;
 
-namespace MobileApp.Host.Extensions;
+namespace AnyOneApi.Host.Extensions;
 
 public class SerializationExtension
 {

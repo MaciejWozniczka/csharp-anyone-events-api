@@ -1,4 +1,10 @@
-﻿namespace MobileApp.Host.Fakers;
+﻿using AnyOneApi.Host.Addresses;
+using AnyOneApi.Host.Categories;
+using AnyOneApi.Host.Events;
+using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.Fakers;
 
 public interface IFakerService
 {

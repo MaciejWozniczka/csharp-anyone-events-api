@@ -1,3 +1,7 @@
+using AnyOneApi.Host;
+using AnyOneApi.Host.Fakers;
+using AnyOneApi.Host.Messages;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
@@ -40,7 +44,7 @@ builder.Host.UseSerilog((host, log) =>
 {
     log.Enrich.FromLogContext();
     log.MinimumLevel.Warning();
-    log.MinimumLevel.Override("MobileApp", LogEventLevel.Information);
+    log.MinimumLevel.Override("AnyOneApi", LogEventLevel.Information);
     log.WriteTo.File(
         Path.Combine("Logs", "log.txt"),
         rollingInterval: RollingInterval.Day,
@@ -94,7 +98,7 @@ app.UseEndpoints(endpoints =>
 });
 
 app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MobileApp v1"));
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AnyOneApi v1"));
 
 app.UseHangfireDashboard();
 

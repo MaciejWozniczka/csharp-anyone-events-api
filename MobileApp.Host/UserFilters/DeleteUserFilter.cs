@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.UserFilters;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.UserFilters;
 
 [ApiController]
 public class DeleteUserFilter(IMediator mediator) : ControllerBase

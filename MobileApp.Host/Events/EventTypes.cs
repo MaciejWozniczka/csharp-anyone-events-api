@@ -1,4 +1,4 @@
-﻿namespace MobileApp.Host.Events;
+﻿namespace AnyOneApi.Host.Events;
 
 public enum EventTypes
 {

@@ -1,4 +1,6 @@
-﻿namespace MobileApp.Host.Messages;
+﻿using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Messages;
 
 [ApiController]
 public class GetChats(IMediator mediator, ICurrentUserAccessor currentUserAccessor)

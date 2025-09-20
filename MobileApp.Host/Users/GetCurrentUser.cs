@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
+using AnyOneApi.Host.Infrastructure;
+using AnyOneApi.Host.Models;
 
-namespace MobileApp.Host.Users;
+namespace AnyOneApi.Host.Users;
 
 [ApiController]
 public class GetCurrentUser(IMediator mediator) : ControllerBase

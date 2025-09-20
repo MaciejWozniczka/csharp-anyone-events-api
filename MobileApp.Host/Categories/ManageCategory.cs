@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.Categories;
+﻿using AnyOneApi.Host.Extensions;
+using AnyOneApi.Host.Infrastructure;
+
+namespace AnyOneApi.Host.Categories;
 
 [ApiController]
 public class ManageCategory(IMediator mediator) : ControllerBase

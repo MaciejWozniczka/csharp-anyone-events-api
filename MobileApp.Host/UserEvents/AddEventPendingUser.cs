@@ -1,4 +1,7 @@
-﻿ namespace MobileApp.Host.UserEvents;
+﻿using AnyOneApi.Host.Infrastructure;
+ using AnyOneApi.Host.Users;
+
+ namespace AnyOneApi.Host.UserEvents;
 
 [ApiController]
 public class AddEventPendingUser(IMediator mediator) : ControllerBase

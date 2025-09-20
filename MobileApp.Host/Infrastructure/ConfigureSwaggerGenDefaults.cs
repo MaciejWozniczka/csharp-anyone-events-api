@@ -1,4 +1,4 @@
-﻿namespace MobileApp.Host.Infrastructure;
+﻿namespace AnyOneApi.Host.Infrastructure;
 
 public class ConfigureSwaggerGenDefaults : IConfigureOptions<SwaggerGenOptions>
 {

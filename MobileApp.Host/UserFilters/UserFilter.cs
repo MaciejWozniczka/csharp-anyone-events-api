@@ -1,4 +1,7 @@
-﻿namespace MobileApp.Host.UserFilters;
+﻿using AnyOneApi.Host.Locations;
+using AnyOneApi.Host.Models;
+
+namespace AnyOneApi.Host.UserFilters;
 
 public class UserFilter : BaseModel
 {
