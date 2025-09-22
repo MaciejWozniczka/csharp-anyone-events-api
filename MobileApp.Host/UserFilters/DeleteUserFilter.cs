@@ -8,7 +8,9 @@ public class DeleteUserFilter(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["UserFilter"], Summary = "Change user filter status to deleted")]
     [HttpDelete("/api/filter/{id}")]
-    public async Task<Result> DeleteUserFilterAsync(Guid id)
+    public async Task<Result> DeleteUserFilterAsync(
+        /// <summary>ID filtru do usunięcia</summary>
+        Guid id)
     {
         return await mediator.Send(new DeleteUserFilterCommand(id));
     }

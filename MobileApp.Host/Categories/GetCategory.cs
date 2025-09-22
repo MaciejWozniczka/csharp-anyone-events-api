@@ -9,21 +9,28 @@ public class GetCategory(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Get category by Id")]
     [HttpGet("/api/category/{id}")]
-    public async Task<Result<List<GetCategoryDto>>> GetCategoryAsync(Guid id)
+    public async Task<Result<List<GetCategoryDto>>> GetCategoryAsync(
+        /// <summary>ID kategorii do pobrania</summary>
+        Guid id)
     {
         return await mediator.Send(new GetCategoryQuery(id));
     }
 
     public class GetCategoryQuery(Guid id) : IRequest<Result<List<GetCategoryDto>>>
     {
+        /// <summary>ID kategorii</summary>
         public Guid Id { get; set; } = id;
     }
 
     public class GetCategoryDto
     {
+        /// <summary>ID kategorii</summary>
         public Guid Id { get; set; }
+        /// <summary>Nazwa kategorii</summary>
         public string Name { get; set; }
+        /// <summary>Typ kategorii (opcjonalny)</summary>
         public string? Type { get; set; }
+        /// <summary>URL zdjęcia kategorii (opcjonalny)</summary>
         public string? Picture { get; set; }
     }
 

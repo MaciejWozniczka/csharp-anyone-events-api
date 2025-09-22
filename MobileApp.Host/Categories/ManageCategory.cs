@@ -9,7 +9,9 @@ public class ManageCategory(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Add category")]
     [HttpPost("/api/category")]
-    public async Task<Result<Guid>> PostCategoryAsync([FromBody] ManageCategoryCommand command)
+    public async Task<Result<Guid>> PostCategoryAsync(
+        /// <summary>Dane nowej kategorii</summary>
+        [FromBody] ManageCategoryCommand command)
     {
         return await mediator.Send(command);
     }
@@ -17,7 +19,11 @@ public class ManageCategory(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Change category")]
     [HttpPut("/api/category/{id}")]
-    public async Task<Result<Guid>> PutCategoryAsync(Guid id, [FromBody] ManageCategoryCommand command)
+    public async Task<Result<Guid>> PutCategoryAsync(
+        /// <summary>ID kategorii do aktualizacji</summary>
+        Guid id, 
+        /// <summary>Dane kategorii do aktualizacji</summary>
+        [FromBody] ManageCategoryCommand command)
     {
         return await mediator.Send(command.Set(p => p.Id = id));
     }
@@ -25,8 +31,11 @@ public class ManageCategory(IMediator mediator) : ControllerBase
     public class ManageCategoryCommand : IRequest<Result<Guid>>
     {
         [JsonIgnore]
+        /// <summary>ID kategorii</summary>
         public Guid Id { get; set; }
+        /// <summary>Nazwa kategorii</summary>
         public string Name { get; set; }
+        /// <summary>URL zdjęcia kategorii (opcjonalny)</summary>
         public string? Picture { get; set; }
     }
 

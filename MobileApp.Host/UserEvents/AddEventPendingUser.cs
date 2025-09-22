@@ -9,15 +9,24 @@ public class AddEventPendingUser(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add pending user group to event")]
     [HttpPost("/api/event/pending/")]
-    public async Task<Result> AddEventPendingUserAsync(List<string> userIds, Guid eventId, string shortText)
+    public async Task<Result> AddEventPendingUserAsync(
+        /// <summary>Lista ID użytkowników</summary>
+        List<string> userIds, 
+        /// <summary>ID wydarzenia</summary>
+        Guid eventId, 
+        /// <summary>Krótki tekst</summary>
+        string shortText)
     {
         return await mediator.Send(new AddEventPendingUserCommand(userIds, eventId, shortText));
     }
 
     public class AddEventPendingUserCommand(List<string> userIds, Guid eventId, string shortText) : IRequest<Result>
     {
+        /// <summary>Lista ID użytkowników</summary>
         public List<string> UserIds { get; set; } = userIds;
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; } = eventId;
+        /// <summary>Krótki tekst</summary>
         public string ShortText { get; set; } = shortText;
     }
 

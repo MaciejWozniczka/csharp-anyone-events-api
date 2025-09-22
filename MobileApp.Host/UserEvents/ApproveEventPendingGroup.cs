@@ -15,7 +15,9 @@ public class ApproveEventPendingGroup(IMediator mediator) : ControllerBase
 
     public class ApproveEventPendingGroupCommand(Guid groupId, Guid eventId) : IRequest<Result>
     {
+        /// <summary>ID grupy</summary>
         public Guid GroupId { get; set; } = groupId;
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; } = eventId;
     }
 

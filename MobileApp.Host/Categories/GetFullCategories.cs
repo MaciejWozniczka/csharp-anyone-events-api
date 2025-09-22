@@ -9,7 +9,9 @@ public class GetFullCategories(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Get all categories with event types")]
     [HttpGet("/api/categories/all")]
-    public async Task<Result<List<GetFullCategoriesDto>>> GetFullCategoriesAsync([FromQuery] GetFullCategoriesQuery query)
+    public async Task<Result<List<GetFullCategoriesDto>>> GetFullCategoriesAsync(
+        /// <summary>Parametry zapytania (opcjonalne)</summary>
+        [FromQuery] GetFullCategoriesQuery query)
     {
         return await mediator.Send(query);
     }
@@ -20,15 +22,22 @@ public class GetFullCategories(IMediator mediator) : ControllerBase
 
     public class GetFullCategoriesDto
     {
+        /// <summary>ID kategorii</summary>
         public Guid Id { get; set; }
+        /// <summary>Nazwa kategorii</summary>
         public string Name { get; set; }
+        /// <summary>Kod emoji</summary>
         public string EmojiCode { get; set; }
+        /// <summary>Lista typów wydarzeń</summary>
         public List<GetFullCategoriesEventTypesDto> EventTypes { get; set; }
     }
     public class GetFullCategoriesEventTypesDto
     {
+        /// <summary>ID typu wydarzenia</summary>
         public Guid Id { get; set; }
+        /// <summary>Nazwa typu wydarzenia</summary>
         public string Name { get; set; }
+        /// <summary>Kod emoji</summary>
         public string EmojiCode { get; set; }
     }
 

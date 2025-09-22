@@ -8,14 +8,18 @@ public class AddUser(IMediator mediator) : ControllerBase
 {
     [SwaggerOperation(Tags = ["Users"], Summary = "Add user")]
     [HttpPost("/api/user")]
-    public async Task<Result<Guid>> AddUserAsync([FromBody] AddUserQuery addUserRequestBody)
+    public async Task<Result<Guid>> AddUserAsync(
+        /// <summary>Dane nowego użytkownika</summary>
+        [FromBody] AddUserQuery addUserRequestBody)
     {
         return await mediator.Send(new AddUserQuery() { Email = addUserRequestBody.Email, Password = addUserRequestBody.Password });
     }
 
     public class AddUserQuery : IRequest<Result<Guid>>
     {
+        /// <summary>Adres email użytkownika</summary>
         public string Email { get; set; }
+        /// <summary>Hasło użytkownika</summary>
         public string Password { get; set; }
     }
 

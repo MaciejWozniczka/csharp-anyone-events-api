@@ -8,7 +8,9 @@ public class PostCommunication(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Communication"], Summary = "Add message")]
     [HttpPost("/api/communication")]
-    public async Task<Result<Guid>> PostCommunicationAsync([FromBody] PostCommunicationCommand command)
+    public async Task<Result<Guid>> PostCommunicationAsync(
+        /// <summary>Dane komunikatu</summary>
+        [FromBody] PostCommunicationCommand command)
     {
         return await mediator.Send(command);
     }
@@ -16,14 +18,20 @@ public class PostCommunication(IMediator mediator) : ControllerBase
     public class PostCommunicationCommand : IRequest<Result<Guid>>
     {
         [JsonIgnore]
+        /// <summary>ID komunikatu</summary>
         public Guid Id { get; set; }
+        /// <summary>ID wydarzenia (opcjonalny)</summary>
         public Guid? EventId { get; set; }
+        /// <summary>Treść komunikatu (opcjonalny)</summary>
         public string? Message { get; set; }
         [JsonIgnore]
+        /// <summary>ID użytkownika</summary>
         public string? UserId { get; set; }
         [JsonIgnore]
+        /// <summary>Czy usunięty</summary>
         public bool IsDeleted { get; set; }
         [JsonIgnore]
+        /// <summary>Data utworzenia</summary>
         public DateTime CreateDate { get; set; }
     }
 

@@ -17,15 +17,21 @@ public class GetChats(IMediator mediator, ICurrentUserAccessor currentUserAccess
 
     public class GetChatsQuery(string id) : IRequest<Result<List<GetChatsDto>>>
     {
+        /// <summary>ID użytkownika</summary>
         public string Id { get; set; } = id;
     }
 
     public class GetChatsDto
     {
+        /// <summary>ID czatu</summary>
         public Guid Id { get; set; }
+        /// <summary>Nazwa czatu</summary>
         public string Name { get; set; }
+        /// <summary>Data wydarzenia</summary>
         public string EventDate { get; set; }
+        /// <summary>Lista uczestników</summary>
         public List<string> Participants { get; set; }
+        /// <summary>Data ostatniej wiadomości</summary>
         public DateTimeOffset LastMessageDate { get; set; }
     }
 

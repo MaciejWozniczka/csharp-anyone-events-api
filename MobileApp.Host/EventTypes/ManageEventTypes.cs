@@ -9,7 +9,9 @@ public class ManageEventTypes(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["EventTypes"], Summary = "Add event type")]
     [HttpPost("/api/eventType")]
-    public async Task<Result<Guid>> PostEventTypeAsync([FromBody] ManageEventTypeCommand command)
+    public async Task<Result<Guid>> PostEventTypeAsync(
+        /// <summary>Dane nowego typu wydarzenia</summary>
+        [FromBody] ManageEventTypeCommand command)
     {
         return await mediator.Send(command);
     }
@@ -17,7 +19,11 @@ public class ManageEventTypes(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["EventTypes"], Summary = "Change event type")]
     [HttpPut("/api/eventType/{id}")]
-    public async Task<Result<Guid>> PutEventTypeAsync(Guid id, [FromBody] ManageEventTypeCommand command)
+    public async Task<Result<Guid>> PutEventTypeAsync(
+        /// <summary>ID typu wydarzenia do aktualizacji</summary>
+        Guid id, 
+        /// <summary>Dane typu wydarzenia do aktualizacji</summary>
+        [FromBody] ManageEventTypeCommand command)
     {
         return await mediator.Send(command.Set(p => p.Id = id));
     }
@@ -25,9 +31,13 @@ public class ManageEventTypes(IMediator mediator) : ControllerBase
     public class ManageEventTypeCommand : IRequest<Result<Guid>>
     {
         [JsonIgnore]
+        /// <summary>ID typu wydarzenia</summary>
         public Guid Id { get; set; }
+        /// <summary>ID kategorii</summary>
         public Guid CategoryId { get; set; }
+        /// <summary>Nazwa typu wydarzenia</summary>
         public string Name { get; set; }
+        /// <summary>URL zdjęcia typu wydarzenia (opcjonalny)</summary>
         public string? Picture { get; set; }
     }
 

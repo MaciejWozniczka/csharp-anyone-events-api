@@ -12,7 +12,9 @@ public class ManageEvent(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Add event")]
     [HttpPost("/api/event")]
-    public async Task<Result<Guid>> PostEventAsync([FromBody] ManageEventCommand command)
+    public async Task<Result<Guid>> PostEventAsync(
+        /// <summary>Dane nowego wydarzenia</summary>
+        [FromBody] ManageEventCommand command)
     {
         return await mediator.Send(command);
     }
@@ -20,48 +22,80 @@ public class ManageEvent(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Change event")]
     [HttpPut("/api/event/{id}")]
-    public async Task<Result<Guid>> PutEventAsync(Guid id, [FromBody] ManageEventCommand command)
+    public async Task<Result<Guid>> PutEventAsync(
+        /// <summary>ID wydarzenia do aktualizacji</summary>
+        Guid id, 
+        /// <summary>Dane wydarzenia do aktualizacji</summary>
+        [FromBody] ManageEventCommand command)
     {
         return await mediator.Send(command.Set(p => p.Id = id));
     }
 
     public class ManageEventCommand : IRequest<Result<Guid>>
     {
+        /// <summary>ID wydarzenia</summary>
         public Guid Id { get; set; }
+        /// <summary>ID typu wydarzenia</summary>
         public Guid EventTypeId { get; set; }
+        /// <summary>Lista ID użytkowników do współpracy</summary>
         public List<string> CooperatorsPending { get; set; }
+        /// <summary>Data i czas wydarzenia</summary>
         public DateTimeOffset EventDateTime { get; set; }
+        /// <summary>Czas trwania w minutach</summary>
         public int Duration { get; set; }
+        /// <summary>Lokalizacja wydarzenia</summary>
         public ManageEventLocationCommand Location { get; set; }
+        /// <summary>Adres wydarzenia</summary>
         public ManageEventAddressCommand Address { get; set; }
+        /// <summary>Krótki opis wydarzenia</summary>
         public string ShortDescription { get; set; }
+        /// <summary>Szczegółowy opis wydarzenia (opcjonalny)</summary>
         public string? Description { get; set; }
+        /// <summary>Limit osób</summary>
         public int PeopleLimit { get; set; } = 0;
+        /// <summary>Minimalny wiek</summary>
         public int? AgeFrom { get; set; } = 18;
+        /// <summary>Maksymalny wiek</summary>
         public int? AgeTo { get; set; } = 99;
+        /// <summary>Typy płci</summary>
         public List<SexType>? SexTypes { get; set; } = [];
     }
 
     public class ManageEventLocationCommand
     {
+        /// <summary>Szerokość geograficzna</summary>
         public double Latitude { get; set; }
+        /// <summary>Długość geograficzna</summary>
         public double Longitude { get; set; }
     }
 
     public class ManageEventAddressCommand
     {
+        /// <summary>Etykieta adresu</summary>
         public string? Label { get; set; }
+        /// <summary>Kod kraju</summary>
         public string? CountryCode { get; set; }
+        /// <summary>Nazwa kraju</summary>
         public string? CountryName { get; set; }
+        /// <summary>Kod stanu/województwa</summary>
         public string? StateCode { get; set; }
+        /// <summary>Nazwa stanu/województwa</summary>
         public string? State { get; set; }
+        /// <summary>Kod powiatu</summary>
         public string? CountyCode { get; set; }
+        /// <summary>Nazwa powiatu</summary>
         public string? County { get; set; }
+        /// <summary>Miasto</summary>
         public string? City { get; set; }
+        /// <summary>Dzielnica</summary>
         public string? District { get; set; }
+        /// <summary>Ulica</summary>
         public string? Street { get; set; }
+        /// <summary>Kod pocztowy</summary>
         public string? PostalCode { get; set; }
+        /// <summary>Numer domu</summary>
         public string? HouseNumber { get; set; }
+        /// <summary>Numer mieszkania</summary>
         public string? ApartmentNumber { get; set; }
     }
 

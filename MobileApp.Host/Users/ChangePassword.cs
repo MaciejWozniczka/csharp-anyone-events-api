@@ -9,14 +9,18 @@ public class ChangePassword(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Auth"], Summary = "Change password")]
     [HttpPut("/api/changepassword")]
-    public async Task<Result> ChangePasswordAsync([FromBody] ChangePasswordQuery changePasswordRequestBody)
+    public async Task<Result> ChangePasswordAsync(
+        /// <summary>Dane zmiany hasła</summary>
+        [FromBody] ChangePasswordQuery changePasswordRequestBody)
     {
         return await mediator.Send(new ChangePasswordQuery() { CurrentPassword = changePasswordRequestBody.CurrentPassword, NewPassword = changePasswordRequestBody.NewPassword });
     }
 
     public class ChangePasswordQuery : IRequest<Result>
     {
+        /// <summary>Aktualne hasło użytkownika</summary>
         public string CurrentPassword { get; set; }
+        /// <summary>Nowe hasło użytkownika</summary>
         public string NewPassword { get; set; }
 
     }

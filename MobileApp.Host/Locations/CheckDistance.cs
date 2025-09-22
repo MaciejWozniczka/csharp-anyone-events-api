@@ -8,19 +8,26 @@ public class CheckDistance(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Check distance")]
     [HttpGet("/api/location/{address}/distance/{destination}")]
-    public async Task<Result<CheckDistanceDto>> CheckDistanceAsync(string address, string destination)
+    public async Task<Result<CheckDistanceDto>> CheckDistanceAsync(
+        /// <summary>Adres początkowy</summary>
+        string address, 
+        /// <summary>Adres docelowy</summary>
+        string destination)
     {
         return await mediator.Send(new CheckDistanceQuery(address, destination));
     }
 
     public class CheckDistanceQuery(string address, string destination) : IRequest<Result<CheckDistanceDto>>
     {
+        /// <summary>Adres początkowy</summary>
         public string Address { get; set; } = address;
+        /// <summary>Adres docelowy</summary>
         public string Destination { get; set; } = destination;
     }
 
     public class CheckDistanceDto
     {
+        /// <summary>Odległość w metrach</summary>
         public double Distance { get; set; }
     }
 

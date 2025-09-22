@@ -10,7 +10,11 @@ public class ManageUser(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Change user")]
     [HttpPut("/api/user/{id}")]
-    public async Task<Result<Guid>> ManageUserAsync(Guid id, ManageUserCommand command)
+    public async Task<Result<Guid>> ManageUserAsync(
+        /// <summary>ID użytkownika do aktualizacji</summary>
+        Guid id, 
+        /// <summary>Dane użytkownika do aktualizacji</summary>
+        ManageUserCommand command)
     {
         return await mediator.Send(command.Set(p => p.Id = id));
     }
@@ -18,17 +22,29 @@ public class ManageUser(IMediator mediator) : ControllerBase
     public class ManageUserCommand : IRequest<Result<Guid>>
     {
         [JsonIgnore]
+        /// <summary>ID użytkownika</summary>
         public Guid? Id { get; set; }
+        /// <summary>Imię użytkownika</summary>
         public string? FirstName { get; set; }
+        /// <summary>Nazwisko użytkownika</summary>
         public string? LastName { get; set; }
+        /// <summary>Rok urodzenia użytkownika</summary>
         public int? BirthdayYear { get; set; }
+        /// <summary>Lista języków użytkownika</summary>
         public List<string>? Languages { get; set; }
+        /// <summary>Narodowość użytkownika</summary>
         public string? Nationality { get; set; }
+        /// <summary>Płeć użytkownika</summary>
         public SexType? Sex { get; set; }
+        /// <summary>URL zdjęcia użytkownika</summary>
         public string? Picture { get; set; }
+        /// <summary>Opis użytkownika</summary>
         public string? Description { get; set; }
+        /// <summary>Numer telefonu użytkownika</summary>
         public int? PhoneNumber { get; set; }
+        /// <summary>Kod kraju dla numeru telefonu</summary>
         public string? PhoneCountryCode { get; set; }
+        /// <summary>Typ użytkownika</summary>
         public UserType? UserType { get; set; }
     }
 

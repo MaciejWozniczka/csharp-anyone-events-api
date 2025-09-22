@@ -8,7 +8,11 @@ public class AddEventPicture(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Add event picture")]
     [HttpPost("/api/event/{id}/picture/")]
-    public async Task<Result<Guid>> Import(IFormFile file, Guid id)
+    public async Task<Result<Guid>> Import(
+        /// <summary>Plik zdjęcia wydarzenia</summary>
+        IFormFile file, 
+        /// <summary>ID wydarzenia</summary>
+        Guid id)
     {
         return await mediator.Send(new AddEventPictureCommand { DataFile = file, EventId = id });
     }
@@ -16,8 +20,10 @@ public class AddEventPicture(IMediator mediator) : ControllerBase
     public class AddEventPictureCommand : IRequest<Result<Guid>>
     {
         [JsonIgnore]
+        /// <summary>Plik zdjęcia</summary>
         public IFormFile DataFile { get; set; }
         [JsonIgnore]
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; }
     }
 

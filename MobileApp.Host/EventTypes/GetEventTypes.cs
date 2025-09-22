@@ -8,7 +8,9 @@ public class GetEventTypes(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["EventTypes"], Summary = "Get event types list")]
     [HttpGet("/api/eventTypes")]
-    public async Task<Result<List<GetEventTypesDto>>> GetEventTypesAsync([FromQuery] GetEventTypesQuery query)
+    public async Task<Result<List<GetEventTypesDto>>> GetEventTypesAsync(
+        /// <summary>Parametry zapytania (opcjonalne)</summary>
+        [FromQuery] GetEventTypesQuery query)
     {
         return await mediator.Send(query);
     }
@@ -19,9 +21,13 @@ public class GetEventTypes(IMediator mediator) : ControllerBase
 
     public class GetEventTypesDto
     {
+        /// <summary>ID typu wydarzenia</summary>
         public Guid Id { get; set; }
+        /// <summary>ID kategorii</summary>
         public Guid CategoryId { get; set; }
+        /// <summary>Nazwa typu wydarzenia</summary>
         public string Name { get; set; }
+        /// <summary>Typ (opcjonalny)</summary>
         public string? Type { get; set; }
     }
 

@@ -10,7 +10,9 @@ public class ManageUserFilters(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["UserFilter"], Summary = "Add user filter")]
     [HttpPost("/api/filter")]
-    public async Task<Result<Guid>> PostUserFilterAsync([FromBody] ManageUserFiltersCommand command)
+    public async Task<Result<Guid>> PostUserFilterAsync(
+        /// <summary>Dane nowego filtru użytkownika</summary>
+        [FromBody] ManageUserFiltersCommand command)
     {
         return await mediator.Send(command);
     }
@@ -18,16 +20,27 @@ public class ManageUserFilters(IMediator mediator) : ControllerBase
     public class ManageUserFiltersCommand : IRequest<Result<Guid>>
     {
         [JsonIgnore]
+        /// <summary>ID filtru</summary>
         public Guid Id { get; set; }
+        /// <summary>ID użytkownika</summary>
         public string UserId { get; set; }
+        /// <summary>ID kategorii</summary>
         public Guid CategoryId { get; set; }
+        /// <summary>ID typu wydarzenia (opcjonalny)</summary>
         public Guid? EventTypeId { get; set; }
+        /// <summary>Czy filtr kategorii</summary>
         public bool IsCategoryFilter { get; set; }
+        /// <summary>Lokalizacja (opcjonalny)</summary>
         public Location? Location { get; set; }
+        /// <summary>Minimalny wiek (opcjonalny)</summary>
         public int? AgeFrom { get; set; }
+        /// <summary>Maksymalny wiek (opcjonalny)</summary>
         public int? AgeTo { get; set; }
+        /// <summary>Typ płci (opcjonalny)</summary>
         public SexType? SexTypes { get; set; }
+        /// <summary>Data od (opcjonalny)</summary>
         public DateTime? DateTimeFrom { get; set; }
+        /// <summary>Data do (opcjonalny)</summary>
         public DateTime? DateTimeTo { get; set; }
     }
 

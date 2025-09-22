@@ -8,7 +8,9 @@ public class AddUserPicture(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Add user picture")]
     [HttpPost("/api/user/picture")]
-    public async Task<Result<string>> Import(IFormFile file)
+    public async Task<Result<string>> Import(
+        /// <summary>Plik zdjęcia użytkownika</summary>
+        IFormFile file)
     {
         return await mediator.Send(new AddUserPictureCommand() { DataFile = file });
     }
@@ -16,6 +18,7 @@ public class AddUserPicture(IMediator mediator) : ControllerBase
     public class AddUserPictureCommand : IRequest<Result<string>>
     {
         [JsonIgnore]
+        /// <summary>Plik zdjęcia</summary>
         public IFormFile? DataFile { get; set; }
     }
 

@@ -8,21 +8,28 @@ public class GetCommunicationByEventId(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Communication"], Summary = "Get communication by event Id")]
     [HttpGet("/api/messages/{eventId}")]
-    public async Task<Result<List<GetCommunicationByEventIdDto>>> GetEventAsync(Guid eventId)
+    public async Task<Result<List<GetCommunicationByEventIdDto>>> GetEventAsync(
+        /// <summary>ID wydarzenia</summary>
+        Guid eventId)
     {
         return await mediator.Send(new GetCommunicationByEventIdQuery(eventId));
     }
 
     public class GetCommunicationByEventIdQuery(Guid eventId) : IRequest<Result<List<GetCommunicationByEventIdDto>>>
     {
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; } = eventId;
     }
 
     public class GetCommunicationByEventIdDto
     {
+        /// <summary>ID komunikatu</summary>
         public Guid Id { get; set; }
+        /// <summary>Treść komunikatu (opcjonalny)</summary>
         public string? Message { get; set; }
+        /// <summary>Nazwa użytkownika (opcjonalny)</summary>
         public string? User { get; set; }
+        /// <summary>Data utworzenia</summary>
         public DateTimeOffset CreateDate { get; set; }
     }
 

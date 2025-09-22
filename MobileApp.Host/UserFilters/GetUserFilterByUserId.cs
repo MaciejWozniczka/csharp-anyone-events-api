@@ -21,19 +21,33 @@ public class GetUserFilterByUserId(IMediator mediator) : ControllerBase
 
     public class GetUserFilterByUserIdDto
     {
+        /// <summary>ID filtru</summary>
         public string Id { get; set; }
+        /// <summary>ID użytkownika</summary>
         public string UserId { get; set; }
+        /// <summary>ID kategorii</summary>
         public Guid CategoryId { get; set; }
+        /// <summary>ID typu wydarzenia (opcjonalny)</summary>
         public Guid? EventTypeId { get; set; }
+        /// <summary>Czy filtr kategorii</summary>
         public bool IsCategoryFilter { get; set; }
+        /// <summary>ID lokalizacji</summary>
         public Guid LocationId { get; set; }
+        /// <summary>Lokalizacja</summary>
         public Location Location { get; set; }
+        /// <summary>Minimalny wiek (opcjonalny)</summary>
         public int? AgeFrom { get; set; }
+        /// <summary>Maksymalny wiek (opcjonalny)</summary>
         public int? AgeTo { get; set; }
+        /// <summary>Typ płci (opcjonalny)</summary>
         public SexType? SexTypes { get; set; }
+        /// <summary>Data od (opcjonalny)</summary>
         public DateTime? DateFrom { get; set; }
+        /// <summary>Data do (opcjonalny)</summary>
         public DateTime? DateTo { get; set; }
+        /// <summary>Czas od (opcjonalny)</summary>
         public DateTime? TimeFrom { get; set; }
+        /// <summary>Czas do (opcjonalny)</summary>
         public DateTime? TimeTo { get; set; }
     }
 

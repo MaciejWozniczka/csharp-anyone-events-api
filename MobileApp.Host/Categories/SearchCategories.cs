@@ -8,20 +8,26 @@ public class SearchCategories(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Search categories by text")]
     [HttpGet("/api/categories/{text}")]
-    public async Task<Result<List<SearchCategoriesDto>>> SearchCategoriesAsync(string text)
+    public async Task<Result<List<SearchCategoriesDto>>> SearchCategoriesAsync(
+        /// <summary>Tekst do wyszukania</summary>
+        string text)
     {
         return await mediator.Send(new SearchCategoriesQuery(text));
     }
 
     public class SearchCategoriesQuery(string text) : IRequest<Result<List<SearchCategoriesDto>>>
     {
+        /// <summary>Tekst do wyszukania</summary>
         public string Text { get; set; } = text;
     }
 
     public class SearchCategoriesDto
     {
+        /// <summary>ID kategorii lub typu wydarzenia</summary>
         public Guid Id { get; set; }
+        /// <summary>Nazwa kategorii lub typu wydarzenia</summary>
         public string Name { get; set; }
+        /// <summary>Typ (Category lub EventType)</summary>
         public string Type { get; set; }
     }
 

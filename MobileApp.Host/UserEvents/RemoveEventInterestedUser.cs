@@ -15,7 +15,9 @@ public class RemoveEventInterestedUser(IMediator mediator) : ControllerBase
 
     public class RemoveEventInterestedUserCommand(string userId, Guid eventId) : IRequest<Result>
     {
+        /// <summary>ID użytkownika</summary>
         public string UserId { get; set; } = userId;
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; } = eventId;
     }
 

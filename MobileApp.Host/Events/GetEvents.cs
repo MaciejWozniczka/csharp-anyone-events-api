@@ -12,8 +12,27 @@ public class GetEventsController(IMediator mediator, ICurrentUserAccessor curren
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Get active events according to parameters")]
     [HttpGet("/api/events/")]
-    public async Task<IActionResult> GetEventsAsync(int? offset, int? limit, double latitude, double longitude, int distance,
-        Guid? categoryId, Guid? eventTypeId, int? ageFrom, int? ageTo, SexType? sexTypes)
+    public async Task<IActionResult> GetEventsAsync(
+        /// <summary>Przesunięcie dla paginacji (domyślnie: 0)</summary>
+        int? offset, 
+        /// <summary>Liczba elementów na stronę (domyślnie: 10)</summary>
+        int? limit, 
+        /// <summary>Szerokość geograficzna</summary>
+        double latitude, 
+        /// <summary>Długość geograficzna</summary>
+        double longitude, 
+        /// <summary>Maksymalna odległość w metrach</summary>
+        int distance,
+        /// <summary>ID kategorii (opcjonalny)</summary>
+        Guid? categoryId, 
+        /// <summary>ID typu wydarzenia (opcjonalny)</summary>
+        Guid? eventTypeId, 
+        /// <summary>Minimalny wiek (opcjonalny)</summary>
+        int? ageFrom, 
+        /// <summary>Maksymalny wiek (opcjonalny)</summary>
+        int? ageTo, 
+        /// <summary>Typ płci (opcjonalny)</summary>
+        SexType? sexTypes)
     {
         var user = await currentUserAccessor.GetCurrentUser();
 
@@ -55,53 +74,89 @@ public class GetEventsQuery(
     SexType? sexTypes)
     : IRequest<Result<GetEventsDto>>
 {
+    /// <summary>Parametry paginacji</summary>
     public PaginationArgs PaginationArgs { get; set; } = paginationArgs;
+    /// <summary>Lokalizacja użytkownika</summary>
     public Location Location { get; set; } = location;
+    /// <summary>ID kategorii (opcjonalny)</summary>
     public Guid? CategoryId { get; set; } = categoryId;
+    /// <summary>ID typu wydarzenia (opcjonalny)</summary>
     public Guid? EventTypeId { get; set; } = eventTypeId;
+    /// <summary>Wiek użytkownika</summary>
     public int UserAge { get; set; } = user.CalculateAge();
+    /// <summary>Płeć użytkownika</summary>
     public SexType UserSexType { get; set; } = user.Sex ?? SexType.All;
+    /// <summary>Minimalny wiek</summary>
     public int? AgeFrom { get; set; } = ageFrom ?? 18;
+    /// <summary>Maksymalny wiek</summary>
     public int? AgeTo { get; set; } = ageTo ?? 99;
+    /// <summary>Typy płci</summary>
     public SexType? SexTypes { get; set; } = sexTypes ?? SexType.All;
 }
 
 public class GetEventsDto
 {
+    /// <summary>Liczba elementów na stronę</summary>
     public int Limit { get; set; }
+    /// <summary>Przesunięcie dla paginacji</summary>
     public int Offset { get; set; }
+    /// <summary>Całkowita liczba elementów</summary>
     public int Total { get; set; }
+    /// <summary>Lista wydarzeń</summary>
     public List<EventsDto> Data { get; set; } = [];
 }
 
 public class EventsDto
 {
+    /// <summary>ID wydarzenia</summary>
     public Guid Id { get; set; }
+    /// <summary>Twórca wydarzenia</summary>
     public GetEventsUserDto Creator { get; set; }
+    /// <summary>Lista współpracowników</summary>
     public List<GetEventsUserDto> Cooperators { get; set; } = [];
+    /// <summary>Liczba przypisanych użytkowników</summary>
     public int UsersAssignedCount { get; set; }
+    /// <summary>Nazwa typu wydarzenia</summary>
     public string EventType { get; set; }
+    /// <summary>Nazwa kategorii</summary>
     public string Category { get; set; }
+    /// <summary>Data i czas wydarzenia</summary>
     public DateTimeOffset EventDateTime { get; set; }
+    /// <summary>Czas trwania w minutach</summary>
     public int Duration { get; set; }
+    /// <summary>Lokalizacja wydarzenia</summary>
     public Location Location { get; set; }
+    /// <summary>Krótki opis wydarzenia</summary>
     public string ShortDescription { get; set; }
+    /// <summary>Szczegółowy opis wydarzenia (opcjonalny)</summary>
     public string? Description { get; set; }
+    /// <summary>URL zdjęcia wydarzenia (opcjonalny)</summary>
     public string? Picture { get; set; }
+    /// <summary>Limit osób</summary>
     public int PeopleLimit { get; set; }
+    /// <summary>Minimalny wiek</summary>
     public int? AgeFrom { get; set; }
+    /// <summary>Maksymalny wiek</summary>
     public int? AgeTo { get; set; }
+    /// <summary>Typy płci</summary>
     public List<SexType>? SexTypes { get; set; } = [];
 }
 
 public class GetEventsUserDto
 {
+    /// <summary>ID użytkownika</summary>
     public string Id { get; set; }
+    /// <summary>Imię użytkownika</summary>
     public string? FirstName { get; set; }
+    /// <summary>Nazwisko użytkownika</summary>
     public string? LastName { get; set; }
+    /// <summary>Wiek użytkownika</summary>
     public int? Age { get; set; }
+    /// <summary>Narodowość użytkownika</summary>
     public string? Nationality { get; set; }
+    /// <summary>Płeć użytkownika</summary>
     public SexType? Sex { get; set; }
+    /// <summary>URL zdjęcia użytkownika</summary>
     public string? Picture { get; set; }
 }
 

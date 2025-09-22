@@ -16,7 +16,9 @@ public class RemoveEventPendingUserFromGroup(IMediator mediator) : ControllerBas
 
     public class RemoveEventPendingUserFromGroupCommand(Guid groupId, Guid eventId) : IRequest<Result>
     {
+        /// <summary>ID grupy</summary>
         public Guid GroupId { get; set; } = groupId;
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; } = eventId;
     }
 

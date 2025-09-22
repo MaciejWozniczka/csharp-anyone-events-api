@@ -20,22 +20,35 @@ public class GetCurrentUserEvents(IMediator mediator) : ControllerBase
 
     public class GetCurrentUserEventsDto
     {
+        /// <summary>ID użytkownika</summary>
         public string Id { get; set; }
+        /// <summary>Lista utworzonych wydarzeń</summary>
         public List<GetCurrentUserEventsRecordDto>? EventsCreated { get; set; } = [];
+        /// <summary>Lista wydarzeń oczekujących na współpracę</summary>
         public List<GetCurrentUserEventsRecordDto>? EventsCooperationPending { get; set; } = [];
+        /// <summary>Lista wydarzeń ze współpracą</summary>
         public List<GetCurrentUserEventsRecordDto>? EventsCooperated { get; set; } = [];
+        /// <summary>Lista oczekujących wydarzeń</summary>
         public List<GetCurrentUserEventsRecordDto>? EventsPending { get; set; } = [];
+        /// <summary>Lista przypisanych wydarzeń</summary>
         public List<GetCurrentUserEventsRecordDto>? EventsAssigned { get; set; } = [];
+        /// <summary>Lista zainteresowanych wydarzeń</summary>
         public List<GetCurrentUserEventsRecordDto>? EventsInterested { get; set; } = [];
     }
 
     public class GetCurrentUserEventsRecordDto
     {
+        /// <summary>ID wydarzenia</summary>
         public Guid Id { get; set; }
+        /// <summary>Data i czas wydarzenia</summary>
         public DateTimeOffset EventDateTime { get; set; }
+        /// <summary>Lokalizacja wydarzenia</summary>
         public Location Location { get; set; }
+        /// <summary>Krótki opis wydarzenia</summary>
         public string ShortDescription { get; set; }
+        /// <summary>Szczegółowy opis wydarzenia (opcjonalny)</summary>
         public string? Description { get; set; }
+        /// <summary>URL zdjęcia wydarzenia (opcjonalny)</summary>
         public string? Picture { get; set; }
     }
 

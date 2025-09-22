@@ -8,7 +8,9 @@ public class DeleteEventPicture(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Add event picture")]
     [HttpDelete("/api/event/picture/")]
-    public async Task<Result<Guid>> Import(Guid eventId)
+    public async Task<Result<Guid>> Import(
+        /// <summary>ID wydarzenia</summary>
+        Guid eventId)
     {
         return await mediator.Send(new DeleteEventPictureCommand() { EventId = eventId });
     }
@@ -16,6 +18,7 @@ public class DeleteEventPicture(IMediator mediator) : ControllerBase
     public class DeleteEventPictureCommand : IRequest<Result<Guid>>
     {
         [JsonIgnore]
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; }
     }
 

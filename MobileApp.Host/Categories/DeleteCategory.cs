@@ -8,7 +8,9 @@ public class DeleteCategory(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Change category status to deleted")]
     [HttpDelete("/api/category/{id}")]
-    public async Task<Result> DeleteCategoryAsync(Guid id)
+    public async Task<Result> DeleteCategoryAsync(
+        /// <summary>ID kategorii do usunięcia</summary>
+        Guid id)
     {
         return await mediator.Send(new DeleteCategoryCommand(id));
     }

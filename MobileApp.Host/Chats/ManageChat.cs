@@ -15,8 +15,11 @@ public class ManageChat(IMediator mediator) : ControllerBase
 
     public class ManageChatCommand : IRequest<Result<Guid>>
     {
+        /// <summary>Nazwa czatu (opcjonalny)</summary>
         public string? Name { get; set; }
+        /// <summary>ID wydarzenia (opcjonalny)</summary>
         public Guid? UserEventId { get; set; }
+        /// <summary>Lista ID uczestników czatu</summary>
         public List<string> ParticipantsIds { get; set; }
     }
 

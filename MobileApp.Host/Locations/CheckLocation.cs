@@ -8,13 +8,16 @@ public class CheckLocation(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Check location")]
     [HttpGet("/api/location/{address}")]
-    public async Task<Result<HereGeocode>> CheckLocationAsync(string address)
+    public async Task<Result<HereGeocode>> CheckLocationAsync(
+        /// <summary>Adres do sprawdzenia</summary>
+        string address)
     {
         return await mediator.Send(new CheckLocationQuery(address));
     }
 
     public class CheckLocationQuery(string address) : IRequest<Result<HereGeocode>>
     {
+        /// <summary>Adres do sprawdzenia</summary>
         public string Address { get; set; } = address;
     }
 

@@ -9,7 +9,13 @@ public class GetMessages(IMediator mediator)
     [Authorize]
     [SwaggerOperation(Tags = ["Messages"], Summary = "Get messages")]
     [HttpGet("/api/message/{id}")]
-    public async Task<Result<List<GetMessagesDto>>> GetMessagesAsync(int? offset, int? limit, Guid id)
+    public async Task<Result<List<GetMessagesDto>>> GetMessagesAsync(
+        /// <summary>Przesunięcie dla paginacji (opcjonalny)</summary>
+        int? offset, 
+        /// <summary>Liczba elementów na stronę (opcjonalny)</summary>
+        int? limit, 
+        /// <summary>ID czatu</summary>
+        Guid id)
     {
         var pagination = new PaginationArgs
         {
@@ -21,18 +27,27 @@ public class GetMessages(IMediator mediator)
 
     public class GetMessagesQuery(Guid id, PaginationArgs paginationArgs) : IRequest<Result<List<GetMessagesDto>>>
     {
+        /// <summary>ID czatu</summary>
         public Guid Id { get; set; } = id;
+        /// <summary>Parametry paginacji</summary>
         public PaginationArgs PaginationArgs { get; set; } = paginationArgs;
     }
 
     public class GetMessagesDto
     {
+        /// <summary>ID wiadomości</summary>
         public Guid Id { get; set; }
+        /// <summary>ID pokoju</summary>
         public string RoomId { get; set; }
+        /// <summary>Nazwa czatu</summary>
         public string ChatName { get; set; }
+        /// <summary>ID nadawcy</summary>
         public string SenderUserId { get; set; }
+        /// <summary>Nazwa użytkownika nadawcy</summary>
         public string SenderUsername { get; set; }
+        /// <summary>Treść wiadomości</summary>
         public string Text { get; set; }
+        /// <summary>Data utworzenia</summary>
         public DateTimeOffset CreateDate { get; set; }
     }
 

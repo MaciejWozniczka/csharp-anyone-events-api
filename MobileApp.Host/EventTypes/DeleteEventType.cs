@@ -8,7 +8,9 @@ public class DeleteEventType(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["EventTypes"], Summary = "Change event type status to deleted")]
     [HttpDelete("/api/eventType/{id}")]
-    public async Task<Result> DeleteEventTypeAsync(Guid id)
+    public async Task<Result> DeleteEventTypeAsync(
+        /// <summary>ID typu wydarzenia do usunięcia</summary>
+        Guid id)
     {
         return await mediator.Send(new DeleteEventTypeCommand(id));
     }

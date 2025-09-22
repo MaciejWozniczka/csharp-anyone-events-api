@@ -21,17 +21,29 @@ public class GetCurrentUser(IMediator mediator) : ControllerBase
 
     public class GetCurrentUserDto
     {
+        /// <summary>ID użytkownika</summary>
         public string? Id { get; set; }
+        /// <summary>Imię użytkownika</summary>
         public string? FirstName { get; set; }
+        /// <summary>Nazwisko użytkownika</summary>
         public string? LastName { get; set; }
+        /// <summary>Wiek użytkownika</summary>
         public int? Age { get; set; }
+        /// <summary>Narodowość użytkownika</summary>
         public string? Nationality { get; set; }
+        /// <summary>Lista języków użytkownika</summary>
         public List<string>? Languages { get; set; }
+        /// <summary>Płeć użytkownika</summary>
         public SexType? Sex { get; set; }
+        /// <summary>URL zdjęcia użytkownika</summary>
         public string? Picture { get; set; }
+        /// <summary>Opis użytkownika</summary>
         public string? Description { get; set; }
+        /// <summary>Numer telefonu użytkownika</summary>
         public int? PhoneNumber { get; set; }
+        /// <summary>Kod kraju dla numeru telefonu</summary>
         public string? PhoneCountryCode { get; set; }
+        /// <summary>Typ użytkownika</summary>
         public UserType? UserType { get; set; }
     }
 

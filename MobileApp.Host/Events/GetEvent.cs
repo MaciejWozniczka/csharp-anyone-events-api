@@ -10,74 +10,122 @@ public class GetEvent(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Events"], Summary = "Get event")]
     [HttpGet("/api/events/{id}")]
-    public async Task<Result<GetEventDto>> GetEventAsync(Guid id)
+    public async Task<Result<GetEventDto>> GetEventAsync(
+        /// <summary>ID wydarzenia do pobrania</summary>
+        Guid id)
     {
         return await mediator.Send(new GetEventQuery(id));
     }
 
     public class GetEventQuery(Guid id) : IRequest<Result<GetEventDto>>
     {
+        /// <summary>ID wydarzenia</summary>
         public Guid Id { get; set; } = id;
     }
 
     public class GetEventDto
     {
+        /// <summary>Twórca wydarzenia</summary>
         public GetEventUserDto Creator { get; set; }
+        /// <summary>Lista współpracowników</summary>
         public List<GetEventUserDto> Cooperators { get; set; } = [];
+        /// <summary>Lista oczekujących współpracowników</summary>
         public List<GetEventUserDto> CooperatorsPending { get; set; } = [];
+        /// <summary>Lista oczekujących użytkowników</summary>
         public List<GetEventUserDto> UsersPending { get; set; } = [];
+        /// <summary>Lista oczekujących grup</summary>
         public List<GetEventUserGroupDto> GroupsPending { get; set; } = [];
+        /// <summary>Lista przypisanych użytkowników</summary>
         public List<GetEventUserDto> UsersAssigned { get; set; } = [];
+        /// <summary>Lista zainteresowanych użytkowników</summary>
         public List<GetEventUserDto> UsersInterested { get; set; } = [];
+        /// <summary>Lista pominiętych użytkowników</summary>
         public List<GetEventUserDto> UsersSkipped { get; set; } = [];
+        /// <summary>Nazwa typu wydarzenia</summary>
         public string EventType { get; set; }
+        /// <summary>Nazwa kategorii</summary>
         public string Category { get; set; }
+        /// <summary>Data i czas wydarzenia</summary>
         public DateTimeOffset EventDateTime { get; set; }
+        /// <summary>Czas trwania w minutach</summary>
         public int Duration { get; set; }
+        /// <summary>Lokalizacja wydarzenia</summary>
         public Location Location { get; set; }
+        /// <summary>Kraj</summary>
         public string Country { get; set; }
+        /// <summary>Stan/województwo</summary>
         public string State { get; set; }
+        /// <summary>Miasto</summary>
         public string City { get; set; }
+        /// <summary>Kod pocztowy</summary>
         public string PostalCode { get; set; }
+        /// <summary>Ulica</summary>
         public string Street { get; set; }
+        /// <summary>Numer domu</summary>
         public string StreetNumber { get; set; }
+        /// <summary>Numer mieszkania</summary>
         public string ApartmentNumber { get; set; }
+        /// <summary>Krótki opis wydarzenia</summary>
         public string ShortDescription { get; set; }
+        /// <summary>Szczegółowy opis wydarzenia</summary>
         public string Description { get; set; }
+        /// <summary>URL zdjęcia wydarzenia (opcjonalny)</summary>
         public string? Picture { get; set; }
+        /// <summary>Limit osób</summary>
         public int PeopleLimit { get; set; }
+        /// <summary>Minimalny wiek</summary>
         public int? AgeFrom { get; set; }
+        /// <summary>Maksymalny wiek</summary>
         public int? AgeTo { get; set; }
+        /// <summary>Typy płci</summary>
         public List<SexType>? SexTypes { get; set; }
     }
 
     public class GetEventUserGroupDto
     {
+        /// <summary>Lista użytkowników w grupie</summary>
         public List<GetEventPendingUserDto> Users { get; set; }
+        /// <summary>Krótki tekst grupy</summary>
         public string ShortText { get; set; }
+        /// <summary>Czy grupa jest widoczna</summary>
         public bool IsVisible { get; set; } = false;
     }
 
     public class GetEventPendingUserDto
     {
+        /// <summary>ID użytkownika</summary>
         public string Id { get; set; }
+        /// <summary>Imię użytkownika</summary>
         public string? FirstName { get; set; }
+        /// <summary>Nazwisko użytkownika</summary>
         public string? LastName { get; set; }
+        /// <summary>Wiek użytkownika</summary>
         public int? Age { get; set; }
+        /// <summary>Narodowość użytkownika</summary>
         public string? Nationality { get; set; }
+        /// <summary>Płeć użytkownika</summary>
         public SexType? Sex { get; set; }
+        /// <summary>URL zdjęcia użytkownika</summary>
         public string? Picture { get; set; }
+        /// <summary>Czy użytkownik zaakceptował zaproszenie</summary>
         public bool? Accepted { get; set; }
     }
 
     public class GetEventUserDto
     {
+        /// <summary>ID użytkownika</summary>
         public string Id { get; set; }
+        /// <summary>Imię użytkownika</summary>
         public string? FirstName { get; set; }
+        /// <summary>Nazwisko użytkownika</summary>
         public string? LastName { get; set; }
+        /// <summary>Wiek użytkownika</summary>
         public int? Age { get; set; }
+        /// <summary>Narodowość użytkownika</summary>
         public string? Nationality { get; set; }
+        /// <summary>Płeć użytkownika</summary>
         public SexType? Sex { get; set; }
+        /// <summary>URL zdjęcia użytkownika</summary>
         public string? Picture { get; set; }
     }
 

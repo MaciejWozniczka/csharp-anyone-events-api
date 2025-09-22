@@ -10,7 +10,11 @@ public class SetCurrentLocation(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Users"], Summary = "Set current location")]
     [HttpPut("/api/user/{id}/location")]
-    public async Task<Result<Guid>> SetCurrentLocationAsync(Guid id, SetCurrentLocationCommand command)
+    public async Task<Result<Guid>> SetCurrentLocationAsync(
+        /// <summary>ID użytkownika</summary>
+        Guid id, 
+        /// <summary>Dane lokalizacji użytkownika</summary>
+        SetCurrentLocationCommand command)
     {
         return await mediator.Send(command.Set(p => p.Id = id));
     }
@@ -18,9 +22,12 @@ public class SetCurrentLocation(IMediator mediator) : ControllerBase
     public class SetCurrentLocationCommand(Guid id, double latitude, double longitude) : IRequest<Result<Guid>>
     {
         [JsonIgnore]
+        /// <summary>ID użytkownika</summary>
         public Guid Id { get; set; } = id;
 
+        /// <summary>Szerokość geograficzna</summary>
         public double Latitude { get; set; } = latitude;
+        /// <summary>Długość geograficzna</summary>
         public double Longitude { get; set; } = longitude;
     }
 

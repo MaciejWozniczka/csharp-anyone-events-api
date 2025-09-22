@@ -8,14 +8,20 @@ public class AddEventSkippedUser(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["UserEvents"], Summary = "Add skipped user to event")]
     [HttpPost("/api/event/skipped/")]
-    public async Task<Result> AddEventSkippedUserAsync(string userId, Guid eventId)
+    public async Task<Result> AddEventSkippedUserAsync(
+        /// <summary>ID użytkownika</summary>
+        string userId, 
+        /// <summary>ID wydarzenia</summary>
+        Guid eventId)
     {
         return await mediator.Send(new AddEventSkippedUserCommand(userId, eventId));
     }
 
     public class AddEventSkippedUserCommand(string userId, Guid eventId) : IRequest<Result>
     {
+        /// <summary>ID użytkownika</summary>
         public string UserId { get; set; } = userId;
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; } = eventId;
     }
 

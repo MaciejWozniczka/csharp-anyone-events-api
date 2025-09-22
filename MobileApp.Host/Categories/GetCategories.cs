@@ -8,7 +8,9 @@ public class GetCategories(IMediator mediator) : ControllerBase
     [Authorize]
     [SwaggerOperation(Tags = ["Category"], Summary = "Get categories list")]
     [HttpGet("/api/categories")]
-    public async Task<Result<List<GetCategoriesDto>>> GetCategoriesAsync([FromQuery] GetCategoriesQuery query)
+    public async Task<Result<List<GetCategoriesDto>>> GetCategoriesAsync(
+        /// <summary>Parametry zapytania (opcjonalne)</summary>
+        [FromQuery] GetCategoriesQuery query)
     {
         return await mediator.Send(query);
     }
@@ -19,9 +21,13 @@ public class GetCategories(IMediator mediator) : ControllerBase
 
     public class GetCategoriesDto
     {
+        /// <summary>ID kategorii</summary>
         public Guid Id { get; set; }
+        /// <summary>Nazwa kategorii</summary>
         public string Name { get; set; }
+        /// <summary>Kod emoji</summary>
         public string EmojiCode { get; set; }
+        /// <summary>URL zdjęcia kategorii</summary>
         public string Picture { get; set; }
     }
 

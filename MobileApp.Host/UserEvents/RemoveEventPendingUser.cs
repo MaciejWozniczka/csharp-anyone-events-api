@@ -15,7 +15,9 @@ public class RemoveEventPendingUser(IMediator mediator) : ControllerBase
 
     public class RemoveEventPendingUserCommand(List<string> userIds, Guid eventId) : IRequest<Result>
     {
+        /// <summary>Lista ID użytkowników</summary>
         public List<string> UserIds { get; set; } = userIds;
+        /// <summary>ID wydarzenia</summary>
         public Guid EventId { get; set; } = eventId;
     }
 
