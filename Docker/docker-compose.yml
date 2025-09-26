@@ -21,7 +21,7 @@ services:
       - 8090:8080 
     networks:
       - shared-network
-  mobileapp-backend:
+  anyone-backend:
     build:
       context: ..
       dockerfile: ./Docker/Dockerfile
@@ -29,7 +29,7 @@ services:
     depends_on:
       - db
     environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Database=MobileApp;Username=postgres;Password=jG1cv1L81%8Y
+      - ConnectionStrings__DefaultConnection=Host=db;Database=AnyOneApi;Username=postgres;Password=jG1cv1L81%8Y
       - ASPNETCORE_URLS=http://+:5173
       - Authentication__SecretKey=d2s3kjhds1lkg4khlfh2sdfk4sf7df3jsd2klfhsd3kfh==
       - Authentication__Audience=AnyOneAppAudience
@@ -37,7 +37,7 @@ services:
     ports:
       - 5173:5173
     volumes: 
-      - ./MobileApp/Logs:/app/MobileApp.Host/bin/Release/net6.0/publish/Logs
+      - ./AnyOneApi/Logs:/app/MobileApp.Host/bin/Release/net6.0/publish/Logs
     networks:
       - shared-network
 networks:
